@@ -142,6 +142,9 @@ const ICON = {
   shield: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"><path d="M12 2.8 19.5 5.6v6c0 4.9-3.2 8.2-7.5 9.6-4.3-1.4-7.5-4.7-7.5-9.6v-6z"/><path d="m8.7 12 2.4 2.4 4.3-4.6" stroke-linecap="round"/></g>`,
   trash: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16M9.5 6.5V4h5v2.5M6 6.5l1 14h10l1-14M10 10.5v6M14 10.5v6"/></g>`,
   info: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/></g><circle cx="12" cy="7.6" r="1.3" fill="${c}"/>`,
+  ellipsis: c => `<g fill="${c}"><circle cx="5.5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="18.5" cy="12" r="1.9"/></g>`,
+  selectCircle: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.8 2.8L16.2 9.6"/></g>`,
+  sidebar: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M9.5 4.5v15"/></g>`,
   external: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></g>`,
   docText: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></g>`,
   infinity: c => `<path d="M7 8.5c-2 0-3.5 1.6-3.5 3.5S5 15.5 7 15.5c3.5 0 6.5-7 10-7 2 0 3.5 1.6 3.5 3.5S19 15.5 17 15.5c-3.5 0-6.5-7-10-7z" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>`,
@@ -204,6 +207,7 @@ function doc(w, h, body, title) {
   <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity=".08"/></filter>
   <filter id="shadowLg" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity=".18"/></filter>
   <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+  <filter id="glass" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#000" flood-opacity=".14"/></filter>
   <linearGradient id="camBg" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#3B4240"/><stop offset=".55" stop-color="#262B2A"/><stop offset="1" stop-color="#121514"/></linearGradient>
   <linearGradient id="scanLine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.accentOnDark}" stop-opacity="0"/><stop offset=".5" stop-color="${C.accentOnDark}"/><stop offset="1" stop-color="${C.accentOnDark}" stop-opacity="0"/></linearGradient>
 </defs>

@@ -229,3 +229,40 @@ enum ParsedPayload {
 | Q5 | CSV形式 | A: UTF-8（BOM付き）、列＝日時, 種類, 内容, コード形式, 取得元, お気に入り / B: BOMなし | **A**（Excelで日本語が文字化けしない） |
 | Q6 | Bundle ID / 商品ID | 仮値 `com.example.seijitsuqr` / `com.example.seijitsuqr.pro` で実装し README の差し替え一覧に記載 | 確定値があれば指示ください |
 | Q7 | Wi-Fi接続（Hotspot Configuration entitlement） | A: 入れる（有料 Developer Program 前提） / B: 外してパスワードコピーのみ | **A**（仕様の「Wi-Fiに接続」を満たす唯一の公開API） |
+| Q8 | iPhone 版モックアップ（01〜06）の見た目 | A: iPad/Duo と揃えて iOS 26 以降の Liquid Glass 表現（浮遊タブバー、ガラスのボタン）に更新し、課金画面の「閉じる」テキストをシステム標準の×ボタンに変更 / B: 現状のまま | **A**（HIG Toolbars「標準の Back/Close ボタンを使い、テキストラベルにしない」。最新 Xcode でビルドすると実機は Liquid Glass 表示になるため、モックアップとの差が出る） |
+
+## 12. iPad / iPhone Duo 対応（デザイン: `docs/design/07_ipad.svg`, `08_iphone_duo.svg`）
+
+根拠: [HIG: Designing for iPhone Duo](https://developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo)（2026-09-09 新設）、[Preparing your app for iPhone Duo](https://developer.apple.com/documentation/TechnologyOverviews/preparing-your-app-for-iphone-duo)、[iPhone Duo 技術仕様](https://www.apple.com/iphone-duo/specs/)。
+
+### 12.1 基本方針
+- **レイアウトはサイズクラスで切り替える**（デバイス種別・向きで分岐しない。`userInterfaceIdiom` を使わない）。compact 幅＝iPhone／Duo 外側、regular 幅＝iPad／Duo 内側。
+- **画面ごとに作り直さない**。compact では 1 カラム（現行 iPhone 設計）、regular では一段深い階層を並べる（HIG「内側では追加の階層を表示してよい」）。機能と状態はどの画面・姿勢でも同一。
+- 標準コンテナ（`TabView` / `NavigationSplitView` / `NavigationStack` の `.toolbar`）を使い、**独自のバーを作らない**。Duo の縦配置・オーバーフロー・折り目回避はシステムが行う。
+- ツールバー項目はすべて **SF Symbol＋タイトルの `Label`** で定義する（縦配置ではアイコン、オーバーフローではアイコン＋タイトルが使われる。タイトルのみの項目は縦配置されない）。
+
+### 12.2 画面別の regular 幅レイアウト
+
+| 画面 | compact（iPhone・Duo 外側） | regular（iPad・Duo 内側） |
+|---|---|---|
+| スキャン | カメラ全面＋結果は `.sheet` | 左: カメラ ／ 右: 読み取り結果ペイン（シートを出さず常時表示）。Duo では `ArrangementView`（split, 横軸のみ） |
+| 履歴 | 一覧 → push で詳細 | `NavigationSplitView`: 一覧（選択を持続ハイライト）｜詳細 |
+| 作成 | 種類メニュー → フォーム → 生成結果 | `NavigationSplitView`: 種類一覧｜フォーム＋プレビュー |
+| 課金 | `.sheet` | iPad: フォームシート ／ Duo 内側: システム既定の配置（折り目を自動回避） |
+| 設定 | グループ化リスト | 同じリストを読みやすい幅に制限して中央表示 |
+
+### 12.3 iPhone Duo 固有
+
+| 項目 | 方針 |
+|---|---|
+| 縦配置バー | 外側ディスプレイと内側の横向きでは、Dynamic Island／ステータスバー／ツールバー／タブバーが後縁に縦に並ぶ（システム既定。上書きしない）。内側の縦向きは通常の横バー |
+| ツールバーの順序 | 上から「閉じる・戻る」→ 主要アクション → その他。スキャン: [連続スキャン, 写真, ライト]、結果: [閉じる] [コピー, 共有, お気に入り]、履歴詳細: [コピー, 共有, お気に入り, 削除] |
+| 操作の位置 | 一覧に作用する操作（CSV・選択）は一覧ペインの上に置き、詳細に作用する操作は後縁の縦バーへ（HIG「操作は対象コンテンツの近くに」） |
+| 折り目（部分的に折りたたみ） | 標準のスプリットビューは列幅を折り目基準で左右対称に自動調整。カメラ｜結果の分割は `ArrangementView` が折り目を避けて配置。独自ビューで重要要素が折り目にかかる場合のみ `ReservedRegion` で回避 |
+| カメラ | 外側カメラ領域は常に予約領域。開閉・回転で表示ディスプレイとカメラの向きが変わるため、スキャンは背面カメラを向きで選択し、プレビューの回転を追従させる（[Choosing a camera by the direction it faces](https://developer.apple.com/documentation/AVKit/choosing-a-camera-by-the-direction-it-faces)） |
+| 画面寸法 | Apple は pt 値を公開していない。モックアップは公開ピクセル値（外側 1398×2034、内側 1878×2670）を @3x 換算した**推定値**（外側 466×678pt、内側 890×626pt）。実装は寸法に依存しない |
+
+### 12.4 実装上の制約（事実）
+- `ArrangementView`、`ReservedRegion`、`toolbarVerticalBehavior(_:)`、`toolbarVerticalEdge` は **iOS / iPadOS 27.1 以降**（Apple Developer Documentation の platform 情報）。最低OSは iOS 17 のまま、`if #available(iOS 27.1, *)` で分岐し、未対応OSでは `HStack` による分割で代替する。
+- 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。**CI（GitHub Actions）のランナーにその Xcode が載っているかは未確認**で、実装時に確認する。
+- iPad 寸法（1180×820pt）は Apple 公開の 2360×1640px（iPad Air 11インチ）を @2x 換算した値。
