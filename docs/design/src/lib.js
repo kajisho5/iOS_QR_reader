@@ -1,4 +1,6 @@
 // Shared drawing helpers for the SVG mockups (iPhone 393x852pt canvas).
+const fs = require('fs');
+const path = require('path');
 const FONT = "-apple-system, 'SF Pro Text', 'Hiragino Sans', 'IPAPGothic', sans-serif";
 const MONO = "'SF Mono', Menlo, 'IPAGothic', monospace";
 
@@ -11,16 +13,82 @@ const C = {
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+// Text is converted to outlines (Noto Sans JP / Noto Sans Mono) so the mockups
+// render identically in every viewer, independent of installed fonts.
+const opentype = require('opentype.js');
+const FONT_DIR = path.join(__dirname, 'node_modules/@fontsource');
+const fontCache = new Map();
+function loadFamily(family, weight) {
+  const key = `${family}-${weight}`;
+  if (!fontCache.has(key)) {
+    const dir = path.join(FONT_DIR, family, 'files');
+    const suffix = `-${weight}-normal.woff`;
+    const files = fs.readdirSync(dir).filter(f => f.endsWith(suffix))
+      .sort((a, b) => (b.includes('latin') - a.includes('latin')));
+    fontCache.set(key, files.map(f => {
+      const b = fs.readFileSync(path.join(dir, f));
+      return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.length));
+    }));
+  }
+  return fontCache.get(key);
+}
+const glyphCache = new Map();
+function glyphFor(ch, weight, mono) {
+  const key = `${ch}|${weight}|${mono}`;
+  if (!glyphCache.has(key)) {
+    const lists = mono ? [loadFamily('noto-sans-mono', weight >= 600 ? 700 : 400), loadFamily('noto-sans-jp', weight)] : [loadFamily('noto-sans-jp', weight)];
+    let hit = null;
+    for (const list of lists) {
+      for (const f of list) {
+        const gi = f.charToGlyphIndex(ch);
+        if (gi > 0) { hit = { font: f, glyph: f.glyphs.get(gi) }; break; }
+      }
+      if (hit) break;
+    }
+    if (!hit) throw new Error(`No glyph for "${ch}" (U+${ch.codePointAt(0).toString(16)})`);
+    glyphCache.set(key, hit);
+  }
+  return glyphCache.get(key);
+}
+const parts = (str, o) => (Array.isArray(str) ? str : [{ s: str }]).map(p => ({ s: String(p.s), weight: p.weight || o.weight || 400, fill: p.fill || o.fill || C.label }));
+// Serialize path commands ourselves (opentype.js toPathData emits NaN for some coordinates).
+const num = v => { const r = Math.round(v * 10) / 10; if (!Number.isFinite(r)) throw new Error('bad coordinate'); return String(r); };
+function pathData(cmds) {
+  return cmds.map(c => {
+    switch (c.type) {
+      case 'M': case 'L': return `${c.type}${num(c.x)} ${num(c.y)}`;
+      case 'Q': return `Q${num(c.x1)} ${num(c.y1)} ${num(c.x)} ${num(c.y)}`;
+      case 'C': return `C${num(c.x1)} ${num(c.y1)} ${num(c.x2)} ${num(c.y2)} ${num(c.x)} ${num(c.y)}`;
+      case 'Z': return 'Z';
+      default: throw new Error(`unknown path command ${c.type}`);
+    }
+  }).join('');
+}
+function measure(str, o = {}) {
+  const size = o.size || 15, ls = o.ls || 0;
+  let w = 0, n = 0;
+  for (const p of parts(str, o)) for (const ch of p.s) {
+    const { font, glyph } = glyphFor(ch, p.weight, !!o.mono);
+    w += glyph.advanceWidth * size / font.unitsPerEm + ls; n++;
+  }
+  return n ? w - ls : 0;
+}
 function t(x, y, str, o = {}) {
-  const a = [`x="${x}"`, `y="${y}"`, `font-family="${o.mono ? MONO : FONT}"`, `font-size="${o.size || 15}"`, `fill="${o.fill || C.label}"`];
-  if (o.weight) a.push(`font-weight="${o.weight}"`);
-  if (o.anchor) a.push(`text-anchor="${o.anchor}"`);
-  if (o.ls) a.push(`letter-spacing="${o.ls}"`);
-  if (o.opacity) a.push(`opacity="${o.opacity}"`);
-  const body = Array.isArray(str)
-    ? str.map(p => `<tspan${p.fill ? ` fill="${p.fill}"` : ''}${p.weight ? ` font-weight="${p.weight}"` : ''}>${esc(p.s)}</tspan>`).join('')
-    : esc(str);
-  return `<text ${a.join(' ')}>${body}</text>`;
+  const size = o.size || 15, ls = o.ls || 0;
+  const total = measure(str, o);
+  let cx = x - (o.anchor === 'middle' ? total / 2 : o.anchor === 'end' ? total : 0);
+  let out = '';
+  for (const p of parts(str, o)) {
+    let d = '';
+    for (const ch of p.s) {
+      const { font, glyph } = glyphFor(ch, p.weight, !!o.mono);
+      if (ch.trim()) d += pathData(glyph.getPath(cx, y, size).commands);
+      cx += glyph.advanceWidth * size / font.unitsPerEm + ls;
+    }
+    if (d) out += `<path d="${d}" fill="${p.fill}"/>`;
+  }
+  const label = parts(str, o).map(p => p.s).join('');
+  return `<g${o.opacity ? ` opacity="${o.opacity}"` : ''}><title>${esc(label)}</title>${out}</g>`;
 }
 
 const rect = (x, y, w, h, o = {}) =>
@@ -169,4 +237,13 @@ function toggle(x, y, on) {
     `<circle cx="${on ? x + 35.5 : x + 15.5}" cy="${y + 15.5}" r="13.5" fill="#fff" filter="url(#shadow)"/>`;
 }
 
-module.exports = { C, FONT, MONO, esc, t, rect, icon, tile, statusBar, homeIndicator, tabBar, phone, doc, fakeQR, toggle, ICON };
+// Icon followed by a label, centered as one unit on cx (widths are measured, not guessed).
+function iconLabel(cx, baseline, name, iconSize, label, o = {}) {
+  const gap = o.gap ?? 8;
+  const tw = measure(label, o);
+  const x0 = cx - (iconSize + gap + tw) / 2;
+  const iy = baseline - (o.size || 15) * 0.36 - iconSize / 2;
+  return icon(name, x0, iy, iconSize, o.iconColor || o.fill || C.label, o.iconExtra) + t(x0 + iconSize + gap, baseline, label, o);
+}
+
+module.exports = { C, FONT, MONO, esc, t, measure, iconLabel, rect, icon, tile, statusBar, homeIndicator, tabBar, phone, doc, fakeQR, toggle, ICON };

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const L = require('./lib');
-const { C, t, rect, icon, tile, statusBar, tabBar, phone, doc, fakeQR, toggle } = L;
+const { C, t, measure, iconLabel, rect, icon, tile, statusBar, tabBar, phone, doc, fakeQR, toggle } = L;
 
 const OUT = process.argv[2];
 const W1 = 393, GAP = 90, PAD = 70;
@@ -14,6 +14,20 @@ function header(title, sub) {
     (sub ? t(PAD - 13, 76, sub, { size: 15, fill: C.secondary }) : '');
 }
 const OY = 120;
+
+// Pill sized to its measured content, centered horizontally on the screen.
+function pillNote(baseline, ic, label, o, bg, h) {
+  const w = 18 + measure(label, o) + 6 + 20 + 18;
+  const top = baseline - (o.size * 0.36) - h / 2;
+  return rect(196.5 - w / 2, top, w, h, { rx: h / 2, fill: bg }) + iconLabel(196.5, baseline, ic, o.size + 6, label, { ...o, gap: 6 });
+}
+
+// Largest size <= max (0.5pt steps) at which the label fits in width (mirrors SwiftUI minimumScaleFactor).
+function fitSize(label, max, width, weight) {
+  let size = max;
+  while (size > 9 && measure(label, { size, weight }) > width) size -= 0.5;
+  return size;
+}
 
 // ---------- 01 Scan ----------
 function cameraFeed() {
@@ -46,10 +60,11 @@ function circleBtn(cx, cy, name, on) {
   return `<circle cx="${cx}" cy="${cy}" r="22" fill="${on ? '#fff' : 'rgba(255,255,255,0.2)'}"/>` + icon(name, cx - 11, cy - 11, 22, on ? C.label : '#fff');
 }
 function contPill(on) {
-  const w = on ? 164 : 136;
+  const label = on ? '連続スキャン ON' : '連続スキャン';
+  const o = { size: 15, weight: 600, fill: '#fff' };
+  const w = 14 + 22 + 8 + measure(label, o) + 18;
   return rect(16, 66, w, 44, { rx: 22, fill: on ? C.accent : 'rgba(255,255,255,0.2)' }) +
-    icon('repeat', 30, 77, 22, '#fff') +
-    t(60, 93, on ? '連続スキャン ON' : '連続スキャン', { size: 15, weight: 600, fill: '#fff' });
+    iconLabel(16 + w / 2 - 2, 93, 'repeat', 22, label, o);
 }
 function scanA() {
   const X = 66.5, Y = 236, S = 260;
@@ -59,9 +74,7 @@ function scanA() {
     circleBtn(299, 88, 'photo') + circleBtn(355, 88, 'bolt') +
     t(196.5, 540, 'コードを枠内に合わせてください', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
     t(196.5, 566, 'QRコード・バーコード 11種類に対応', { size: 13, fill: 'rgba(255,255,255,0.75)', anchor: 'middle' }) +
-    rect(70.5, 700, 252, 34, { rx: 17, fill: 'rgba(0,0,0,0.45)' }) +
-    icon('shield', 84, 708, 18, C.accentOnDark) +
-    t(108, 722, '読み取り内容は端末内だけで処理します', { size: 12, weight: 500, fill: '#fff' }) +
+    pillNote(722, 'shield', '読み取り内容は端末内だけで処理します', { size: 12, weight: 500, fill: '#fff', iconColor: C.accentOnDark }, 'rgba(0,0,0,0.45)', 34) +
     tabBar(0, true);
 }
 function trayRow(y, kind, ic, title, meta, isNew) {
@@ -76,9 +89,7 @@ function scanB() {
     statusBar(true) + contPill(true) +
     circleBtn(299, 88, 'photo') + circleBtn(355, 88, 'bolt', true) +
     // toast
-    rect(56.5, 502, 280, 40, { rx: 20, fill: 'rgba(255,255,255,0.95)' }) +
-    icon('checkCircle', 70, 512, 20, C.accent) +
-    t(98, 527, '読み取りました（重複は記録しません）', { size: 13, weight: 600, fill: C.label }) +
+    pillNote(527, 'checkCircle', '読み取りました（重複は記録しません）', { size: 13, weight: 600, fill: C.label, iconColor: C.accent }, 'rgba(255,255,255,0.95)', 40) +
     // tray
     rect(12, 556, 369, 204, { rx: 22, fill: 'rgba(28,28,30,0.94)' }) +
     t(28, 586, '今回の読み取り', { size: 15, weight: 700, fill: '#fff' }) +
@@ -100,7 +111,7 @@ function scanC() {
     t(196.5, 486, '読み取った内容が外部に送信されることはありません。', { size: 13, fill: C.secondary, anchor: 'middle' }) +
     rect(36, 528, 321, 52, { rx: 14, fill: C.accent }) + t(196.5, 560, '設定を開く', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
     rect(36, 592, 321, 52, { rx: 14, fill: C.card, stroke: C.separator }) +
-    icon('photo', 112, 607, 22, C.accent) + t(208, 624, '写真から読み取る', { size: 17, weight: 600, fill: C.accent, anchor: 'middle' }) +
+    iconLabel(196.5, 624, 'photo', 22, '写真から読み取る', { size: 17, weight: 600, fill: C.accent }) +
     tabBar(0, false);
 }
 
@@ -122,7 +133,7 @@ function actionTriple(y, items) {
   return items.map(([ic, label, col], i) => {
     const x = 16 + i * (w + 8);
     return rect(x, y, w, 66, { rx: 14, fill: C.card }) + icon(ic, x + w / 2 - 12, y + 11, 24, col || C.accent, ic === 'star') +
-      t(x + w / 2, y + 54, label, { size: 13, weight: 600, fill: col || C.accent, anchor: 'middle' });
+      t(x + w / 2, y + 54, label, { size: fitSize(label, 13, w - 16, 600), weight: 600, fill: col || C.accent, anchor: 'middle' });
   }).join('');
 }
 function resultURL() {
@@ -137,13 +148,12 @@ function resultURL() {
     `<line x1="32" y1="${Y + 216}" x2="361" y2="${Y + 216}" stroke="${C.separator}"/>` +
     t(32, Y + 242, 'ドメイン', { size: 15, fill: C.secondary }) + t(361, Y + 242, 'www.example.co.jp', { size: 15, weight: 700, anchor: 'end' }) +
     `<line x1="32" y1="${Y + 258}" x2="361" y2="${Y + 258}" stroke="${C.separator}"/>` +
-    t(32, Y + 284, '方式', { size: 15, fill: C.secondary }) + icon('lock', 228, Y + 271, 16, C.accent) + t(361, Y + 284, 'https（暗号化）', { size: 15, weight: 600, anchor: 'end' }) +
+    t(32, Y + 284, '方式', { size: 15, fill: C.secondary }) + icon('lock', 361 - measure('https（暗号化）', { size: 15, weight: 600 }) - 20, Y + 271, 16, C.accent) + t(361, Y + 284, 'https（暗号化）', { size: 15, weight: 600, anchor: 'end' }) +
     icon('info', 18, Y + 326, 16, C.secondary) +
     t(40, Y + 339, '「ブラウザで開く」を押すまで通信は発生しません。', { size: 13, fill: C.secondary }) +
-    rect(16, Y + 362, 361, 54, { rx: 14, fill: C.accent }) + icon('external', 112, Y + 377, 22, '#fff') +
-    t(206, Y + 396, 'ブラウザで開く', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
+    rect(16, Y + 362, 361, 54, { rx: 14, fill: C.accent }) + iconLabel(196.5, Y + 396, 'external', 22, 'ブラウザで開く', { size: 17, weight: 700, fill: '#fff' }) +
     actionTriple(Y + 428, [['copy', 'コピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
-    icon('checkCircle', 128, Y + 520, 16, '#34A853') + t(150, Y + 533, '履歴に保存しました', { size: 13, fill: C.secondary }) +
+    iconLabel(196.5, Y + 533, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: '#34A853', gap: 6 }) +
     L.homeIndicator(false);
 }
 function resultWiFi() {
@@ -161,10 +171,9 @@ function resultWiFi() {
     row(Y + 260, 'ステルス（非公開）', 'いいえ') +
     icon('info', 18, Y + 290, 16, C.secondary) +
     t(40, Y + 303, '接続時にiOSの確認ダイアログが表示されます。', { size: 13, fill: C.secondary }) +
-    rect(16, Y + 326, 361, 54, { rx: 14, fill: C.accent }) + icon('wifi', 104, Y + 341, 22, '#fff') +
-    t(206, Y + 360, 'このWi-Fiに接続', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
+    rect(16, Y + 326, 361, 54, { rx: 14, fill: C.accent }) + iconLabel(196.5, Y + 360, 'wifi', 22, 'このWi-Fiに接続', { size: 17, weight: 700, fill: '#fff' }) +
     actionTriple(Y + 392, [['copy', 'パスワードをコピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
-    icon('checkCircle', 128, Y + 484, 16, '#34A853') + t(150, Y + 497, '履歴に保存しました', { size: 13, fill: C.secondary }) +
+    iconLabel(196.5, Y + 497, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: '#34A853', gap: 6 }) +
     L.homeIndicator(false);
 }
 
@@ -187,19 +196,26 @@ function histRow(y, kind, ic, title, meta, fav, last, offset = 0) {
     (last ? '' : `<line x1="78" y1="${y + 64}" x2="377" y2="${y + 64}" stroke="${C.separator}"/>`) + '</g>';
   return s;
 }
-function chip(x, y, label, on, w, ic) {
-  return rect(x, y, w, 32, { rx: 16, fill: on ? C.accent : C.card, stroke: on ? null : C.separator }) +
-    (ic ? icon(ic, x + 10, y + 8, 16, on ? '#fff' : C.yellow, true) : '') +
-    t(x + w / 2 + (ic ? 9 : 0), y + 21, label, { size: 14, weight: 600, fill: on ? '#fff' : C.label, anchor: 'middle' });
+function chips(x, y, items) {
+  let s = '';
+  for (const [label, on, ic] of items) {
+    const o = { size: 14, weight: 600, fill: on ? '#fff' : C.label };
+    const w = measure(label, o) + 28 + (ic ? 22 : 0);
+    s += rect(x, y, w, 32, { rx: 16, fill: on ? C.accent : C.card, stroke: on ? null : C.separator });
+    s += ic ? iconLabel(x + w / 2, y + 21, ic, 16, label, { ...o, iconColor: on ? '#fff' : C.yellow, iconExtra: true, gap: 6 }) : t(x + w / 2, y + 21, label, { ...o, anchor: 'middle' });
+    x += w + 8;
+  }
+  return s;
 }
 function historyTop() {
-  const right = icon('share', 254, 66, 22, C.accent) + t(280, 83, 'CSV', { size: 17, weight: 600, fill: C.accent }) +
+  const editW = measure('編集', { size: 17 });
+  const csvX = 377 - editW - 24 - measure('CSV', { size: 17, weight: 600 });
+  const right = icon('share', csvX - 26, 66, 22, C.accent) + t(csvX, 83, 'CSV', { size: 17, weight: 600, fill: C.accent }) +
     t(377, 83, '編集', { size: 17, fill: C.accent, anchor: 'end' });
   return navLarge('履歴', right) +
     rect(16, 148, 361, 38, { rx: 10, fill: C.fill }) + icon('search', 26, 157, 20, C.secondary) +
     t(52, 173, '日時・種類・内容で検索', { size: 16, fill: '#8E8E93' }) +
-    chip(16, 198, 'すべて', true, 76) + chip(100, 198, 'お気に入り', false, 116, 'star') +
-    chip(224, 198, 'URL', false, 58) + chip(290, 198, 'Wi-Fi', false, 68) + chip(366, 198, '連絡先', false, 76);
+    chips(16, 198, [['すべて', true], ['お気に入り', false, 'star'], ['URL', false], ['Wi-Fi', false], ['連絡先', false], ['テキスト', false]]);
 }
 function historyBanner(y) {
   return rect(16, y, 361, 58, { rx: 14, fill: C.accentSoft }) +
@@ -249,7 +265,7 @@ function historyB() {
 function createCard(x, y, w, kind, ic, title, sub, locked) {
   return `<g filter="url(#shadow)">${rect(x, y, w, 128, { rx: 18, fill: C.card })}</g>` +
     tile(x + 16, y + 16, 44, locked ? '#B9BEC4' : C.kind[kind], ic, 11) +
-    (locked ? rect(x + w - 66, y + 16, 52, 24, { rx: 12, fill: C.accentSoft }) + icon('lock', x + w - 59, y + 21, 14, C.accent) + t(x + w - 31, y + 33, 'Pro', { size: 13, weight: 800, fill: C.accent, anchor: 'middle' }) :
+    (locked ? rect(x + w - 66, y + 16, 52, 24, { rx: 12, fill: C.accentSoft }) + iconLabel(x + w - 40, y + 33, 'lock', 13, 'Pro', { size: 13, weight: 800, fill: C.accent, gap: 3 }) :
       rect(x + w - 62, y + 16, 48, 24, { rx: 12, fill: '#EEF2F6' }) + t(x + w - 38, y + 33, '無料', { size: 12, weight: 700, fill: C.secondary, anchor: 'middle' })) +
     t(x + 16, y + 92, title, { size: 18, weight: 800, fill: locked ? C.secondary : C.label }) +
     t(x + 16, y + 113, sub, { size: 12, fill: C.secondary });
@@ -278,11 +294,9 @@ function createB() {
     `<g filter="url(#shadow)">${rect(16, 200, 361, 352, { rx: 18, fill: C.card })}</g>` +
     fakeQR(76.5, 226, 240, 29, '#000', 3) +
     t(196.5, 498, 'https://www.example.co.jp', { size: 13, mono: true, fill: C.secondary, anchor: 'middle' }) +
-    icon('checkCircle', 124, 515, 16, '#34A853') + t(146, 528, '履歴に保存しました', { size: 13, fill: C.secondary }) +
-    rect(16, 568, 361, 54, { rx: 14, fill: C.accent }) + icon('download', 120, 584, 22, '#fff') +
-    t(206, 602, '写真に保存', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
-    rect(16, 634, 361, 54, { rx: 14, fill: C.card, stroke: C.separator }) + icon('share', 132, 650, 22, C.accent) +
-    t(206, 668, '共有', { size: 17, weight: 700, fill: C.accent, anchor: 'middle' }) +
+    iconLabel(196.5, 528, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: '#34A853', gap: 6 }) +
+    rect(16, 568, 361, 54, { rx: 14, fill: C.accent }) + iconLabel(196.5, 602, 'download', 22, '写真に保存', { size: 17, weight: 700, fill: '#fff' }) +
+    rect(16, 634, 361, 54, { rx: 14, fill: C.card, stroke: C.separator }) + iconLabel(196.5, 668, 'share', 22, '共有', { size: 17, weight: 700, fill: C.accent }) +
     tabBar(2, false);
 }
 
@@ -307,12 +321,11 @@ function paywall(purchased) {
     t(66, Y + 296, '広告は今後も入れません', { size: 16, weight: 800, fill: C.accentDark }) +
     t(16, Y + 350, 'Proで使えるようになる機能', { size: 13, weight: 700, fill: C.secondary }) +
     feature(Y + 362, 'infinity', '履歴を無制限に保存', '無料版は直近30件まで') +
-    feature(Y + 414, 'qr', 'すべての種類のQRコードを作成', 'Wi-Fi・連絡先・イベント（無料版はテキスト・URL）') +
+    feature(Y + 414, 'qr', 'すべての種類のQRコードを作成', 'Wi-Fi・連絡先・イベントにも対応') +
     feature(Y + 466, 'docText', '履歴のCSVエクスポート', '表計算アプリで開ける形式で書き出し') +
     t(196.5, Y + 540, 'スキャンは無料版でも回数無制限です。', { size: 13, fill: C.secondary, anchor: 'middle' });
   if (purchased) {
-    s += rect(16, Y + 560, 361, 56, { rx: 14, fill: '#EEF2F6' }) + icon('checkCircle', 112, Y + 576, 24, C.accent) +
-      t(206, Y + 595, '購入済みです', { size: 17, weight: 700, fill: C.accentDark, anchor: 'middle' });
+    s += rect(16, Y + 560, 361, 56, { rx: 14, fill: '#EEF2F6' }) + iconLabel(196.5, Y + 595, 'checkCircle', 24, '購入済みです', { size: 17, weight: 700, fill: C.accentDark, iconColor: C.accent });
   } else {
     s += rect(16, Y + 560, 361, 56, { rx: 14, fill: C.accent }) +
       t(196.5, Y + 595, '¥800 で購入（買い切り）', { size: 18, weight: 800, fill: '#fff', anchor: 'middle' });
