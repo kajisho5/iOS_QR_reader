@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import StoreKit
+import SwiftUI
 
 /// The single non-consumable "Pro" purchase (StoreKit 2). There are no subscriptions.
 /// Pro status is never cached by the app: it always comes from verified transactions.
