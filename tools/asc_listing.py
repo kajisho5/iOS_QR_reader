@@ -121,14 +121,16 @@ def main():
         call("GET", f"/v1/apps/{app_id}/appAvailabilityV2")
         print("availability: already set (left as is)")
     except SystemExit:
-        refs = [{"type": "territoryAvailabilities", "id": f"${{{t}}}"} for t in territories]
+        # Apple requires an entry for every territory: available only in the listed ones.
+        everywhere = [t["id"] for t in call("GET", "/v1/territories", limit="200")["data"]]
+        refs = [{"type": "territoryAvailabilities", "id": f"${{{t}}}"} for t in everywhere]
         call("POST", "/v2/appAvailabilities", {
             "data": {"type": "appAvailabilities", "attributes": {"availableInNewTerritories": False}, "relationships": {
                 "app": {"data": {"type": "apps", "id": app_id}},
                 "territoryAvailabilities": {"data": refs}}},
-            "included": [{"type": "territoryAvailabilities", "id": r["id"], "attributes": {"available": True},
+            "included": [{"type": "territoryAvailabilities", "id": r["id"], "attributes": {"available": t in territories},
                           "relationships": {"territory": {"data": {"type": "territories", "id": t}}}}
-                         for r, t in zip(refs, territories)]})
+                         for r, t in zip(refs, everywhere)]})
         print(f"availability: {', '.join(territories)}")
 
     # In-App Purchase: localization and review note.
