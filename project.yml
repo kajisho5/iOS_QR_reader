@@ -65,6 +65,8 @@ targets:
     platform: iOS
     sources:
       - path: SeijitsuQRTests
+      - path: StoreKit/Configuration.storekit
+        buildPhase: resources
     dependencies:
       - target: SeijitsuQR
     settings:
@@ -80,6 +82,7 @@ schemes:
         SeijitsuQRTests: [test]
     run:
       config: Debug
+      storeKitConfiguration: StoreKit/Configuration.storekit
     test:
       config: Debug
       targets:

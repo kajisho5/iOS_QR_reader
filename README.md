@@ -46,4 +46,19 @@ python3 tools/gen_l10n.py
 | `SeijitsuQR/App/AppConstants.swift` | `termsOfUseURL` | `https://example.com/seijitsuqr/terms` |
 | `SeijitsuQR/Resources/Assets.xcassets/AppIcon.appiconset` | アプリアイコン（仮） | `docs/design/src/app_icon.svg` から生成 |
 
-StoreKit の商品 ID 設定手順は課金機能の実装時（ステップ④）に追記します。
+## StoreKit（Pro 買い切り）の設定手順
+
+アプリ内課金は非消耗型（Non-Consumable）1 点だけです。サブスクリプションは使いません。
+
+1. **App Store Connect** でアプリを作成し、「App 内課金」→「＋」→ 種類 **非消耗型** を選びます。
+   - 参照名: `Pro`、製品 ID: `AppConstants.proProductID` と同じ値（例 `com.yourcompany.seijitsuqr.pro`）
+   - 価格: ¥800 を選択（App Store Connect の価格表で選べることを確認してください）
+   - 表示名・説明（日本語）: `Pro（買い切り）`／「履歴の無制限保存、すべての種類のQRコード作成、CSVエクスポート（買い切り）」
+   - 審査用のスクリーンショット（課金画面）を添付
+2. `SeijitsuQR/App/AppConstants.swift` の `proProductID` を 1. の製品 ID に変更します。
+3. ローカル確認用の `StoreKit/Configuration.storekit` の `productID` も同じ値に変更します（Xcode でファイルを開いて編集できます）。
+   - スキーム `SeijitsuQR` の Run に設定済みのため、シミュレータでは App Store に接続せずに購入・復元・返金を試せます。
+   - ユニットテスト `ProStoreTests` もこのファイルを使います。
+4. 審査提出時、App 内課金をアプリのバージョンと一緒に提出します。
+
+アプリは購入状態を独自に保存せず、毎回 StoreKit の検証済みトランザクション（`Transaction.currentEntitlements`）で判定します。復元ボタンは課金画面と設定画面にあり、`AppStore.sync()` を呼びます。
