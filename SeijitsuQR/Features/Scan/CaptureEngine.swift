@@ -43,6 +43,34 @@ extension CodeSymbology {
     }
 }
 
+/// Converts between the device's zoom factor and the factor shown to people (1× = the wide lens,
+/// as in the Camera app).
+enum CameraZoom {
+    /// Multiply the device factor by this to get the displayed factor.
+    static func displayMultiplier(for device: AVCaptureDevice) -> CGFloat {
+        if #available(iOS 18.0, *) {
+            return device.displayVideoZoomFactorMultiplier
+        }
+        // Before iOS 18: an ultra wide first constituent means the wide lens starts at the
+        // first switch-over factor.
+        if device.constituentDevices.first?.deviceType == .builtInUltraWideCamera,
+           let first = device.virtualDeviceSwitchOverVideoZoomFactors.first?.doubleValue, first > 0 {
+            return 1 / CGFloat(first)
+        }
+        return 1
+    }
+
+    /// Device factor that is displayed as 1×.
+    static func standardFactor(for device: AVCaptureDevice) -> CGFloat {
+        1 / displayMultiplier(for: device)
+    }
+
+    /// The largest factor offered to people: 10× (displayed), or less if the device can't.
+    static func maximumFactor(for device: AVCaptureDevice) -> CGFloat {
+        min(device.maxAvailableVideoZoomFactor, standardFactor(for: device) * 10)
+    }
+}
+
 /// Wraps a capture device so it can be handed from the session queue to the main actor.
 /// The device is only read on the main actor (rotation coordinator) after configuration.
 struct CaptureDeviceReference: @unchecked Sendable {
@@ -77,6 +105,45 @@ final class CaptureEngine: NSObject, @unchecked Sendable {
             if self.session.isRunning {
                 self.session.stopRunning()
             }
+        }
+    }
+
+    /// Sets the zoom factor (device units, clamped to what the device allows).
+    func setZoom(_ factor: CGFloat) {
+        queue.async {
+            guard let device = self.device, (try? device.lockForConfiguration()) != nil else { return }
+            device.videoZoomFactor = min(max(factor, device.minAvailableVideoZoomFactor), device.maxAvailableVideoZoomFactor)
+            device.unlockForConfiguration()
+        }
+    }
+
+    /// Focuses (and meters exposure) once at a point in device coordinates ({0,0} top-left,
+    /// {1,1} bottom-right of the unrotated image). Continuous autofocus resumes when the
+    /// subject area changes (see `resumeContinuousFocus`).
+    func focus(at devicePoint: CGPoint) {
+        queue.async {
+            guard let device = self.device, (try? device.lockForConfiguration()) != nil else { return }
+            if device.isFocusPointOfInterestSupported, device.isFocusModeSupported(.autoFocus) {
+                device.focusPointOfInterest = devicePoint
+                device.focusMode = .autoFocus
+            }
+            if device.isExposurePointOfInterestSupported, device.isExposureModeSupported(.continuousAutoExposure) {
+                device.exposurePointOfInterest = devicePoint
+                device.exposureMode = .continuousAutoExposure
+            }
+            device.unlockForConfiguration()
+        }
+    }
+
+    /// Back to continuous autofocus on the center (after a tap-to-focus, once the scene changes).
+    func resumeContinuousFocus() {
+        queue.async {
+            guard let device = self.device, (try? device.lockForConfiguration()) != nil else { return }
+            let center = CGPoint(x: 0.5, y: 0.5)
+            if device.isFocusPointOfInterestSupported { device.focusPointOfInterest = center }
+            if device.isFocusModeSupported(.continuousAutoFocus) { device.focusMode = .continuousAutoFocus }
+            if device.isExposurePointOfInterestSupported { device.exposurePointOfInterest = center }
+            device.unlockForConfiguration()
         }
     }
 
@@ -151,6 +218,12 @@ final class CaptureEngine: NSObject, @unchecked Sendable {
             if camera.isAutoFocusRangeRestrictionSupported {
                 camera.autoFocusRangeRestriction = .near
             }
+            // Lets the app return to continuous autofocus after a tap-to-focus.
+            camera.isSubjectAreaChangeMonitoringEnabled = true
+            // Virtual devices with an ultra wide lens start at its full field of view (zoom 1.0,
+            // shown as 0.5× in the Camera app). Start at the wide lens instead, like the Camera
+            // app's 1×; the device still switches lenses for close focus.
+            camera.videoZoomFactor = min(max(CameraZoom.standardFactor(for: camera), camera.minAvailableVideoZoomFactor), camera.maxAvailableVideoZoomFactor)
             camera.unlockForConfiguration()
         }
         device = camera

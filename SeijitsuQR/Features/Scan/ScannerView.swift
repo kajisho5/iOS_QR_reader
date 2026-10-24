@@ -32,6 +32,8 @@ struct ScannerView: View {
     /// vertically on the trailing edge (HIG "Designing for iPhone Duo"), so the scan controls stay
     /// in the toolbar there instead of the bottom row.
     @State private var hasVerticalBar = false
+    /// Where the person tapped to focus (preview coordinates); shown briefly as a square.
+    @State private var focusIndicator: FocusTap?
     private var showsBottomControls: Bool { presentsSheet && !hasVerticalBar }
 
     var body: some View {
@@ -210,7 +212,30 @@ struct ScannerView: View {
         ZStack {
             Group {
                 Color.black
-                CameraPreview(session: capture.session, device: capture.device)
+                CameraPreview(
+                    session: capture.session,
+                    device: capture.device,
+                    zoomFactor: capture.zoomFactor,
+                    zoomValueText: zoomText,
+                    onZoom: { capture.setZoom($0) },
+                    onZoomStep: { capture.stepZoom(in: $0) },
+                    onResetZoom: { capture.resetZoom() },
+                    onFocus: { devicePoint, viewPoint in
+                        capture.focus(atDevicePoint: devicePoint)
+                        focusIndicator = FocusTap(point: viewPoint)
+                    }
+                )
+                .overlay(alignment: .topLeading) {
+                    if let focusIndicator {
+                        FocusSquare()
+                            .position(focusIndicator.point)
+                            .id(focusIndicator.id)
+                            .task(id: focusIndicator.id) {
+                                try? await Task.sleep(for: .seconds(1.2))
+                                if self.focusIndicator?.id == focusIndicator.id { self.focusIndicator = nil }
+                            }
+                    }
+                }
                 ReticleOverlay(isActive: coordinator.isContinuous, isRaised: isTrayVisible && presentsSheet)
             }
             .ignoresSafeArea(edges: [.top, .horizontal])
@@ -246,6 +271,16 @@ struct ScannerView: View {
                         NoticeCapsule(text: L10n.scanPrivacyNote, systemImage: "checkmark.shield")
                     }
                 }
+                if isZoomed {
+                    Button {
+                        capture.resetZoom()
+                    } label: {
+                        NoticeCapsule(text: zoomText, systemImage: "plus.magnifyingglass")
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(zoomText)
+                    .accessibilityHint(L10n.scanZoomReset)
+                }
                 if showsBottomControls {
                     controlBar
                 }
@@ -255,6 +290,14 @@ struct ScannerView: View {
             .animation(.default, value: coordinator.isToastVisible)
         }
         .environment(\.colorScheme, .dark)
+    }
+
+    private var zoomText: String {
+        L10n.scanZoomValue(Double(capture.displayZoom).formatted(.number.precision(.fractionLength(1))))
+    }
+
+    private var isZoomed: Bool {
+        capture.state == .running && abs(capture.displayZoom - 1) > 0.05
     }
 
     private var isTrayVisible: Bool { coordinator.isContinuous && !coordinator.tray.isEmpty }
@@ -490,3 +533,27 @@ private struct VerticalToolbarProbe: ViewModifier {
     }
 }
 #endif
+
+private struct FocusTap: Equatable {
+    let id = UUID()
+    let point: CGPoint
+}
+
+/// Brief square at the tap-to-focus point. Decorative (VoiceOver users zoom instead).
+private struct FocusSquare: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var settled = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 6, style: .continuous)
+            .strokeBorder(AppColor.accentOnCamera, lineWidth: 2)
+            .frame(width: 76, height: 76)
+            .scaleEffect(settled ? 1 : 1.3)
+            .opacity(settled ? 1 : 0.4)
+            .onAppear {
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) { settled = true }
+            }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}

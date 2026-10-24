@@ -20,6 +20,13 @@ final class CaptureController {
     private(set) var isTorchOn = false
     private(set) var hasTorch = false
     private(set) var device: AVCaptureDevice?
+    /// Zoom in device units; `displayZoom` is what people see (1× = the wide lens).
+    private(set) var zoomFactor: CGFloat = 1
+    private(set) var zoomRange: ClosedRange<CGFloat> = 1...1
+    @ObservationIgnored private var zoomDisplayMultiplier: CGFloat = 1
+
+    var displayZoom: CGFloat { zoomFactor * zoomDisplayMultiplier }
+    var standardZoomFactor: CGFloat { 1 / zoomDisplayMultiplier }
 
     @ObservationIgnored let engine = CaptureEngine()
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
@@ -66,8 +73,13 @@ final class CaptureController {
         guard startGeneration == generation else { return }
         switch result {
         case .running(let reference):
-            device = reference.device
-            hasTorch = reference.device.hasTorch
+            let camera = reference.device
+            device = camera
+            hasTorch = camera.hasTorch
+            zoomDisplayMultiplier = CameraZoom.displayMultiplier(for: camera)
+            zoomRange = camera.minAvailableVideoZoomFactor...max(camera.minAvailableVideoZoomFactor, CameraZoom.maximumFactor(for: camera))
+            zoomFactor = camera.videoZoomFactor
+            observeSubjectArea(of: camera)
             state = .running
         case .noCamera, .failed:
             state = .unavailable
@@ -87,8 +99,37 @@ final class CaptureController {
         }
     }
 
+    func setZoom(_ factor: CGFloat) {
+        guard state == .running else { return }
+        let clamped = min(max(factor, zoomRange.lowerBound), zoomRange.upperBound)
+        zoomFactor = clamped
+        engine.setZoom(clamped)
+    }
+
+    /// One zoom step for VoiceOver (adjustable) and similar controls: ×1.5 or ÷1.5.
+    func stepZoom(in zoomIn: Bool) {
+        setZoom(zoomIn ? zoomFactor * 1.5 : zoomFactor / 1.5)
+    }
+
+    func resetZoom() {
+        setZoom(standardZoomFactor)
+    }
+
+    func focus(atDevicePoint point: CGPoint) {
+        guard state == .running else { return }
+        engine.focus(at: point)
+    }
+
     func toggleTorch() async {
         isTorchOn = await engine.setTorch(!isTorchOn)
+    }
+
+    private func observeSubjectArea(of camera: AVCaptureDevice) {
+        observers.append(NotificationCenter.default.addObserver(forName: AVCaptureDevice.subjectAreaDidChangeNotification, object: camera, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.engine.resumeContinuousFocus()
+            }
+        })
     }
 
     private func observeInterruptions() {

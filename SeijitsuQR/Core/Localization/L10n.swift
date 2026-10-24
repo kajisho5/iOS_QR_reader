@@ -232,6 +232,7 @@ enum L10n {
     static var scanPaneTitle: String { String(localized: "scan.pane.title") }
     static var scanPhoto: String { String(localized: "scan.photo") }
     static var scanPreview: String { String(localized: "scan.preview") }
+    static var scanPreviewHint: String { String(localized: "scan.preview.hint") }
     static var scanPrivacyFootnote: String { String(localized: "scan.privacyFootnote") }
     static var scanPrivacyNote: String { String(localized: "scan.privacyNote") }
     static var scanRestrictedMessage: String { String(localized: "scan.restricted.message") }
@@ -243,6 +244,10 @@ enum L10n {
     static var scanTrayTitle: String { String(localized: "scan.tray.title") }
     static var scanUnavailableMessage: String { String(localized: "scan.unavailable.message") }
     static var scanUnavailableTitle: String { String(localized: "scan.unavailable.title") }
+    static var scanZoomReset: String { String(localized: "scan.zoom.reset") }
+    static func scanZoomValue(_ p1: String) -> String {
+        String(format: String(localized: "scan.zoom.value"), p1)
+    }
     static var settingsAboutHeader: String { String(localized: "settings.about.header") }
     static var settingsAboutPrivacy: String { String(localized: "settings.about.privacy") }
     static var settingsAboutPromise: String { String(localized: "settings.about.promise") }
@@ -504,6 +509,7 @@ enum L10n {
         "scan.pane.title",
         "scan.photo",
         "scan.preview",
+        "scan.preview.hint",
         "scan.privacyFootnote",
         "scan.privacyNote",
         "scan.restricted.message",
@@ -515,6 +521,8 @@ enum L10n {
         "scan.tray.title",
         "scan.unavailable.message",
         "scan.unavailable.title",
+        "scan.zoom.reset",
+        "scan.zoom.value",
         "settings.about.header",
         "settings.about.privacy",
         "settings.about.promise",
