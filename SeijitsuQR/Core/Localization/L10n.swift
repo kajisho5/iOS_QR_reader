@@ -12,6 +12,104 @@ enum L10n {
     static var commonOpenSettings: String { String(localized: "common.openSettings") }
     static var commonShare: String { String(localized: "common.share") }
     static var commonYes: String { String(localized: "common.yes") }
+    static var createBadgeFree: String { String(localized: "create.badge.free") }
+    static var createBadgePro: String { String(localized: "create.badge.pro") }
+    static var createFieldAddress: String { String(localized: "create.field.address") }
+    static var createFieldAllDay: String { String(localized: "create.field.allDay") }
+    static var createFieldEmail: String { String(localized: "create.field.email") }
+    static var createFieldEnd: String { String(localized: "create.field.end") }
+    static var createFieldEventTitle: String { String(localized: "create.field.eventTitle") }
+    static var createFieldFamilyName: String { String(localized: "create.field.familyName") }
+    static var createFieldGivenName: String { String(localized: "create.field.givenName") }
+    static var createFieldHidden: String { String(localized: "create.field.hidden") }
+    static var createFieldJobTitle: String { String(localized: "create.field.jobTitle") }
+    static var createFieldLocation: String { String(localized: "create.field.location") }
+    static var createFieldNote: String { String(localized: "create.field.note") }
+    static var createFieldNotes: String { String(localized: "create.field.notes") }
+    static var createFieldOrganization: String { String(localized: "create.field.organization") }
+    static var createFieldPassword: String { String(localized: "create.field.password") }
+    static var createFieldPhone: String { String(localized: "create.field.phone") }
+    static var createFieldSecurity: String { String(localized: "create.field.security") }
+    static var createFieldSsid: String { String(localized: "create.field.ssid") }
+    static var createFieldSsidPrompt: String { String(localized: "create.field.ssid.prompt") }
+    static var createFieldStart: String { String(localized: "create.field.start") }
+    static var createFieldText: String { String(localized: "create.field.text") }
+    static var createFieldTextPrompt: String { String(localized: "create.field.text.prompt") }
+    static var createFieldUrl: String { String(localized: "create.field.url") }
+    static var createFieldUrlContact: String { String(localized: "create.field.url.contact") }
+    static var createFieldUrlPrompt: String { String(localized: "create.field.url.prompt") }
+    static var createGenerate: String { String(localized: "create.generate") }
+    static var createImageA11y: String { String(localized: "create.image.a11y") }
+    static var createInvalidContact: String { String(localized: "create.invalid.contact") }
+    static var createInvalidEvent: String { String(localized: "create.invalid.event") }
+    static var createInvalidText: String { String(localized: "create.invalid.text") }
+    static var createInvalidUrl: String { String(localized: "create.invalid.url") }
+    static var createInvalidWifi: String { String(localized: "create.invalid.wifi") }
+    static var createKindContact: String { String(localized: "create.kind.contact") }
+    static var createKindContactDetail: String { String(localized: "create.kind.contact.detail") }
+    static var createKindEvent: String { String(localized: "create.kind.event") }
+    static var createKindEventDetail: String { String(localized: "create.kind.event.detail") }
+    static var createKindText: String { String(localized: "create.kind.text") }
+    static var createKindTextDetail: String { String(localized: "create.kind.text.detail") }
+    static var createKindUrl: String { String(localized: "create.kind.url") }
+    static var createKindUrlDetail: String { String(localized: "create.kind.url.detail") }
+    static var createKindWifi: String { String(localized: "create.kind.wifi") }
+    static var createKindWifiDetail: String { String(localized: "create.kind.wifi.detail") }
+    static func createLockedA11y(_ p1: String) -> String {
+        String(format: String(localized: "create.locked.a11y"), p1)
+    }
+    static var createLockedMessage: String { String(localized: "create.locked.message") }
+    static var createLockedTitle: String { String(localized: "create.locked.title") }
+    static var createPhotoDeniedMessage: String { String(localized: "create.photoDenied.message") }
+    static var createPhotoDeniedTitle: String { String(localized: "create.photoDenied.title") }
+    static var createPhotoFailedMessage: String { String(localized: "create.photoFailed.message") }
+    static var createPhotoFailedTitle: String { String(localized: "create.photoFailed.title") }
+    static var createPreviewEmpty: String { String(localized: "create.preview.empty") }
+    static var createSaveToPhotos: String { String(localized: "create.saveToPhotos") }
+    static var createSavedToPhotos: String { String(localized: "create.savedToPhotos") }
+    static var createSectionInput: String { String(localized: "create.section.input") }
+    static var createSectionPreview: String { String(localized: "create.section.preview") }
+    static var createSubtitle: String { String(localized: "create.subtitle") }
+    static var createTitle: String { String(localized: "create.title") }
+    static var createTooLong: String { String(localized: "create.tooLong") }
+    static var csvHeaderContent: String { String(localized: "csv.header.content") }
+    static var csvHeaderDate: String { String(localized: "csv.header.date") }
+    static var csvHeaderFavorite: String { String(localized: "csv.header.favorite") }
+    static var csvHeaderKind: String { String(localized: "csv.header.kind") }
+    static var csvHeaderSource: String { String(localized: "csv.header.source") }
+    static var csvHeaderSymbology: String { String(localized: "csv.header.symbology") }
+    static var historyAutosaveOffAction: String { String(localized: "history.autosaveOff.action") }
+    static var historyAutosaveOffMessage: String { String(localized: "history.autosaveOff.message") }
+    static var historyAutosaveOffTitle: String { String(localized: "history.autosaveOff.title") }
+    static var historyDelete: String { String(localized: "history.delete") }
+    static var historyDeleteAll: String { String(localized: "history.deleteAll") }
+    static func historyDeleteAllMessage(_ p1: Int) -> String {
+        String(format: String(localized: "history.deleteAll.message"), p1)
+    }
+    static var historyDeleteAllTitle: String { String(localized: "history.deleteAll.title") }
+    static var historyDetailEmptyMessage: String { String(localized: "history.detail.empty.message") }
+    static var historyDetailEmptyTitle: String { String(localized: "history.detail.empty.title") }
+    static var historyEmptyAction: String { String(localized: "history.empty.action") }
+    static var historyEmptyMessage: String { String(localized: "history.empty.message") }
+    static var historyEmptyTitle: String { String(localized: "history.empty.title") }
+    static var historyExportCsv: String { String(localized: "history.export.csv") }
+    static var historyFilterAll: String { String(localized: "history.filter.all") }
+    static var historyFilterFavorites: String { String(localized: "history.filter.favorites") }
+    static var historyFilterLabel: String { String(localized: "history.filter.label") }
+    static func historyFreeCount(_ p1: Int, _ p2: Int) -> String {
+        String(format: String(localized: "history.free.count"), p1, p2)
+    }
+    static var historyFreeTitle: String { String(localized: "history.free.title") }
+    static var historyNoResultsAction: String { String(localized: "history.noResults.action") }
+    static var historyNoResultsFilterTitle: String { String(localized: "history.noResults.filterTitle") }
+    static var historyNoResultsMessage: String { String(localized: "history.noResults.message") }
+    static func historyNoResultsTitle(_ p1: String) -> String {
+        String(format: String(localized: "history.noResults.title"), p1)
+    }
+    static var historySearchPrompt: String { String(localized: "history.search.prompt") }
+    static var historySectionToday: String { String(localized: "history.section.today") }
+    static var historySectionYesterday: String { String(localized: "history.section.yesterday") }
+    static var historyTitle: String { String(localized: "history.title") }
     static var kindContact: String { String(localized: "kind.contact") }
     static var kindEmail: String { String(localized: "kind.email") }
     static var kindEvent: String { String(localized: "kind.event") }
@@ -110,7 +208,9 @@ enum L10n {
     static var scanTrayTitle: String { String(localized: "scan.tray.title") }
     static var scanUnavailableMessage: String { String(localized: "scan.unavailable.message") }
     static var scanUnavailableTitle: String { String(localized: "scan.unavailable.title") }
+    static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
+    static var sourcePhoto: String { String(localized: "source.photo") }
     static var symbologyAztec: String { String(localized: "symbology.aztec") }
     static var symbologyCode128: String { String(localized: "symbology.code128") }
     static var symbologyCode39: String { String(localized: "symbology.code39") }
@@ -139,6 +239,96 @@ enum L10n {
         "common.openSettings",
         "common.share",
         "common.yes",
+        "create.badge.free",
+        "create.badge.pro",
+        "create.field.address",
+        "create.field.allDay",
+        "create.field.email",
+        "create.field.end",
+        "create.field.eventTitle",
+        "create.field.familyName",
+        "create.field.givenName",
+        "create.field.hidden",
+        "create.field.jobTitle",
+        "create.field.location",
+        "create.field.note",
+        "create.field.notes",
+        "create.field.organization",
+        "create.field.password",
+        "create.field.phone",
+        "create.field.security",
+        "create.field.ssid",
+        "create.field.ssid.prompt",
+        "create.field.start",
+        "create.field.text",
+        "create.field.text.prompt",
+        "create.field.url",
+        "create.field.url.contact",
+        "create.field.url.prompt",
+        "create.generate",
+        "create.image.a11y",
+        "create.invalid.contact",
+        "create.invalid.event",
+        "create.invalid.text",
+        "create.invalid.url",
+        "create.invalid.wifi",
+        "create.kind.contact",
+        "create.kind.contact.detail",
+        "create.kind.event",
+        "create.kind.event.detail",
+        "create.kind.text",
+        "create.kind.text.detail",
+        "create.kind.url",
+        "create.kind.url.detail",
+        "create.kind.wifi",
+        "create.kind.wifi.detail",
+        "create.locked.a11y",
+        "create.locked.message",
+        "create.locked.title",
+        "create.photoDenied.message",
+        "create.photoDenied.title",
+        "create.photoFailed.message",
+        "create.photoFailed.title",
+        "create.preview.empty",
+        "create.saveToPhotos",
+        "create.savedToPhotos",
+        "create.section.input",
+        "create.section.preview",
+        "create.subtitle",
+        "create.title",
+        "create.tooLong",
+        "csv.header.content",
+        "csv.header.date",
+        "csv.header.favorite",
+        "csv.header.kind",
+        "csv.header.source",
+        "csv.header.symbology",
+        "history.autosaveOff.action",
+        "history.autosaveOff.message",
+        "history.autosaveOff.title",
+        "history.delete",
+        "history.deleteAll",
+        "history.deleteAll.message",
+        "history.deleteAll.title",
+        "history.detail.empty.message",
+        "history.detail.empty.title",
+        "history.empty.action",
+        "history.empty.message",
+        "history.empty.title",
+        "history.export.csv",
+        "history.filter.all",
+        "history.filter.favorites",
+        "history.filter.label",
+        "history.free.count",
+        "history.free.title",
+        "history.noResults.action",
+        "history.noResults.filterTitle",
+        "history.noResults.message",
+        "history.noResults.title",
+        "history.search.prompt",
+        "history.section.today",
+        "history.section.yesterday",
+        "history.title",
         "kind.contact",
         "kind.email",
         "kind.event",
@@ -235,7 +425,9 @@ enum L10n {
         "scan.tray.title",
         "scan.unavailable.message",
         "scan.unavailable.title",
+        "source.camera",
         "source.created",
+        "source.photo",
         "symbology.aztec",
         "symbology.code128",
         "symbology.code39",
