@@ -28,7 +28,7 @@ final class CaptureController {
     var displayZoom: CGFloat { zoomFactor * zoomDisplayMultiplier }
     var standardZoomFactor: CGFloat { 1 / zoomDisplayMultiplier }
 
-    @ObservationIgnored let engine = CaptureEngine()
+    @ObservationIgnored let engine = CaptureEngine.shared
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
     @ObservationIgnored private var onDetect: ((DetectedCode) -> Void)?
     /// Incremented by every stop(). A start that was overtaken by a stop (e.g. the user left the

@@ -85,6 +85,10 @@ final class CaptureEngine: NSObject, @unchecked Sendable {
         case failed
     }
 
+    /// One engine for the app, so the camera can be started at launch (`prewarm()`), before the
+    /// scan screen asks for it.
+    static let shared = CaptureEngine()
+
     let session = AVCaptureSession()
     private let queue = DispatchQueue(label: "SeijitsuQR.capture")
     private let metadataOutput = AVCaptureMetadataOutput()
@@ -96,6 +100,20 @@ final class CaptureEngine: NSObject, @unchecked Sendable {
         await withCheckedContinuation { continuation in
             queue.async {
                 continuation.resume(returning: self.startOnQueue(onDetect: onDetect))
+            }
+        }
+    }
+
+    /// Configures and starts the camera on the session queue without waiting, so it runs alongside
+    /// the rest of app launch. Codes are ignored until `start(onDetect:)` sets a handler. Only call
+    /// this when camera access is already granted (it must not trigger the permission prompt).
+    func prewarm() {
+        queue.async {
+            if !self.isConfigured {
+                guard case .running = self.configure() else { return }
+            }
+            if !self.session.isRunning {
+                self.session.startRunning()
             }
         }
     }
