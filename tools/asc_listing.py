@@ -91,9 +91,9 @@ def main():
     if detail:
         patch("appStoreReviewDetails", detail["id"], detail["attributes"], review, "reviewDetail")
     else:
-        call("POST", "/v1/appStoreReviewDetails", {"data": {"type": "appStoreReviewDetails", "attributes": review,
-             "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version["id"]}}}}})
-        print("reviewDetail: created (notes, contact email)")
+        # Apple requires the contact's name and phone number to create the review details; only the account
+        # holder can enter those, so this waits until they have saved the contact in App Store Connect once.
+        print("reviewDetail: not created yet (needs the contact name and phone in App Store Connect); notes are in listing.json")
 
     # Free app (the only purchase is the Pro In-App Purchase).
     try:

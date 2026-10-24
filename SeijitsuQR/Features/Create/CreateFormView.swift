@@ -31,10 +31,20 @@ struct CreateFormView: View {
     }
 
     private static let previewID = "preview"
+    /// The preview column is 400pt; the form beside it needs at least 280pt to stay readable.
+    private static let sidePreviewMinWidth: CGFloat = 680
+
+    @State private var width: CGFloat = 0
+
+    /// Form | preview side by side only when both fit (regular width alone is not enough: the iPhone Duo inner
+    /// display and an 11-inch iPad in portrait leave too little room next to the sidebar). Otherwise stacked.
+    private var showsSidePreview: Bool {
+        horizontalSizeClass == .regular && width >= Self.sidePreviewMinWidth
+    }
 
     var body: some View {
         Group {
-            if horizontalSizeClass == .regular {
+            if showsSidePreview {
                 HStack(alignment: .top, spacing: 0) {
                     inputForm
                     Divider()
@@ -48,6 +58,7 @@ struct CreateFormView: View {
                 inputForm
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .navigationTitle(kind.title)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: form) {
@@ -75,7 +86,7 @@ struct CreateFormView: View {
                 Section(L10n.createSectionInput) {
                     fields
                 }
-                if horizontalSizeClass != .regular, generated != nil {
+                if !showsSidePreview, generated != nil {
                     Section(L10n.createSectionPreview) {
                         preview
                             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
@@ -88,7 +99,7 @@ struct CreateFormView: View {
                 generateBar
             }
             .onChange(of: generated) { _, code in
-                guard code != nil, horizontalSizeClass != .regular else { return }
+                guard code != nil, !showsSidePreview else { return }
                 withAnimation { proxy.scrollTo(Self.previewID, anchor: .top) }
             }
         }
