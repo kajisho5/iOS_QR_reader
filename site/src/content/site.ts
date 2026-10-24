@@ -2,7 +2,7 @@ export const site = {
   appName: "誠実QRリーダー",
   provider: "seventhwell",
   // Set the public support address here. The support page shows the contact card only when this is set.
-  contactEmail: "" as string,
+  contactEmail: "info@seventh-well.com" as string,
   priceLabel: "¥800（買い切り）",
   minimumOS: "iOS 17 / iPadOS 17 以降",
   // Set after the App Store release. Until then the hero shows "App Store で近日公開".

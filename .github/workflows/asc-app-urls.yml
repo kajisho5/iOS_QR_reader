@@ -1,0 +1,30 @@
+# Sets the privacy policy / support / marketing URLs in App Store Connect (tools/asc_app_urls.py).
+name: asc-app-urls
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/new-session-6aeoeq]
+    paths: [tools/asc_app_urls.py, .github/workflows/asc-app-urls.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  urls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install --quiet pyjwt cryptography
+      - name: Set App Store Connect URLs
+        working-directory: tools
+        run: python3 asc_app_urls.py
+        env:
+          BUNDLE_ID: com.seventhwell.seijitsuqr
+          PRIVACY_URL: https://seijitsuqr.kajisho5.workers.dev/privacy/
+          SUPPORT_URL: https://seijitsuqr.kajisho5.workers.dev/support/
+          MARKETING_URL: https://seijitsuqr.kajisho5.workers.dev/
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
