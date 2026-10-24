@@ -1,0 +1,135 @@
+name: iOS
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.6.app
+          xcodebuild -version
+          xcrun swiftc --version
+          xcrun --sdk iphonesimulator --show-sdk-version
+
+      - name: Pick simulators
+        run: |
+          sdk=$(xcrun --sdk iphonesimulator --show-sdk-version)
+          if ! xcrun simctl list devices available -j | python3 tools/ci_destinations.py "$sdk" > destinations.env; then
+            # Runner images occasionally ship without a simulator runtime for this Xcode.
+            xcodebuild -downloadPlatform iOS
+            xcrun simctl list devices available -j | python3 tools/ci_destinations.py "$sdk" > destinations.env
+          fi
+          cat destinations.env | tee -a "$GITHUB_ENV"
+
+      - name: Check generated localization code
+        run: python3 tools/gen_l10n.py --check
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Test on iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPHONE_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-iphone.log
+
+      - name: Build for iPad simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPAD_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-ipad.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: xcodebuild-logs
+          path: xcodebuild-*.log
+
+  # Newest Xcode/iOS available on GitHub-hosted runners. The `xcode-27` image is still a preview
+  # (capacity-limited), so a failure or queueing here is reported but does not block the PR.
+  latest-xcode:
+    runs-on: xcode-27
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Show installed Xcode and simulators
+        run: |
+          ls -d /Applications/Xcode*.app
+          xcodebuild -version
+          xcrun swiftc --version
+          xcrun --sdk iphonesimulator --show-sdk-version
+          xcrun simctl list runtimes
+
+      - name: Pick the newest simulators
+        run: |
+          xcrun simctl list devices available -j | python3 tools/ci_destinations.py | tee -a "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Test on iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPHONE_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-iphone.log
+
+      - name: Build for iPad simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPAD_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-ipad.log
+
+      - name: Build for iPhone Duo simulator
+        if: env.DUO_DESTINATION != ''
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$DUO_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-duo.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: xcodebuild-latest-logs
+          path: xcodebuild-latest-*.log

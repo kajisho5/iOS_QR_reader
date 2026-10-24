@@ -1,0 +1,33 @@
+{
+  "identifier" : "5E1A2B3C",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "800",
+      "familyShareable" : false,
+      "internalID" : "6739000001",
+      "localizations" : [
+        {
+          "description" : "履歴の無制限保存、すべての種類のQRコード作成、CSVエクスポート（買い切り）",
+          "displayName" : "Pro（買い切り）",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "com.seventhwell.seijitsuqr.pro",
+      "referenceName" : "Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}
