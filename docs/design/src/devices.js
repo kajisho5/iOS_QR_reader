@@ -469,6 +469,10 @@ function writeIpad() {
   const H = y2 + PH + 120;
   fs.writeFileSync(path.join(OUT, '07_ipad.svg'), doc(W, H, body, '07 iPad'));
 }
-writeIpad();
-writeDuo();
-console.log('ok');
+module.exports = { glass, glassCircle, camFeed, reticle, pill, sep, urlDetail, rowsGroup, chips, CHIP_ITEMS, searchField, freeBanner, ROWS_TODAY, ROWS_YDAY, caps, truncate, uid };
+
+if (require.main === module) {
+  writeIpad();
+  writeDuo();
+  console.log('ok');
+}

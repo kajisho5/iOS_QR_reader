@@ -186,6 +186,10 @@ enum ParsedPayload {
 | `NSPhotoLibraryAddUsageDescription` | 作成したQRコードの画像を写真ライブラリに保存するために使用します | QRを写真へ保存（追加のみ権限） |
 | `NSContactsUsageDescription` | 読み取った連絡先を連絡先アプリに追加するために使用します | ※要実機確認（下記） |
 
+| `UISupportedInterfaceOrientations~iphone` | `UIInterfaceOrientationPortrait` のみ | iPhone は縦向き固定（要件） |
+| `UISupportedInterfaceOrientations~ipad` | Portrait / PortraitUpsideDown / LandscapeLeft / LandscapeRight | iPad は全方向（要件） |
+| `UIRequiresFullScreen` | 設定しない（false） | true にすると iPad のマルチタスク・リサイズから外れる（Apple: UIRequiresFullScreen） |
+
 - 写真からの読み取りは `PhotosPicker`（システムが別プロセスで提示）を使うため写真ライブラリ読取権限は要求しない。
 - `CNContactViewController(forNewContact:)` が連絡先アクセス権なしで保存できるかは**一次情報で確認できなかった（不明）**。①〜②の実装時に実機で検証し、不要なら上記キーを削除する。
 
@@ -200,7 +204,7 @@ enum ParsedPayload {
 
 | Step | 内容 | 完了条件 |
 |---|---|---|
-| ① スキャン | project.yml / CI / カメラ・トーチ・写真読取・連続モード・触覚音・ResultSheet（解析8種＋アクション）・自動保存の最小形 | CIグリーン、Parserテスト合格 |
+| ① スキャン | project.yml / CI / カメラ・トーチ・写真読取・連続モード・触覚音・ResultSheet（解析8種＋アクション）・自動保存の最小形・向き設定・カメラ中断時の表示 | CIグリーン、Parserテスト合格、iPad シミュレータで回転・ウィンドウ縮小時に崩れないこと |
 | ② 履歴 | 一覧・検索・フィルタ・お気に入り・削除（単体/全件）・CSV（ゲート前） | CIグリーン、30件制限テスト |
 | ③ QR作成 | 5種フォーム・生成・写真保存・共有・履歴保存 | CIグリーン、Encoderテスト |
 | ④ 課金 | ProStore・Paywall・各ゲート接続・復元2箇所・.storekit | CIグリーン |
@@ -216,7 +220,7 @@ enum ParsedPayload {
 | D4 | スキャン音 | 自作の短い音声ファイルを同梱し再生 | システムサウンドIDは公開ドキュメントで確認できないため依存しない |
 | D5 | 写真から複数コード検出 | 1件なら即結果表示、複数なら一覧から選択 | 誤った方を自動採用しない |
 | D6 | アプリアイコン | 仮アイコン（SVGから1024px PNG生成）を同梱。差し替え前提 | ビルド・審査に必須 |
-| D7 | iPad | 同一 TabView 構成（iPadOS 18以降はシステムがタブを上部表示） | 仕様外のレイアウト追加をしない |
+| D7 | iPad / iPhone Duo | サイズクラスで 1 カラム⇔2 カラムを切り替える（§12・§13）。※当初の「同一 TabView 構成のみ」から、iPad/Duo 対応の指示を受けて変更 | HIG Layout / Designing for iPhone Duo |
 
 ## 11. 要確認事項（仕様外の判断・回答待ち）
 
@@ -266,3 +270,33 @@ enum ParsedPayload {
 - `ArrangementView`、`ReservedRegion`、`toolbarVerticalBehavior(_:)`、`toolbarVerticalEdge` は **iOS / iPadOS 27.1 以降**（Apple Developer Documentation の platform 情報）。最低OSは iOS 17 のまま、`if #available(iOS 27.1, *)` で分岐し、未対応OSでは `HStack` による分割で代替する。
 - 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。**CI（GitHub Actions）のランナーにその Xcode が載っているかは未確認**で、実装時に確認する。
 - iPad 寸法（1180×820pt）は Apple 公開の 2360×1640px（iPad Air 11インチ）を @2x 換算した値。
+
+## 13. 画面の向き・iPad マルチタスク（デザイン: `docs/design/09_ipad_multitasking.svg`）
+
+要件: iPhone は縦向き固定（回転しない）。iPad は回転と画面分割に対応し、レイアウトが崩れないこと。
+
+### 13.1 前提の訂正（事実）
+- 「Split View / ステージマネージャ」は **iPadOS 18 以前**の名称。**iPadOS 26 以降**のマルチタスクは「全画面」か「ウィンドウ表示（Windowed Apps）」の 2 方式で、左右に並べる操作はウィンドウのタイル配置で行う（[HIG Multitasking](https://developer.apple.com/design/human-interface-guidelines/multitasking)、[UIRequiresFullScreen](https://developer.apple.com/documentation/bundleresources/information-property-list/uirequiresfullscreen)）。
+- 最低対応 OS が iOS / iPadOS 17 のため、**両方に対応する**（iPadOS 17〜18: Split View・Slide Over・ステージマネージャ ／ iPadOS 26 以降: ウィンドウ表示）。どちらも「ウィンドウの大きさが変わる」だけなので、実装はサイズクラスによるレイアウト切替で共通。
+
+### 13.2 向きの設定
+| 端末 | 設定 | 備考 |
+|---|---|---|
+| iPhone | 縦向きのみ | Info.plist の `~iphone` キー |
+| iPhone Duo 外側ディスプレイ | 縦向きのみ（iPhone と同じ設定が適用される） | Apple Tech Talk「外側の向きは他の iPhone と同じ」 |
+| iPhone Duo 内側ディスプレイ | **アプリ側で固定できない可能性が高い** | 同じ Tech Talk 内で「内側は対応向きの設定に従わない」「対応向きは尊重するが内側ではアプリが拡大縮小される」と矛盾する説明がある（[Prepare your app for iPhone Duo](https://developer.apple.com/videos/play/tech-talks/111461/)）。どちらでも崩れないよう、内側は §12 の regular 幅レイアウト（横長）で設計済み。実機で要確認 |
+| iPad | 全方向 | `UIRequiresFullScreen` は設定しない |
+
+### 13.3 レイアウト切替の基準（iPad）
+| 条件 | レイアウト |
+|---|---|
+| 横幅 regular（全画面の縦・横、2/3 分割、大きいウィンドウ） | 2 カラム（スキャン: カメラ｜結果、履歴・作成: 一覧｜詳細）。タブバーは上部 |
+| 横幅 compact（1/2〜1/3 分割、狭いウィンドウ） | iPhone と同じ 1 カラム。タブバーは下部 |
+| スキャン画面で高さ＞幅 | カメラ｜結果を上下に並べる |
+| 共通 | 端末の種類・向きで分岐しない。最小幅 320pt（iPhone SE 相当）まで崩れないこと。ウィンドウ表示時は左上のウィンドウコントロールと重ならないよう、操作ボタンは右上に置く（HIG Windows） |
+
+### 13.4 カメラの制約（事実）と対応
+- iPad では、他のアプリと同時に表示している間（Split View・ウィンドウ表示など）は**システムがカメラを停止する**のが既定。継続利用できるのは `isMultitaskingCameraAccessSupported` が true の場合のみで、その条件は「外部ディスプレイに接続してステージマネージャを使える iPad」「VoIP アプリ」「VoIP アプリ限定の専用 entitlement」（[isMultitaskingCameraAccessSupported](https://developer.apple.com/documentation/avfoundation/avcapturesession/ismultitaskingcameraaccesssupported)、[Accessing the camera while multitasking on iPad](https://developer.apple.com/documentation/avkit/accessing-the-camera-while-multitasking-on-ipad)）。本アプリは VoIP ではないため entitlement は使えない。
+- 対応: サポートされる環境では `isMultitaskingCameraAccessEnabled = true` にする。停止された場合（中断理由 `videoDeviceNotAvailableWithMultipleForegroundApps`）は「他のアプリと同時に表示中はカメラを使えません」と表示し、「写真から読み取る」を案内する。全画面に戻ったら自動で再開する（09 の C）。
+- iPadOS 26 のウィンドウ表示を内蔵ディスプレイだけで使うときに上記条件に当てはまるか（＝カメラが使えるか）は、ドキュメントから**判断できない**。実機で確認する。
+- 回転時のプレビューの向きは `AVCaptureDevice.RotationCoordinator`（iOS 17 以降）で補正する（[RotationCoordinator](https://developer.apple.com/documentation/avfoundation/avcapturedevice/rotationcoordinator)）。読み取り枠の座標変換もプレビューレイヤー基準で行う。
