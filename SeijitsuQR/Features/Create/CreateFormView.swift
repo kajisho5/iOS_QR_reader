@@ -103,11 +103,14 @@ struct CreateFormView: View {
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
+            // Regular width (iPad, iPhone Duo inner display): sized to its label at the trailing edge,
+            // so it never spans the fold (Apple's iPhone Duo guidance for custom bottom buttons).
             Button(action: generate) {
                 Label(L10n.createGenerate, systemImage: "qrcode")
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .buttonStyle(PrimaryButtonStyle(fillsWidth: horizontalSizeClass != .regular))
             .keyboardShortcut(.return, modifiers: .command)
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)

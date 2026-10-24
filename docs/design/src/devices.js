@@ -152,8 +152,9 @@ function sessionList(x, y, w) {
 
 // ---------- iPhone Duo ----------
 // Point sizes are estimated from Apple's published pixels at @3x (Apple does not publish pt sizes):
-// outer 1398x2034px -> 466x678pt (portrait), inner 2670x1878px -> 890x626pt (landscape).
-const OUT_W = 466, OUT_H = 678, IN_W = 890, IN_H = 626;
+// Measured on the iPhone Duo simulator (Xcode 27.1, October 2026): outer 466x678pt, inner 951x669pt @3x,
+// safe area right 84 / bottom 34 on both (kajisho5/flight-deck references/iphone-duo.md).
+const OUT_W = 466, OUT_H = 678, IN_W = 951, IN_H = 669;
 const COL = 64;          // trailing column reserved for vertical bars (outer)
 const COL_IN = 72;       // trailing column on inner display
 
@@ -424,7 +425,7 @@ function writeDuo() {
   let body = header('08 iPhone Duo', [
     '閉じた時＝外側ディスプレイ（compact幅・縦長）、開いた時＝内側ディスプレイ（regular幅・横長）。HIG「Designing for iPhone Duo」に準拠。',
     'ツールバー／タブバー／ステータスバー／Dynamic Island は後縁（右端）に縦配置（システム標準）。内側では一段深い階層（一覧＋詳細）を並べる。',
-    '寸法はAppleの公開ピクセル値を@3xで換算した推定値（外側 466×678pt、内側 890×626pt）。Appleはpt値を公開していない。',
+    '寸法は iPhone Duo シミュレータ（Xcode 27.1）での実測値：外側 466×678pt、内側 951×669pt（@3x）。右端に縦バー（安全領域 右84pt）。',
   ]);
   const y1 = 190;
   body += t(70, y1 - 22, '閉じた時（外側ディスプレイ）', { size: 20, weight: 800, fill: C.accentDark });

@@ -1,10 +1,14 @@
 import SwiftUI
 
 struct RootView: View {
-    @State private var selection: AppTab = .scan
+    @State private var selection: AppTab
     @State private var store = ProStore()
     @State private var isPaywallPresented = false
     @State private var isHistorySearchPresented = false
+
+    init(initialTab: AppTab = .scan) {
+        _selection = State(initialValue: initialTab)
+    }
 
     var body: some View {
         TabView(selection: $selection) {
