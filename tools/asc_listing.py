@@ -2,8 +2,9 @@
 """Apply appstore/listing.json to App Store Connect. Idempotent; prints each change (no secrets).
 
 Sets: version string, copyright, category, content rights, subtitle, description, keywords, promotional text,
+availability (the listed territories),
 age rating (all "none"), App Review notes, the newest valid build, a free app price, and the In-App Purchase
-localization and review note. Things only the account holder can do (review contact name and phone, availability,
+localization, availability and review note. Things only the account holder can do (review contact name and phone,
 submitting for review) are left alone. Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_BASE64, BUNDLE_ID.
 """
 import json
@@ -114,6 +115,22 @@ def main():
                           "relationships": {"appPricePoint": {"data": {"type": "appPricePoints", "id": free["id"]}}}}]})
         print("price: free (base territory JPN)")
 
+    # Availability: only the listed territories, not new ones automatically.
+    territories = LISTING["territories"]
+    try:
+        call("GET", f"/v1/apps/{app_id}/appAvailabilityV2")
+        print("availability: already set (left as is)")
+    except SystemExit:
+        refs = [{"type": "territoryAvailabilities", "id": f"${{{t}}}"} for t in territories]
+        call("POST", "/v2/appAvailabilities", {
+            "data": {"type": "appAvailabilities", "attributes": {"availableInNewTerritories": False}, "relationships": {
+                "app": {"data": {"type": "apps", "id": app_id}},
+                "territoryAvailabilities": {"data": refs}}},
+            "included": [{"type": "territoryAvailabilities", "id": r["id"], "attributes": {"available": True},
+                          "relationships": {"territory": {"data": {"type": "territories", "id": t}}}}
+                         for r, t in zip(refs, territories)]})
+        print(f"availability: {', '.join(territories)}")
+
     # In-App Purchase: localization and review note.
     iap_cfg = LISTING["inAppPurchase"]
     iap = next(i for i in call("GET", f"/v1/apps/{app_id}/inAppPurchasesV2")["data"]
@@ -128,6 +145,19 @@ def main():
                  "attributes": {"locale": locale, **texts},
                  "relationships": {"inAppPurchaseV2": {"data": {"type": "inAppPurchases", "id": iap["id"]}}}}})
             print(f"IAP localization {locale}: created")
+    try:
+        current = {t["id"] for t in call("GET", f"/v1/inAppPurchaseAvailabilities/{iap['id']}/availableTerritories",
+                                             limit="200").get("data", [])}
+    except SystemExit:
+        current = set()  # 404 until availability has been set
+    if current != set(territories):
+        call("POST", "/v1/inAppPurchaseAvailabilities", {"data": {"type": "inAppPurchaseAvailabilities",
+             "attributes": {"availableInNewTerritories": False}, "relationships": {
+                 "inAppPurchase": {"data": {"type": "inAppPurchases", "id": iap["id"]}},
+                 "availableTerritories": {"data": [{"type": "territories", "id": t} for t in territories]}}}})
+        print(f"IAP availability: {', '.join(territories)}")
+    else:
+        print("IAP availability: already set")
     print("IAP state:", call("GET", f"/v2/inAppPurchases/{iap['id']}")["data"]["attributes"]["state"])
 
 
