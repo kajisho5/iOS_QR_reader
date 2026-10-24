@@ -58,7 +58,9 @@ python3 tools/gen_l10n.py
 2. `SeijitsuQR/App/AppConstants.swift` の `proProductID` を 1. の製品 ID に変更します。
 3. ローカル確認用の `StoreKit/Configuration.storekit` の `productID` も同じ値に変更します（Xcode でファイルを開いて編集できます）。
    - スキーム `SeijitsuQR` の Run に設定済みのため、シミュレータでは App Store に接続せずに購入・復元・返金を試せます。
-   - ユニットテスト `ProStoreTests` もこのファイルを使います。
+   - 動作確認の手順: シミュレータで「設定」タブ → 「購入」→ 購入、アプリを再起動して Pro のままか確認、Xcode の Debug → StoreKit → Manage Transactions で返金して Pro が外れるか確認、「購入を復元」で戻るか確認。
+   - 価格を円で表示するには、Xcode でこのファイルを開き、Editor → Default Storefront を「Japan」にします。
+   - CI のシミュレータでは StoreKit のテストセッションが反映されないため、ユニットテスト `ProStoreTests` は Pro 判定のルール（検証済み・未返金・Pro 製品のみ）だけを検証しています。
 4. 審査提出時、App 内課金をアプリのバージョンと一緒に提出します。
 
 アプリは購入状態を独自に保存せず、毎回 StoreKit の検証済みトランザクション（`Transaction.currentEntitlements`）で判定します。復元ボタンは課金画面と設定画面にあり、`AppStore.sync()` を呼びます。

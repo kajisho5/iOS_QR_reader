@@ -3,6 +3,13 @@ import Observation
 import StoreKit
 import SwiftUI
 
+/// The parts of a StoreKit transaction that decide whether Pro is unlocked.
+struct EntitlementSnapshot: Equatable, Sendable {
+    let productID: String
+    let isVerified: Bool
+    let isRevoked: Bool
+}
+
 /// The single non-consumable "Pro" purchase (StoreKit 2). There are no subscriptions.
 /// Pro status is never cached by the app: it always comes from verified transactions.
 @MainActor
@@ -60,15 +67,21 @@ final class ProStore {
     }
 
     func refreshEntitlements() async {
-        var unlocked = false
+        var snapshots: [EntitlementSnapshot] = []
         for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result,
-               transaction.productID == AppConstants.proProductID,
-               transaction.revocationDate == nil {
-                unlocked = true
+            switch result {
+            case .verified(let transaction):
+                snapshots.append(EntitlementSnapshot(productID: transaction.productID, isVerified: true, isRevoked: transaction.revocationDate != nil))
+            case .unverified(let transaction, _):
+                snapshots.append(EntitlementSnapshot(productID: transaction.productID, isVerified: false, isRevoked: transaction.revocationDate != nil))
             }
         }
-        isPro = unlocked
+        isPro = Self.hasPro(snapshots)
+    }
+
+    /// Pro is unlocked only by a verified, non-revoked transaction for the Pro product.
+    nonisolated static func hasPro(_ entitlements: [EntitlementSnapshot], productID: String = AppConstants.proProductID) -> Bool {
+        entitlements.contains { $0.productID == productID && $0.isVerified && !$0.isRevoked }
     }
 
     /// Uses SwiftUI's purchase action so the system presents the payment sheet in the right scene.

@@ -21,18 +21,13 @@
     }
   ],
   "settings" : {
-    "_failTransactionsEnabled" : false,
-    "_locale" : "ja",
-    "_storefront" : "JPN",
-    "_storeKitErrors" : [
 
-    ]
   },
   "subscriptionGroups" : [
 
   ],
   "version" : {
-    "major" : 4,
+    "major" : 2,
     "minor" : 0
   }
 }

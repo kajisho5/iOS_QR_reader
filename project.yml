@@ -65,8 +65,6 @@ targets:
     platform: iOS
     sources:
       - path: SeijitsuQRTests
-      - path: StoreKit/Configuration.storekit
-        buildPhase: resources
     dependencies:
       - target: SeijitsuQR
     settings:
