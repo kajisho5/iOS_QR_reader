@@ -7,32 +7,25 @@ const OUT = path.join(__dirname, '..');
 const PUB = path.join(__dirname, '../../../../appstore/video/public');
 const img = (f) => 'data:image/' + (f.endsWith('.png') ? 'png' : 'jpeg') + ';base64,' + fs.readFileSync(path.join(PUB, f)).toString('base64');
 const SHOTS = {
-  url: img('shot-02-result-url.jpg'), history: img('shot-01-history.jpg'), create: img('shot-04-create.jpg'), icon: img('icon.png'),
+  url: img('shot-02-result-url.jpg'), history: img('shot-01-history.jpg'), create: img('shot-04-create.jpg'), icon: img('icon-glass.png'),
 };
 const FONT = "'Noto Sans CJK JP', 'Hiragino Sans', sans-serif";
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const text = (x, y, s, size, o = {}) =>
   `<text x="${x}" y="${y}" font-size="${size}" font-weight="${o.weight || 800}" fill="${o.fill || '#fff'}" text-anchor="${o.anchor || 'middle'}" opacity="${o.opacity ?? 1}"${o.ls ? ` letter-spacing="${o.ls}"` : ''}>${esc(s)}</text>`;
 
-// Decorative QR glyph (not a real code).
+// The app icon's mark (docs/design/icon/src): QR glyph and rounded viewfinder corners.
 function qr(cx, cy, size, opacity = 1) {
-  const n = 21, c = size / n;
-  const on = (r, k) => {
-    const finder = (r0, c0) => r >= r0 && r < r0 + 7 && k >= c0 && k < c0 + 7 &&
-      (r === r0 || r === r0 + 6 || k === c0 || k === c0 + 6 || (r >= r0 + 2 && r <= r0 + 4 && k >= c0 + 2 && k <= c0 + 4));
-    if (finder(0, 0) || finder(0, 14) || finder(14, 0)) return true;
-    if ((r < 8 && (k < 8 || k > 12)) || (r > 12 && k < 8)) return false;
-    return ((r * 7 + k * 13 + r * k) % 5) < 2;
-  };
-  let s = `<g opacity="${opacity}"><rect x="${cx - size / 2 - c * 2}" y="${cy - size / 2 - c * 2}" width="${size + c * 4}" height="${size + c * 4}" rx="${c * 2}" fill="#fff"/>`;
-  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (on(r, k)) s += `<rect x="${cx - size / 2 + k * c}" y="${cy - size / 2 + r * c}" width="${c}" height="${c}" fill="#0A3B31"/>`;
-  return s + '</g>';
+  const k = size / 340; // the icon's QR spans 340 of 1024
+  return `<g opacity="${opacity}" transform="translate(${cx - 512 * k} ${cy - 512 * k}) scale(${k})" fill="#fff">
+    <path fill-rule="evenodd" d="M342 342h150v150H342zM384 384v66h66v-66zM532 342h150v150H532zM574 384v66h66v-66zM342 532h150v150H342zM384 574v66h66v-66z"/>
+    <rect x="532" y="532" width="62" height="62" rx="10"/><rect x="620" y="620" width="62" height="62" rx="10"/>
+    <rect x="620" y="532" width="62" height="42" rx="10"/><rect x="532" y="640" width="42" height="42" rx="10"/></g>`;
 }
 function reticle(cx, cy, size, color = '#fff', glow = false) {
-  const h = size / 2, a = size * 0.22, w = size * 0.035;
-  const corner = (sx, sy) => `<path d="M${cx + sx * h} ${cy + sy * (h - a)} V${cy + sy * h} H${cx + sx * (h - a)}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
-  return (glow ? `<circle cx="${cx}" cy="${cy}" r="${size * 0.62}" fill="none" stroke="#7FF0D2" stroke-width="${w * 0.6}" opacity=".45"/><circle cx="${cx}" cy="${cy}" r="${size * 0.8}" fill="none" stroke="#7FF0D2" stroke-width="${w * 0.4}" opacity=".2"/>` : '') +
-    corner(-1, -1) + corner(1, -1) + corner(-1, 1) + corner(1, 1);
+  const k = size / 600; // the corners span 600 of 1024
+  return (glow ? `<circle cx="${cx}" cy="${cy}" r="${size * 0.62}" fill="none" stroke="#7FF0D2" stroke-width="${size * 0.02}" opacity=".45"/><circle cx="${cx}" cy="${cy}" r="${size * 0.8}" fill="none" stroke="#7FF0D2" stroke-width="${size * 0.014}" opacity=".2"/>` : '') +
+    `<g transform="translate(${cx - 512 * k} ${cy - 512 * k}) scale(${k})"><path d="M212 352V282a70 70 0 0 1 70-70h70M672 212h70a70 70 0 0 1 70 70v70M812 672v70a70 70 0 0 1-70 70h-70M352 812h-70a70 70 0 0 1-70-70v-70" fill="none" stroke="${color}" stroke-width="56" stroke-linecap="round" stroke-linejoin="round"/></g>`;
 }
 function phone(cx, cy, h, shot, o = {}) {
   const w = h * 0.4795, r = h * 0.085, bez = h * 0.018;
@@ -65,7 +58,7 @@ const header = [
     sub(HW * 0.4, HH * 0.75, '必要なら、一度買うだけ。', 76) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.create)],
   ['⑥ 12.0 秒 端末の中だけ', () => lock(HW * 0.4, HH * 0.3, 220) + text(HW * 0.4, HH * 0.54, '読んだ中身は、', 140) +
     text(HW * 0.4, HH * 0.65, 'どこにも送らない。', 140) + sub(HW * 0.4, HH * 0.77, 'ぜんぶ、この iPhone の中で。', 76) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.history)],
-  ['⑦ 13.8 秒 締め（→ ① にループ）', () => `<image href="${SHOTS.icon}" x="${HW / 2 - 200}" y="${HH * 0.16}" width="400" height="400" clip-path="inset(0 round 90px)"/>` +
+  ['⑦ 13.8 秒 締め（→ ① にループ）', () => `<image href="${SHOTS.icon}" x="${HW / 2 - 200}" y="${HH * 0.16}" width="400" height="400" />` +
     text(HW / 2, HH * 0.66, '誠実QRリーダー', 170) + sub(HW / 2, HH * 0.78, 'ちゃんと、読むだけ。', 96)],
 ];
 // ---- Search results (3840x2560) keyframes ----

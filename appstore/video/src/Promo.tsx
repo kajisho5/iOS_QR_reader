@@ -2,8 +2,7 @@ import { AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig } from "
 import { Caption } from "./components/Caption";
 import { LockIcon } from "./components/LockIcon";
 import { Phone } from "./components/Phone";
-import { QRGlyph } from "./components/QRGlyph";
-import { Reticle } from "./components/Reticle";
+import { IconMark } from "./components/IconMark";
 import { BRAND, FONT, T, mix, pop, ramp, rise } from "./timeline";
 
 type Layout = "header" | "search";
@@ -13,8 +12,8 @@ const SCREENS = ["shot-02-result-url.jpg", "shot-01-history.jpg", "shot-04-creat
 /** Positions as fractions of the frame; sizes in px (both compositions are 3840 wide). */
 const LAYOUTS = {
   header: {
-    qrCenter: { x: 0.5, y: 0.5, size: 520 },
-    qrSide: { x: 0.36, y: 0.42, size: 300 },
+    qrCenter: { x: 0.5, y: 0.5, size: 400 },
+    qrSide: { x: 0.36, y: 0.42, size: 230 },
     scanCaption: { x: 0.36, y: 0.75, size: 150 },
     phoneIn: { x: 0.64, y: 0.56, h: 1500 },
     phoneMain: { x: 0.67, y: 0.56, h: 1500 },
@@ -23,8 +22,8 @@ const LAYOUTS = {
     end: { iconY: 0.3, icon: 400, nameY: 0.66, name: 170, subY: 0.79, sub: 96 },
   },
   search: {
-    qrCenter: { x: 0.5, y: 0.45, size: 640 },
-    qrSide: { x: 0.3, y: 0.5, size: 520 },
+    qrCenter: { x: 0.5, y: 0.45, size: 520 },
+    qrSide: { x: 0.3, y: 0.5, size: 400 },
     scanCaption: { x: 0.3, y: 0.79, size: 170 },
     phoneIn: { x: 0.64, y: 0.58, h: 2100 },
     phoneMain: { x: 0.5, y: 0.64, h: 1800 },
@@ -58,7 +57,9 @@ export const Promo = ({ layout }: { layout: Layout }) => {
   const qrSize = mix(L.qrCenter.size, L.qrSide.size, toSide);
   const approach = looping ? 0 : rise(f, 4, 36);
   const locked = looping ? 0 : pop(f, T.lock, 18);
-  const reticleSize = qrSize * 1.31 * mix(1.7, 1.12, approach) * mix(1, 0.89, locked);
+  const markSize = qrSize * (1024 / 340);
+  const bracketScale = mix(1.45, 1.04, approach) * mix(1, 0.94, locked);
+  const reticleSize = markSize * (600 / 1024) * bracketScale; // span of the corners, for the ripples
   const mintness = looping ? 0 : ramp(f, T.lock, T.lock + 6);
   const reticleColor = mintness > 0.5 ? BRAND.mint : "#fff";
   const qrOpacity = looping ? ramp(f, T.loop, durationInFrames) : 1 - ramp(f, T.noExtras - 10, T.noExtras);
@@ -123,11 +124,8 @@ export const Promo = ({ layout }: { layout: Layout }) => {
             }}
           />
         ))}
-        <div style={{ position: "absolute", left: -qrSize / 2, top: -qrSize / 2, filter: "drop-shadow(0 20px 40px rgba(0,30,20,0.3))" }}>
-          <QRGlyph size={qrSize} />
-        </div>
-        <div style={{ position: "absolute", left: -reticleSize / 2, top: -reticleSize / 2 }}>
-          <Reticle size={reticleSize} color={reticleColor} />
+        <div style={{ position: "absolute", left: -markSize / 2, top: -markSize / 2 }}>
+          <IconMark size={markSize} bracketScale={bracketScale} bracketColor={reticleColor} />
         </div>
       </div>
 
@@ -185,17 +183,28 @@ export const Promo = ({ layout }: { layout: Layout }) => {
 
       {endIn > 0 && endOut < 1 ? (
         <div style={{ position: "absolute", inset: 0, opacity: endIn * (1 - endOut) }}>
+          <div
+            style={{
+              position: "absolute",
+              width: L.end.icon * 2.2,
+              height: L.end.icon * 2.2,
+              left: W / 2 - L.end.icon * 1.1,
+              top: L.end.iconY * H - L.end.icon * 1.1,
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 62%)",
+              opacity: iconPop,
+            }}
+          />
           <Img
-            src={staticFile("icon.png")}
+            src={staticFile("icon-glass.png")}
             style={{
               position: "absolute",
               width: L.end.icon,
               height: L.end.icon,
               left: W / 2 - L.end.icon / 2,
               top: L.end.iconY * H - L.end.icon / 2,
-              borderRadius: L.end.icon * 0.2237,
               transform: `scale(${mix(0.7, 1, iconPop)})`,
-              boxShadow: "0 30px 80px rgba(0,30,20,0.35), 0 0 0 4px rgba(255,255,255,0.18)",
+              filter: "drop-shadow(0 30px 60px rgba(0,30,20,0.4))",
             }}
           />
           <Caption
