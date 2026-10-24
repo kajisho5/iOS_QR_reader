@@ -63,19 +63,20 @@ struct ScannerView: View {
         .onChange(of: isPro) { updateCoordinator() }
         .onDisappear {
             isVisible = false
-            capture.stop()
+            // Kept running briefly, so going to another tab and straight back shows the camera at once.
+            capture.stop(after: .seconds(3))
             requestReviewIfDue()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { startCamera() } else if phase == .background { capture.stop() }
         }
         .onChange(of: coordinator.presented == nil) { _, isClosed in
-            // The camera pauses while a result sheet is open, so the same code is not read again.
+            // The camera keeps running behind the result sheet, so it is live again the moment the
+            // sheet closes. The coordinator ignores codes while the sheet is open, and the code just
+            // shown for 2 seconds after it closes.
             if isClosed {
                 startCamera()
                 requestReviewIfDue()
-            } else {
-                capture.stop()
             }
         }
         .onChange(of: coordinator.isContinuous) { _, isOn in
@@ -157,23 +158,18 @@ struct ScannerView: View {
         #endif
     }
 
+    /// One layout whose axis follows the shape, so rotating keeps the same camera view (separate
+    /// HStack / VStack branches would rebuild the preview on every rotation).
     private var stackedRegularLayout: some View {
         GeometryReader { proxy in
             let isWide = proxy.size.width >= proxy.size.height
-            if isWide {
-                HStack(spacing: 0) {
-                    cameraArea
-                    Divider()
-                    resultPane
-                        .frame(width: min(420, proxy.size.width * 0.42))
-                }
-            } else {
-                VStack(spacing: 0) {
-                    cameraArea
-                        .frame(height: proxy.size.height * 0.5)
-                    Divider()
-                    resultPane
-                }
+            let layout = isWide ? AnyLayout(HStackLayout(spacing: 0)) : AnyLayout(VStackLayout(spacing: 0))
+            layout {
+                cameraArea
+                    .frame(height: isWide ? nil : proxy.size.height * 0.5)
+                Divider()
+                resultPane
+                    .frame(width: isWide ? min(420, proxy.size.width * 0.42) : nil)
             }
         }
     }
@@ -371,7 +367,7 @@ struct ScannerView: View {
     // MARK: Actions
 
     private func startCamera() {
-        guard isVisible, coordinator.presented == nil, scenePhase == .active else { return }
+        guard isVisible, scenePhase == .active else { return }
         coordinator.feedback.prepare()
         let coordinator = coordinator
         Task {
