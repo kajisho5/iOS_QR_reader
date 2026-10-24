@@ -1,0 +1,97 @@
+# Captures the App Store screenshots on the 6.9" iPhone and 13" iPad simulators (ScreenSnapshotTests,
+# SNAPSHOT_PROFILE=appstore) and uploads them as an artifact. They are sent to App Store Connect only when the
+# commit message contains [asc-upload] (or on a manual run), after the images have been checked.
+name: appstore-screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/new-session-6aeoeq]
+    paths: [SeijitsuQRTests/ScreenSnapshotTests.swift, tools/asc_screenshots.py, .github/workflows/appstore-screenshots.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      TEST_RUNNER_SNAPSHOT_DIR: ${{ github.workspace }}/appstore-screenshots
+      TEST_RUNNER_SNAPSHOT_PROFILE: appstore
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+
+      - name: Find the 6.9" iPhone and 13" iPad simulators
+        run: |
+          xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          devices = json.load(sys.stdin)["devices"]
+          def find(pattern):
+              for runtime in sorted((r for r in devices if "iOS" in r), key=lambda r: [int(x) for x in re.findall(r"\d+", r)], reverse=True):
+                  names = sorted(d["name"] for d in devices[runtime] if re.search(pattern, d["name"]))
+                  if names:
+                      return next(d["udid"] for d in devices[runtime] if d["name"] == names[-1]), names[-1]
+              sys.exit(f"no simulator matching {pattern}")
+          for key, pattern in (("IPHONE", r"^iPhone \d+ Pro Max$"), ("IPAD", r"^iPad Pro 13")):
+              udid, name = find(pattern)
+              print(f"{key}_UDID={udid}")
+              print(f"{key}_NAME={name}", file=sys.stderr)
+          ' >> "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Capture on iPhone
+        run: |
+          set +e
+          xcodebuild test -project SeijitsuQR.xcodeproj -scheme SeijitsuQR -destination "id=$IPHONE_UDID" \
+            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            CODE_SIGNING_ALLOWED=NO > xcodebuild-appstore-iphone.log 2>&1
+          status=$?
+          grep -E "error:|✔|✘|\*\* " xcodebuild-appstore-iphone.log | tail -40
+          exit $status
+
+      - name: Capture on iPad
+        run: |
+          set +e
+          xcodebuild test-without-building -project SeijitsuQR.xcodeproj -scheme SeijitsuQR -destination "id=$IPAD_UDID" \
+            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            CODE_SIGNING_ALLOWED=NO > xcodebuild-appstore-ipad.log 2>&1
+          status=$?
+          grep -E "error:|✔|✘|\*\* " xcodebuild-appstore-ipad.log | tail -40
+          exit $status
+
+      - name: Show what was captured
+        run: |
+          cat appstore-screenshots/diagnostics-appstore-*.txt
+          for f in appstore-screenshots/*.png; do echo "$f $(sips -g pixelWidth -g pixelHeight "$f" | awk '/pixel/{printf "%s ", $2}')"; done
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: appstore-screenshots
+          path: |
+            appstore-screenshots
+            xcodebuild-appstore-*.log
+          if-no-files-found: ignore
+
+      - name: Send to App Store Connect
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[asc-upload]')
+        working-directory: tools
+        run: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography || pip3 install --quiet pyjwt cryptography
+          python3 asc_screenshots.py ../appstore-screenshots
+        env:
+          BUNDLE_ID: com.seventhwell.seijitsuqr
+          IAP_PRODUCT_ID: com.seventhwell.seijitsuqr.pro
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}

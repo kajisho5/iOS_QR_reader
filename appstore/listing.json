@@ -1,0 +1,31 @@
+{
+  "versionString": "1.0.0",
+  "copyright": "2026 seventhwell",
+  "primaryCategory": "UTILITIES",
+  "contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+  "localizations": {
+    "ja": {
+      "subtitle": "広告なし・サブスクなしのQRリーダー",
+      "promotionalText": "広告なし、サブスクなし。読み取った内容は端末の外に出ません。QRコードとバーコードの読み取り・作成・履歴が、すべて端末の中で完結します。",
+      "keywords": "QRコード,バーコード,読み取り,スキャナー,QR作成,WiFi,JAN,広告なし,買い切り",
+      "description": "誠実QRリーダーは、広告もサブスクリプションもない QR コード・バーコードリーダーです。読み取った内容が開発者に送られることはありません。\n\n■ 3つの約束\n・広告なし：広告もアクセス解析も入っていません。\n・サブスクなし：Pro は ¥800 の買い切り。定期的な課金はありません。\n・端末の中で完結：読み取り・作成・履歴はすべて端末内。アプリ自身は通信しません。\n\n■ できること\n・QR コードとバーコード（JAN/EAN、Code 128 など）の読み取り\n・写真から読み取り\n・連続スキャン\n・URL は開く前に全体を表示。Wi-Fi への接続や連絡先への追加もその場で\n・履歴の検索とお気に入り\n・テキストと URL の QR コード作成\n\n■ Pro（買い切り ¥800）\n・履歴の無制限保存（無料版は最新 30 件）\n・Wi-Fi・連絡先・イベントの QR コード作成\n・履歴の CSV 書き出し\n\n■ 対応\niPhone / iPad（iOS 17 / iPadOS 17 以降）。iPad ではポインタとキーボードショートカットに対応しています。"
+    }
+  },
+  "ageRating": "all-none",
+  "review": {
+    "contactEmail": "info@seventh-well.com",
+    "demoAccountRequired": false,
+    "notes": "ログインは不要です。カメラで QR コードを読み取るか、スキャン画面の「写真から」で画像を選んで試せます。\nApp 内課金「Pro」（非消耗型・¥800）は、設定画面の「Pro」または鍵付きの機能をタップすると購入画面が開きます。購入の復元にも対応しています。\nWi-Fi への接続機能には Hotspot Configuration を使用しています。\nアプリ自身は外部と通信しません（購入・復元時の StoreKit を除く）。"
+  },
+  "inAppPurchase": {
+    "productId": "com.seventhwell.seijitsuqr.pro",
+    "localizations": {
+      "ja": {
+        "name": "Pro（買い切り）",
+        "description": "履歴の無制限保存・全種類の作成・CSV書き出し"
+      }
+    },
+    "reviewNote": "購入画面は、設定画面の「Pro」、または鍵付きの機能（Wi-Fi・連絡先・イベントの作成、CSV 書き出しなど）をタップすると表示されます。一度の購入でずっと使え、購入の復元にも対応しています。"
+  },
+  "price": "free"
+}

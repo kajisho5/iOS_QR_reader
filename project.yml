@@ -67,6 +67,9 @@ targets:
     platform: iOS
     sources:
       - path: SeijitsuQRTests
+      # Lets SKTestSession load the Pro product in the App Store screenshot test.
+      - path: StoreKit/Configuration.storekit
+        buildPhase: resources
     dependencies:
       - target: SeijitsuQR
     settings:
