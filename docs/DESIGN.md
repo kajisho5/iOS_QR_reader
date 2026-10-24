@@ -271,7 +271,7 @@ enum ParsedPayload {
 
 ### 12.4 実装上の制約（事実）
 - `ArrangementView`、`ReservedRegion`、`toolbarVerticalBehavior(_:)`、`toolbarVerticalEdge` は **iOS / iPadOS 27.1 以降**（Apple Developer Documentation の platform 情報）。最低OSは iOS 17 のまま、`if #available(iOS 27.1, *)` で分岐し、未対応OSでは `HStack` による分割で代替する。
-- 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。実装時に確認した結果、CI のランナーは Xcode 26.6（iOS 26.5 SDK）で iOS 27.1 SDK を含まないため、§15 のとおり Duo 専用 API の採用は見送った。
+- 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。必須の CI は Xcode 26.6（iOS 26.5 SDK）だが、参考ジョブの `xcode-27` ランナー（Xcode 27.1 / iOS 27.1 SDK）でビルドを確認できるため、§15 X1 のとおりスキャン画面に `ArrangementView` を採用した。
 - iPad 寸法（1180×820pt）は Apple 公開の 2360×1640px（iPad Air 11インチ）を @2x 換算した値。
 
 ## 13. 画面の向き・iPad マルチタスク（デザイン: `docs/design/09_ipad_multitasking.svg`）
@@ -380,7 +380,7 @@ enum ParsedPayload {
 
 | # | 箇所 | 設計 | 実装 | 理由 |
 |---|---|---|---|---|
-| X1 | iPhone Duo 専用 API（§12.4） | iOS 27.1 以降で `ArrangementView` / `ReservedRegion` 等を `#available` で使用 | 使用せず、サイズクラスによる 1 カラム⇔2 カラム切り替えのみ | CI の Xcode 26.6 に iOS 27.1 SDK がなく、ビルドを検証できないため。iOS 27.1 SDK を含む Xcode が使えるようになった時点で追加する |
+| X1 | iPhone Duo 専用 API（§12.4） | iOS 27.1 以降で `ArrangementView` / `ReservedRegion` 等を `#available` で使用 | スキャン画面の regular 幅（カメラ｜結果）だけ `ArrangementView`（split）を使用。iOS 27.1 SDK でのみコンパイルするよう `#if compiler(>=6.4)` で分岐（Xcode 26.6 = Swift 6.3.3、Xcode 27.1 = Swift 6.4 を CI ログで確認）。履歴・作成の `NavigationSplitView` とシートはシステムが折り目に合わせるため変更なし（ReservedRegion のドキュメント「Choose where to check for regions」）。`ReservedRegion` を自分で読む箇所はない | 当初は CI の Xcode に iOS 27.1 SDK がなく見送ったが、`xcode-27` ランナー（Xcode 27.1）でビルドを確認できるようになったため実装。制約: Xcode 27.0（Swift 6.4・iOS 27.0 SDK）ではビルドできない |
 | X2 | 履歴ツールバー | 選択アイコン | 「すべて削除」（ゴミ箱）ボタン。単体削除は一覧のスワイプと詳細画面のゴミ箱ボタン | 仕様の「削除（単体/全件）」を最短の操作で満たすため |
 | X3 | 課金のユニットテスト | `.storekit` を使った StoreKitTest で購入・復元を自動テスト | Pro 判定ルール（検証済み・未返金・Pro 製品のみ）の純粋なテスト。購入・復元・返金は README の手順で手動確認 | CI のシミュレータで StoreKitTest のセッションが反映されず（商品が取得できない）、XcodeGen ではテストアクションに StoreKit 設定を指定できないため |
 | X4 | レビュー依頼のタイミング | 成功スキャン 10 回超の自然なタイミングで 1 回 | 結果シートを閉じた時・連続スキャン終了時・スキャン画面を離れた時のいずれか最初の 1 回（シートの閉じる動作を待って 0.6 秒後に表示）。表示するかは OS が決める | スキャン中に割り込まないため |

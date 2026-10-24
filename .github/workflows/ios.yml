@@ -94,6 +94,10 @@ jobs:
               raise SystemExit(f"No {prefix} simulator found")
           print(f"IPHONE_DESTINATION={newest('iPhone')}")
           print(f"IPAD_DESTINATION={newest('iPad')}")
+          duo = [(v, d["name"]) for v, r in runtimes for d in devices[r] if "Duo" in d["name"]]
+          if duo:
+              v, name = duo[-1]
+              print(f"DUO_DESTINATION=platform=iOS Simulator,name={name},OS={v[0]}.{v[1]}")
           PY
           cat "$GITHUB_ENV"
 
@@ -122,6 +126,17 @@ jobs:
             -destination "$IPAD_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             | tee xcodebuild-latest-ipad.log
+
+      - name: Build for iPhone Duo simulator
+        if: env.DUO_DESTINATION != ''
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$DUO_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-duo.log
 
       - name: Upload logs
         if: failure()

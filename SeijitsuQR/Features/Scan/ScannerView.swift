@@ -125,7 +125,30 @@ struct ScannerView: View {
         dynamicTypeSize.isAccessibilitySize ? [.large] : [.medium, .large]
     }
 
+    /// Camera | result. On iOS 27.1+ an ArrangementView splits them and keeps each side clear of
+    /// the fold when iPhone Duo is partially folded (HIG "Designing for iPhone Duo").
+    /// The ArrangementView API needs the iOS 27.1 SDK (Xcode 27.1, Swift 6.4); older SDKs use the
+    /// stack layout below.
+    @ViewBuilder
     private var regularLayout: some View {
+        #if compiler(>=6.4)
+        if #available(iOS 27.1, *) {
+            ArrangementView {
+                cameraArea
+                    .splitArrangementLayoutRatio(0.58)
+            } secondary: {
+                resultPane
+            }
+            .arrangementViewStyle(.split)
+        } else {
+            stackedRegularLayout
+        }
+        #else
+        stackedRegularLayout
+        #endif
+    }
+
+    private var stackedRegularLayout: some View {
         GeometryReader { proxy in
             let isWide = proxy.size.width >= proxy.size.height
             if isWide {

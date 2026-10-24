@@ -16,7 +16,7 @@ xcodegen generate
 open SeijitsuQR.xcodeproj
 ```
 
-- 必要環境: Xcode 26 以降（CI は Xcode 26.6 / iOS 26.5 シミュレータで検証）
+- 必要環境: Xcode 26.x、または Xcode 27.1 以降（CI は Xcode 26.6 と Xcode 27.1 で検証）。Xcode 27.0 は iPhone Duo 用の API（iOS 27.1 SDK）がないためビルドできません。App Store に出すビルドは Xcode 27.1 以降を推奨（iPhone Duo の画面全体に描画するため）
 - 実機で動かす場合は Xcode の Signing & Capabilities で自分のチームを選択してください。
 - Wi-Fi 接続機能は Hotspot Configuration の entitlement を使います。有料の Apple Developer Program のチームでないと実機署名できない場合があります（シミュレータのビルドには影響しません）。
 
