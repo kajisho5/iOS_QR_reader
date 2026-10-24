@@ -119,6 +119,8 @@ enum L10n {
     static var kindText: String { String(localized: "kind.text") }
     static var kindUrl: String { String(localized: "kind.url") }
     static var kindWifi: String { String(localized: "kind.wifi") }
+    static var menuGo: String { String(localized: "menu.go") }
+    static var menuSearchHistory: String { String(localized: "menu.searchHistory") }
     static var metaSeparator: String { String(localized: "meta.separator") }
     static func paywallBuy(_ p1: String) -> String {
         String(format: String(localized: "paywall.buy"), p1)
@@ -207,6 +209,8 @@ enum L10n {
     static var resultWifiSsid: String { String(localized: "result.wifi.ssid") }
     static var scanContinuous: String { String(localized: "scan.continuous") }
     static var scanContinuousOn: String { String(localized: "scan.continuous.on") }
+    static var scanControlContinuousOn: String { String(localized: "scan.control.continuousOn") }
+    static var scanControlPhoto: String { String(localized: "scan.control.photo") }
     static var scanDeniedMessage: String { String(localized: "scan.denied.message") }
     static var scanDeniedTitle: String { String(localized: "scan.denied.title") }
     static func scanDetectedAnnouncement(_ p1: String) -> String {
@@ -391,6 +395,8 @@ enum L10n {
         "kind.text",
         "kind.url",
         "kind.wifi",
+        "menu.go",
+        "menu.searchHistory",
         "meta.separator",
         "paywall.buy",
         "paywall.failed.message",
@@ -477,6 +483,8 @@ enum L10n {
         "result.wifi.ssid",
         "scan.continuous",
         "scan.continuous.on",
+        "scan.control.continuousOn",
+        "scan.control.photo",
         "scan.denied.message",
         "scan.denied.title",
         "scan.detected.announcement",

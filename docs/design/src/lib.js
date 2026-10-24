@@ -166,6 +166,11 @@ const ICON = {
   sidebar: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M9.5 4.5v15"/></g>`,
   external: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></g>`,
   docText: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></g>`,
+  returnKey: c => `<path d="M19 5v6.5a2.5 2.5 0 0 1-2.5 2.5H5.5M9.5 10 5.5 14l4 4" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  deleteKey: c => `<g fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M8.5 5.5H20a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5H8.5L2.5 12z"/><path d="m11.5 9.5 5 5M16.5 9.5l-5 5"/></g>`,
+  chevronUp: c => `<path d="M5.5 15 12 8.5l6.5 6.5" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  chevronDown: c => `<path d="M5.5 9 12 15.5 18.5 9" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  pointer: c => `<circle cx="12" cy="12" r="9" fill="${c}" fill-opacity=".38" stroke="#fff" stroke-opacity=".7" stroke-width="1"/>`,
   infinity: c => `<path d="M7 8.5c-2 0-3.5 1.6-3.5 3.5S5 15.5 7 15.5c3.5 0 6.5-7 10-7 2 0 3.5 1.6 3.5 3.5S19 15.5 17 15.5c-3.5 0-6.5-7-10-7z" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>`,
 };
 

@@ -72,6 +72,8 @@ struct CreateView: View {
                                     CreateKindCard(kind: kind, isLocked: isLocked(kind))
                                 }
                                 .buttonStyle(.plain)
+                                .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 18, style: .continuous))
+                                .hoverEffect(.highlight)
                             }
                         }
                         if !isPro { LockedNotice() }

@@ -27,5 +27,6 @@ struct SeijitsuQRApp: App {
                 .environment(settings)
         }
         .modelContainer(modelContainer)
+        .commands { AppCommands() }
     }
 }

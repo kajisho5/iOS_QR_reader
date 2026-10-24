@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 
 /// Details and actions for one code. Shown in a sheet (compact width) or a side pane (regular width).
+/// On compact width the actions are pinned to the bottom, within thumb reach.
 struct ResultView: View {
     enum Style {
         case sheet
@@ -11,9 +12,14 @@ struct ResultView: View {
 
     let result: ScanResult
     var style: Style = .sheet
+    /// Set when this view is itself in a sheet: the caller closes it before showing the contact
+    /// form, so sheets are never stacked. When nil the contact form opens from here.
+    var addContact: ((ContactCard) -> Void)?
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.openURL) private var openURL
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var isFavorite = false
     @State private var isPasswordVisible = false
@@ -32,12 +38,28 @@ struct ResultView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
-                actions
+                if !pinsActions {
+                    actions
+                }
                 footer
             }
             .padding(16)
         }
         .background(Color(.systemGroupedBackground))
+        .safeAreaInset(edge: .bottom) {
+            if pinsActions {
+                VStack(spacing: 8) {
+                    actions
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
+                .background {
+                    Color(.systemGroupedBackground).ignoresSafeArea()
+                }
+                .overlay(alignment: .top) { Divider() }
+            }
+        }
         .onAppear(perform: loadFavorite)
         .onChange(of: result.id) { loadFavorite() }
         .sheet(isPresented: $isAddingContact) {
@@ -51,6 +73,12 @@ struct ResultView: View {
         } message: { alert in
             Text(alert.message)
         }
+    }
+
+    /// Pinned on compact width. At accessibility text sizes the actions follow the content instead,
+    /// because a pinned bar would cover most of the screen.
+    private var pinsActions: Bool {
+        horizontalSizeClass == .compact && !dynamicTypeSize.isAccessibilitySize
     }
 
     private var isAlertPresented: Binding<Bool> {
@@ -209,6 +237,7 @@ struct ResultView: View {
                 Label(primary.title, systemImage: primary.systemImage)
             }
             .buttonStyle(PrimaryButtonStyle())
+            .keyboardShortcut(.return, modifiers: .command)
             .disabled(isConnecting)
         }
         AdaptiveStack(spacing: 8, alignment: .center) {
@@ -220,6 +249,7 @@ struct ResultView: View {
             }
             .buttonStyle(ActionTileStyle())
             .foregroundStyle(Color.accentColor)
+            .keyboardShortcut("c", modifiers: [.command, .shift])
 
             ShareLink(item: result.code.content) {
                 VStack(spacing: 6) {
@@ -241,6 +271,7 @@ struct ResultView: View {
                     }
                 }
                 .buttonStyle(ActionTileStyle())
+                .keyboardShortcut("d", modifiers: .command)
                 .accessibilityLabel(isFavorite ? L10n.resultFavoriteRemove : L10n.resultFavoriteAdd)
             }
         }
@@ -273,8 +304,14 @@ struct ResultView: View {
             PrimaryAction(title: L10n.resultOpenInBrowser, systemImage: "arrow.up.right.square") { open(url) }
         case .wifi(let network):
             PrimaryAction(title: L10n.resultWifiConnect, systemImage: "wifi") { connect(network) }
-        case .contact:
-            PrimaryAction(title: L10n.resultContactAdd, systemImage: "person.crop.circle.badge.plus") { isAddingContact = true }
+        case .contact(let card):
+            PrimaryAction(title: L10n.resultContactAdd, systemImage: "person.crop.circle.badge.plus") {
+                if let addContact {
+                    addContact(card)
+                } else {
+                    isAddingContact = true
+                }
+            }
         case .email(let message):
             ActionURLs.mail(message).map { url in PrimaryAction(title: L10n.resultEmailCompose, systemImage: "envelope") { open(url) } }
         case .phone(let number):

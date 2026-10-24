@@ -34,7 +34,9 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSRequiresIPhoneOS: true
         ITSAppUsesNonExemptEncryption: false
-        UILaunchScreen: {}
+        # Solid color only (no text, logo or animation): matches the first screen, the camera (HIG Launching).
+        UILaunchScreen:
+          UIColorName: LaunchBackground
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations~iphone:

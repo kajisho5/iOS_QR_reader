@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum AppTab: Hashable {
+enum AppTab: Hashable, CaseIterable {
     case scan
     case history
     case create
@@ -32,4 +32,23 @@ extension EnvironmentValues {
     @Entry var isProUnlocked: Bool = false
     @Entry var selectTab = SelectTabAction()
     @Entry var requestPro = RequestProAction()
+    /// Activates the history search field (hardware keyboard: ⌘F).
+    @Entry var isHistorySearchPresented: Binding<Bool> = .constant(false)
+}
+
+/// Actions behind the app's menu commands (hardware keyboard shortcuts on iPad).
+struct AppCommandActions {
+    var selectTab: @MainActor (AppTab) -> Void
+    var searchHistory: @MainActor () -> Void
+}
+
+private struct AppCommandActionsKey: FocusedValueKey {
+    typealias Value = AppCommandActions
+}
+
+extension FocusedValues {
+    var appCommandActions: AppCommandActions? {
+        get { self[AppCommandActionsKey.self] }
+        set { self[AppCommandActionsKey.self] = newValue }
+    }
 }

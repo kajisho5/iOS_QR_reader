@@ -117,7 +117,7 @@ function noCodeInImage() {
 const AX = { large: 60, title2: 56, body: 53, subhead: 49, footnote: 44 };
 function axResult() {
   let s = S.sheetBackdrop() + `<path d="M0 72a14 14 0 0 1 14-14H379a14 14 0 0 1 14 14V852H0Z" fill="${C.bg}"/>` + rect(178.5, 64, 36, 5, { rx: 2.5, fill: C.grabber }) +
-    glassCircle(355, 104, 22, 'xmark', false);
+    glassCircle(38, 104, 22, 'xmark', false);
   // Header stacks vertically: icon above the title (inline -> stacked at accessibility sizes).
   s += tile(16, 90, 64, C.kind.url, 'link', 16);
   s += t(16, 210, 'URL', { size: AX.title2, weight: 800 });
@@ -127,7 +127,8 @@ function axResult() {
   s += para(32, card + 52, 'リンク先（全文）', 329, { size: AX.footnote, weight: 600, fill: C.secondary }, 52);
   wrap('https://www.example.co.jp/campaign/2026/autumn?utm_source=qr&ref=store-1234&lang=ja', 329, { size: AX.body, mono: true })
     .forEach((ln, i) => { const by = card + 168 + i * 62; if (by < 812) s += t(32, by, ln, { size: AX.body, mono: true }); });
-  // scroll indicator: content continues; actions follow below the full URL
+  // scroll indicator: content continues; at accessibility sizes the actions are not pinned
+  // (a pinned bar would cover too much of the screen) and follow below the full URL
   s += rect(386, 300, 4, 140, { rx: 2, fill: 'rgba(0,0,0,0.35)' });
   return s + L.homeIndicator(false);
 }

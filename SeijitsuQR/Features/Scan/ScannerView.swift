@@ -5,8 +5,9 @@ import SwiftUI
 import UIKit
 
 /// The first screen: scanning starts immediately, with no splash or tutorial.
-/// Compact width shows results in a sheet; regular width (iPad, iPhone Duo inner display)
-/// shows them in a pane beside the camera.
+/// Compact width shows results in a sheet and puts the scan controls at the bottom, within thumb
+/// reach; regular width (iPad, iPhone Duo inner display) shows results in a pane beside the camera
+/// and the controls in the toolbar.
 struct ScannerView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.modelContext) private var modelContext
@@ -22,6 +23,9 @@ struct ScannerView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var imageAlert: ImageAlert?
     @State private var multipleCodes: [DetectedCode] = []
+    /// A contact to add after the result sheet has closed (one sheet at a time: HIG Sheets).
+    @State private var pendingContact: ContactCard?
+    @State private var contactToAdd: ContactRequest?
 
     private var presentsSheet: Bool { horizontalSizeClass != .regular }
 
@@ -34,9 +38,11 @@ struct ScannerView: View {
                     regularLayout
                 }
             }
-            .toolbar { toolbarContent }
+            .toolbar {
+                if !presentsSheet { toolbarContent }
+            }
+            .toolbar(presentsSheet ? .hidden : .automatic, for: .navigationBar)
             .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(isCameraLive && presentsSheet ? .dark : nil, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
@@ -66,9 +72,9 @@ struct ScannerView: View {
         .onChange(of: coordinator.isContinuous) { _, isOn in
             if !isOn { requestReviewIfDue() }
         }
-        .sheet(item: $coordinator.presented) { result in
+        .sheet(item: $coordinator.presented, onDismiss: showPendingContact) { result in
             NavigationStack {
-                ResultView(result: result)
+                ResultView(result: result, addContact: addContactAfterClosing)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button {
@@ -76,12 +82,17 @@ struct ScannerView: View {
                             } label: {
                                 Label(L10n.commonClose, systemImage: "xmark")
                             }
+                            .keyboardShortcut(.cancelAction)
                         }
                     }
                     .navigationBarTitleDisplayMode(.inline)
             }
             .presentationDetents(resultDetents)
             .presentationDragIndicator(.visible)
+        }
+        .sheet(item: $contactToAdd) { request in
+            ContactAddView(card: request.card) { contactToAdd = nil }
+                .ignoresSafeArea()
         }
         .photosPicker(isPresented: $isPhotoPickerPresented, selection: $photoItem, matching: .images)
         .onChange(of: photoItem) { _, item in
@@ -167,16 +178,24 @@ struct ScannerView: View {
 
     private var liveCamera: some View {
         ZStack {
-            Color.black
-            CameraPreview(session: capture.session, device: capture.device)
-            ReticleOverlay(isActive: coordinator.isContinuous)
+            Group {
+                Color.black
+                CameraPreview(session: capture.session, device: capture.device)
+                ReticleOverlay(isActive: coordinator.isContinuous, isRaised: isTrayVisible && presentsSheet)
+            }
+            .ignoresSafeArea(edges: [.top, .horizontal])
             VStack(spacing: 12) {
+                if presentsSheet {
+                    // Top of the screen: information only, no controls.
+                    NoticeCapsule(text: L10n.scanPrivacyNote, systemImage: "checkmark.shield")
+                        .padding(.top, 8)
+                }
                 Spacer()
                 if coordinator.isToastVisible {
                     NoticeCapsule(text: L10n.scanDetectedToast, systemImage: "checkmark.circle.fill", prominent: true)
                         .transition(.opacity)
                 }
-                if coordinator.isContinuous, !coordinator.tray.isEmpty {
+                if isTrayVisible {
                     ContinuousTray(
                         results: coordinator.tray,
                         onSelect: { coordinator.show($0) },
@@ -193,15 +212,56 @@ struct ScannerView: View {
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.white)
                     .accessibilityHidden(true)
-                    NoticeCapsule(text: L10n.scanPrivacyNote, systemImage: "checkmark.shield")
+                    if !presentsSheet {
+                        NoticeCapsule(text: L10n.scanPrivacyNote, systemImage: "checkmark.shield")
+                    }
+                }
+                if presentsSheet {
+                    controlBar
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
             .animation(.default, value: coordinator.isToastVisible)
         }
-        .ignoresSafeArea(edges: [.top, .horizontal])
         .environment(\.colorScheme, .dark)
+    }
+
+    private var isTrayVisible: Bool { coordinator.isContinuous && !coordinator.tray.isEmpty }
+
+    // MARK: Bottom controls (compact width)
+
+    private var controlBar: some View {
+        HStack(alignment: .top, spacing: 8) {
+            ScanControlButton(
+                title: L10n.scanControlPhoto,
+                systemImage: "photo",
+                accessibilityLabel: L10n.scanPhoto,
+                action: pickPhoto
+            )
+            .keyboardShortcut("o", modifiers: .command)
+            ScanControlButton(
+                title: coordinator.isContinuous ? L10n.scanControlContinuousOn : L10n.scanContinuous,
+                systemImage: "repeat",
+                isOn: coordinator.isContinuous,
+                accessibilityLabel: L10n.scanContinuous,
+                accessibilityValue: coordinator.isContinuous ? L10n.commonOn : L10n.commonOff
+            ) {
+                coordinator.setContinuous(!coordinator.isContinuous)
+            }
+            if capture.hasTorch && capture.state == .running {
+                ScanControlButton(
+                    title: L10n.scanTorch,
+                    systemImage: capture.isTorchOn ? "flashlight.on.fill" : "flashlight.off.fill",
+                    isOn: capture.isTorchOn,
+                    accessibilityLabel: L10n.scanTorch,
+                    accessibilityValue: capture.isTorchOn ? L10n.commonOn : L10n.commonOff
+                ) {
+                    Task { await capture.toggleTorch() }
+                }
+            }
+        }
+        .frame(maxWidth: 420)
     }
 
     // MARK: Toolbar
@@ -223,6 +283,7 @@ struct ScannerView: View {
             Button(action: pickPhoto) {
                 Label(L10n.scanPhoto, systemImage: "photo")
             }
+            .keyboardShortcut("o", modifiers: .command)
             if capture.hasTorch && capture.state == .running {
                 Button {
                     Task { await capture.toggleTorch() }
@@ -257,19 +318,24 @@ struct ScannerView: View {
         }
     }
 
+    /// Adding a contact from the result sheet closes the sheet first, then shows the contact form.
+    private func addContactAfterClosing(_ card: ContactCard) {
+        pendingContact = card
+        coordinator.presented = nil
+    }
+
+    private func showPendingContact() {
+        guard let card = pendingContact else { return }
+        pendingContact = nil
+        contactToAdd = ContactRequest(card: card)
+    }
+
     private func updateCoordinator() {
         coordinator.update(.init(settings: settings, context: modelContext, isPro: isPro, presentsSheet: presentsSheet))
     }
 
     private func handle(_ code: DetectedCode, source: RecordSource) {
         coordinator.handle(code, source: source)
-    }
-
-    private var isCameraLive: Bool {
-        switch capture.state {
-        case .idle, .starting, .running: true
-        case .denied, .restricted, .unavailable, .interruptedByMultitasking: false
-        }
     }
 
     private func pickPhoto() {
@@ -321,5 +387,46 @@ private enum ImageAlert: Equatable {
         case .noCode: L10n.scanNoCodeMessage
         case .loadFailed: L10n.scanImageLoadFailedMessage
         }
+    }
+}
+
+/// Round control under the camera (compact width): icon in a circle with a short label below.
+private struct ScanControlButton: View {
+    let title: String
+    let systemImage: String
+    var isOn = false
+    let accessibilityLabel: String
+    var accessibilityValue: String?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: systemImage)
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(isOn ? Color.black : Color.white)
+                    .frame(width: 56, height: 56)
+                    .background {
+                        if isOn {
+                            Circle().fill(Color.white)
+                        } else {
+                            Circle().fill(.ultraThinMaterial)
+                        }
+                    }
+                    .overlay { Circle().strokeBorder(Color.white.opacity(isOn ? 0 : 0.3)) }
+                    .contentShape(.hoverEffect, Circle())
+                    .hoverEffect(.lift)
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .shadow(color: .black.opacity(0.6), radius: 2)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityValue(accessibilityValue ?? "")
     }
 }

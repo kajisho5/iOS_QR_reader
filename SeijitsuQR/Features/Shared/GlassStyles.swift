@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Full-width filled button for the primary action of a screen.
+/// iPad pointer: lift effect (small element with an opaque background, HIG Pointing devices).
 struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -10,10 +11,12 @@ struct PrimaryButtonStyle: ButtonStyle {
             .padding(.horizontal, 16)
             .background(AppColor.accentFill.opacity(configuration.isPressed ? 0.8 : 1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .hoverEffect(.lift)
     }
 }
 
-/// Secondary action tile (icon over label) used in result screens.
+/// Secondary action tile (icon over label) used in result screens. iPad pointer: highlight effect.
 struct ActionTileStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -22,5 +25,7 @@ struct ActionTileStyle: ButtonStyle {
             .padding(.horizontal, 6)
             .background(Color(.secondarySystemGroupedBackground).opacity(configuration.isPressed ? 0.7 : 1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .hoverEffect(.highlight)
     }
 }

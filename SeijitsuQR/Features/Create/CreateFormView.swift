@@ -4,6 +4,7 @@ import UIKit
 
 /// Input form for one kind of QR code. The code is generated, and saved to history,
 /// only when the user taps "QRコードを作成" (not on every keystroke).
+/// The button is pinned to the bottom of the form, so the software keyboard never hides it.
 struct CreateFormView: View {
     let kind: CreateKind
 
@@ -19,6 +20,17 @@ struct CreateFormView: View {
     @State private var isSavingPhoto = false
     @State private var savedToPhotos = false
     @State private var photoAlert: PhotoAlert?
+    @FocusState private var focus: Field?
+
+    /// Text fields in the order the return key moves through them.
+    private enum Field: Hashable {
+        case text, url
+        case ssid, password
+        case familyName, givenName, organization, jobTitle, phone, email, contactURL, address, note
+        case eventTitle, location, notes
+    }
+
+    private static let previewID = "preview"
 
     var body: some View {
         Group {
@@ -58,31 +70,52 @@ struct CreateFormView: View {
     // MARK: Form
 
     private var inputForm: some View {
-        Form {
-            Section(L10n.createSectionInput) {
-                fields
-            }
-            Section {
-                Button(action: generate) {
-                    Label(L10n.createGenerate, systemImage: "qrcode")
+        ScrollViewReader { proxy in
+            Form {
+                Section(L10n.createSectionInput) {
+                    fields
                 }
-                .buttonStyle(PrimaryButtonStyle())
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-                if let errorMessage {
-                    Label(errorMessage, systemImage: "exclamationmark.circle")
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .listRowBackground(Color.clear)
+                if horizontalSizeClass != .regular, generated != nil {
+                    Section(L10n.createSectionPreview) {
+                        preview
+                            .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
+                    }
+                    .id(Self.previewID)
                 }
             }
-            if horizontalSizeClass != .regular, generated != nil {
-                Section(L10n.createSectionPreview) {
-                    preview
-                        .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
-                }
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom) {
+                generateBar
+            }
+            .onChange(of: generated) { _, code in
+                guard code != nil, horizontalSizeClass != .regular else { return }
+                withAnimation { proxy.scrollTo(Self.previewID, anchor: .top) }
             }
         }
+    }
+
+    /// Sits directly above the keyboard while it is shown.
+    private var generateBar: some View {
+        VStack(spacing: 8) {
+            if let errorMessage {
+                Label(errorMessage, systemImage: "exclamationmark.circle")
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            Button(action: generate) {
+                Label(L10n.createGenerate, systemImage: "qrcode")
+            }
+            .buttonStyle(PrimaryButtonStyle())
+            .keyboardShortcut(.return, modifiers: .command)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .background {
+            Color(.systemGroupedBackground).ignoresSafeArea(edges: .horizontal)
+        }
+        .overlay(alignment: .top) { Divider() }
     }
 
     @ViewBuilder
@@ -92,10 +125,12 @@ struct CreateFormView: View {
             LabeledField(L10n.createFieldText) {
                 TextField(L10n.createFieldText, text: $form.text, prompt: Text(L10n.createFieldTextPrompt), axis: .vertical)
                     .lineLimit(3...10)
+                    .focused($focus, equals: .text)
             }
         case .url:
             LabeledField(L10n.createFieldUrl) {
                 TextField(L10n.createFieldUrl, text: $form.url, prompt: Text(L10n.createFieldUrlPrompt))
+                    .submits(.url, focus: $focus, order: fieldOrder, onLast: generate)
                     .keyboardType(.URL)
                     .textContentType(.URL)
                     .textInputAutocapitalization(.never)
@@ -104,6 +139,7 @@ struct CreateFormView: View {
         case .wifi:
             LabeledField(L10n.createFieldSsid) {
                 TextField(L10n.createFieldSsid, text: $form.wifi.ssid, prompt: Text(L10n.createFieldSsidPrompt))
+                    .submits(.ssid, focus: $focus, order: fieldOrder, onLast: generate)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
@@ -115,6 +151,7 @@ struct CreateFormView: View {
             if form.wifi.security != .open {
                 LabeledField(L10n.createFieldPassword) {
                     SecureField(L10n.createFieldPassword, text: $form.wifi.password)
+                        .submits(.password, focus: $focus, order: fieldOrder, onLast: generate)
                         .textContentType(.password)
                 }
             }
@@ -123,21 +160,27 @@ struct CreateFormView: View {
         case .contact:
             LabeledField(L10n.createFieldFamilyName) {
                 TextField(L10n.createFieldFamilyName, text: $form.contact.familyName).textContentType(.familyName)
+                    .submits(.familyName, focus: $focus, order: fieldOrder, onLast: generate)
             }
             LabeledField(L10n.createFieldGivenName) {
                 TextField(L10n.createFieldGivenName, text: $form.contact.givenName).textContentType(.givenName)
+                    .submits(.givenName, focus: $focus, order: fieldOrder, onLast: generate)
             }
             LabeledField(L10n.createFieldOrganization) {
                 TextField(L10n.createFieldOrganization, text: $form.contact.organization).textContentType(.organizationName)
+                    .submits(.organization, focus: $focus, order: fieldOrder, onLast: generate)
             }
             LabeledField(L10n.createFieldJobTitle) {
                 TextField(L10n.createFieldJobTitle, text: $form.contact.jobTitle).textContentType(.jobTitle)
+                    .submits(.jobTitle, focus: $focus, order: fieldOrder, onLast: generate)
             }
             LabeledField(L10n.createFieldPhone) {
                 TextField(L10n.createFieldPhone, text: $form.contact.phone).keyboardType(.phonePad).textContentType(.telephoneNumber)
+                    .focused($focus, equals: .phone)
             }
             LabeledField(L10n.createFieldEmail) {
                 TextField(L10n.createFieldEmail, text: $form.contact.email)
+                    .submits(.email, focus: $focus, order: fieldOrder, onLast: generate)
                     .keyboardType(.emailAddress)
                     .textContentType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -145,22 +188,27 @@ struct CreateFormView: View {
             }
             LabeledField(L10n.createFieldUrlContact) {
                 TextField(L10n.createFieldUrlContact, text: $form.contact.url)
+                    .submits(.contactURL, focus: $focus, order: fieldOrder, onLast: generate)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
             LabeledField(L10n.createFieldAddress) {
                 TextField(L10n.createFieldAddress, text: $form.contact.address, axis: .vertical).textContentType(.fullStreetAddress)
+                    .focused($focus, equals: .address)
             }
             LabeledField(L10n.createFieldNote) {
                 TextField(L10n.createFieldNote, text: $form.contact.note, axis: .vertical)
+                    .focused($focus, equals: .note)
             }
         case .event:
             LabeledField(L10n.createFieldEventTitle) {
                 TextField(L10n.createFieldEventTitle, text: $form.event.title)
+                    .submits(.eventTitle, focus: $focus, order: fieldOrder, onLast: generate)
             }
             LabeledField(L10n.createFieldLocation) {
                 TextField(L10n.createFieldLocation, text: $form.event.location)
+                    .submits(.location, focus: $focus, order: fieldOrder, onLast: generate)
             }
             Toggle(L10n.createFieldAllDay, isOn: $form.event.isAllDay)
                 .tint(AppColor.accentFill)
@@ -168,6 +216,7 @@ struct CreateFormView: View {
             DatePicker(L10n.createFieldEnd, selection: $form.event.end, in: form.event.start..., displayedComponents: form.event.isAllDay ? [.date] : [.date, .hourAndMinute])
             LabeledField(L10n.createFieldNotes) {
                 TextField(L10n.createFieldNotes, text: $form.event.notes, axis: .vertical)
+                    .focused($focus, equals: .notes)
             }
         }
     }
@@ -220,7 +269,19 @@ struct CreateFormView: View {
 
     // MARK: Actions
 
+    /// Fields of the current kind in return-key order (only those currently shown).
+    private var fieldOrder: [Field] {
+        switch kind {
+        case .text: [.text]
+        case .url: [.url]
+        case .wifi: form.wifi.security == .open ? [.ssid] : [.ssid, .password]
+        case .contact: [.familyName, .givenName, .organization, .jobTitle, .phone, .email, .contactURL, .address, .note]
+        case .event: [.eventTitle, .location, .notes]
+        }
+    }
+
     private func generate() {
+        focus = nil
         guard let content = encodedContent() else {
             errorMessage = invalidMessage
             return
@@ -336,5 +397,22 @@ private struct LabeledField<Content: View>: View {
                 .accessibilityHidden(true)
             content
         }
+    }
+}
+
+private extension View {
+    /// Return key moves to the next field ("次へ"), or runs `onLast` from the last one ("完了").
+    func submits<Field: Hashable>(_ field: Field, focus: FocusState<Field?>.Binding, order: [Field], onLast: @escaping () -> Void) -> some View {
+        let next = order.firstIndex(of: field).flatMap { order.indices.contains($0 + 1) ? order[$0 + 1] : nil }
+        return self
+            .focused(focus, equals: field)
+            .submitLabel(next == nil ? .done : .next)
+            .onSubmit {
+                if let next {
+                    focus.wrappedValue = next
+                } else {
+                    onLast()
+                }
+            }
     }
 }

@@ -3,7 +3,7 @@
   "private": true,
   "description": "Generates the SVG mockups in docs/design (text is converted to outlines so every viewer renders identically).",
   "scripts": {
-    "build": "node screens.js .. && node flow.js .. && node devices.js .. && node multitask.js .. && node states.js .."
+    "build": "node screens.js .. && node flow.js .. && node devices.js .. && node multitask.js .. && node states.js .. && node reach.js .."
   },
   "dependencies": {
     "@fontsource/noto-sans-jp": "5.3.1",

@@ -3,11 +3,17 @@ import SwiftUI
 /// Dims the camera outside the framing guide and shows the guide corners. Purely decorative.
 struct ReticleOverlay: View {
     var isActive = false
+    /// Moves the guide up and makes it smaller, leaving room for the continuous-scan tray and the
+    /// controls at the bottom of the screen.
+    var isRaised = false
 
     var body: some View {
         GeometryReader { proxy in
-            let side = min(260, proxy.size.width * 0.66, proxy.size.height * 0.5)
-            let rect = CGRect(x: (proxy.size.width - side) / 2, y: (proxy.size.height - side) / 2 - 20, width: side, height: side)
+            let side = isRaised
+                ? min(220, proxy.size.width * 0.56, proxy.size.height * 0.3)
+                : min(260, proxy.size.width * 0.66, proxy.size.height * 0.5)
+            let centerY = isRaised ? proxy.size.height * 0.3 : proxy.size.height / 2 - 20
+            let rect = CGRect(x: (proxy.size.width - side) / 2, y: centerY - side / 2, width: side, height: side)
             ZStack {
                 Path { path in
                     path.addRect(CGRect(origin: .zero, size: proxy.size))

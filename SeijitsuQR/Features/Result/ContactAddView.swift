@@ -25,6 +25,12 @@ extension ContactCard {
     }
 }
 
+/// A card waiting to be shown in the "New Contact" screen (sheet item).
+struct ContactRequest: Identifiable {
+    let id = UUID()
+    let card: ContactCard
+}
+
 /// The system "New Contact" screen, prefilled from the scanned card. Saving is done by the user there.
 struct ContactAddView: UIViewControllerRepresentable {
     let card: ContactCard

@@ -81,6 +81,8 @@ struct HistoryFilterBar: View {
             .overlay {
                 if !isOn { Capsule().strokeBorder(Color(.separator)) }
             }
+            .contentShape(.hoverEffect, Capsule())
+            .hoverEffect(.highlight)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isOn ? .isSelected : [])
@@ -130,6 +132,7 @@ struct HistoryDetailView: View {
                     Button(role: .destructive, action: onDelete) {
                         Label(L10n.historyDelete, systemImage: "trash")
                     }
+                    .keyboardShortcut(.delete, modifiers: .command)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

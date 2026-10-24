@@ -1200,6 +1200,28 @@
         }
       }
     },
+    "menu.go": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移動"
+          }
+        }
+      }
+    },
+    "menu.searchHistory": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴を検索"
+          }
+        }
+      }
+    },
     "meta.separator": {
       "extractionState": "manual",
       "localizations": {
@@ -2142,6 +2164,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "連続スキャン ON"
+          }
+        }
+      }
+    },
+    "scan.control.continuousOn": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連続 ON"
+          }
+        }
+      }
+    },
+    "scan.control.photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真から"
           }
         }
       }

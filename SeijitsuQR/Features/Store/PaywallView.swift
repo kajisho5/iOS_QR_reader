@@ -7,7 +7,12 @@ struct PaywallView: View {
     @Environment(ProStore.self) private var store
     @Environment(\.purchase) private var purchase
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var notice: ProStore.Notice?
+
+    /// The purchase and restore buttons stay at the bottom, within thumb reach. At accessibility
+    /// text sizes they follow the content instead, so they do not cover most of the screen.
+    private var pinsPurchase: Bool { !dynamicTypeSize.isAccessibilitySize }
 
     var body: some View {
         NavigationStack {
@@ -20,7 +25,9 @@ struct PaywallView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                    purchaseSection
+                    if !pinsPurchase {
+                        purchaseSection
+                    }
                     footer
                 }
                 .padding(.horizontal, 20)
@@ -28,11 +35,27 @@ struct PaywallView: View {
                 .frame(maxWidth: 560)
                 .frame(maxWidth: .infinity)
             }
+            .safeAreaInset(edge: .bottom) {
+                if pinsPurchase {
+                    VStack(spacing: 4) {
+                        purchaseSection
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .frame(maxWidth: 560)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        Color(.systemBackground).ignoresSafeArea()
+                    }
+                    .overlay(alignment: .top) { Divider() }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
                         Label(L10n.commonClose, systemImage: "xmark")
                     }
+                    .keyboardShortcut(.cancelAction)
                 }
             }
             .alert(notice?.title ?? "", isPresented: isNoticePresented, presenting: notice) { _ in

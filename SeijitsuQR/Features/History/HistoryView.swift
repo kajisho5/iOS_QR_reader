@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UIKit
 
 /// History of scanned and created codes. Compact width: list then detail; regular width: list | detail.
 struct HistoryView: View {
@@ -8,6 +9,7 @@ struct HistoryView: View {
     @Environment(\.isProUnlocked) private var isPro
     @Environment(\.selectTab) private var selectTab
     @Environment(\.requestPro) private var requestPro
+    @Environment(\.isHistorySearchPresented) private var isSearchPresented
 
     @Query(sort: \ScanRecord.createdAt, order: .reverse) private var records: [ScanRecord]
 
@@ -34,6 +36,10 @@ struct HistoryView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .onChange(of: isSearchPresented.wrappedValue) { _, presented in
+            // ⌘F with no history: there is no search field to activate.
+            if presented, records.isEmpty { isSearchPresented.wrappedValue = false }
+        }
         .confirmationDialog(L10n.historyDeleteAllTitle, isPresented: $isConfirmingDeleteAll, titleVisibility: .visible) {
             Button(L10n.historyDeleteAll, role: .destructive, action: deleteAll)
             Button(L10n.commonCancel, role: .cancel) {}
@@ -67,6 +73,8 @@ struct HistoryView: View {
                             FreePlanBanner(count: records.count)
                         }
                         .buttonStyle(.plain)
+                        .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .hoverEffect(.highlight)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowBackground(Color.clear)
                     }
@@ -90,12 +98,34 @@ struct HistoryView: View {
                                 }
                                 .tint(AppColor.favoriteFill)
                             }
+                            // Secondary click on iPad (right click / two-finger tap); long press on iPhone.
+                            .contextMenu {
+                                Button {
+                                    toggleFavorite(record)
+                                } label: {
+                                    Label(record.isFavorite ? L10n.resultFavoriteRemove : L10n.resultFavoriteAdd, systemImage: record.isFavorite ? "star.slash" : "star")
+                                }
+                                Button {
+                                    UIPasteboard.general.string = record.content
+                                } label: {
+                                    Label(L10n.commonCopy, systemImage: "doc.on.doc")
+                                }
+                                ShareLink(item: record.content) {
+                                    Label(L10n.commonShare, systemImage: "square.and.arrow.up")
+                                }
+                                Divider()
+                                Button(role: .destructive) {
+                                    delete(record)
+                                } label: {
+                                    Label(L10n.historyDelete, systemImage: "trash")
+                                }
+                            }
                         }
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .searchable(text: $query.text, prompt: Text(L10n.historySearchPrompt))
+            .searchable(text: $query.text, isPresented: isSearchPresented, prompt: Text(L10n.historySearchPrompt))
             .overlay {
                 if filtered.isEmpty {
                     noResults

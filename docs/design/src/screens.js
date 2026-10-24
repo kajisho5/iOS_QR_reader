@@ -56,25 +56,28 @@ function reticle(x, y, s, color = '#fff') {
 function dimOutside(x, y, s) {
   return `<path fill="rgba(0,0,0,0.5)" fill-rule="evenodd" d="M0 0H393V852H0Z M${x + 24} ${y}H${x + s - 24}a24 24 0 0 1 24 24V${y + s - 24}a24 24 0 0 1-24 24H${x + 24}a24 24 0 0 1-24-24V${y + 24}a24 24 0 0 1 24-24Z"/>`;
 }
-function circleBtn(cx, cy, name, on) {
-  return glassCircle(cx, cy, 22, name, true, on);
+// Scan controls sit in the lower part of the screen, within thumb reach (above the tab bar).
+const CONTROL_Y = 678;
+function controlButton(cx, name, label, on) {
+  return glassCircle(cx, CONTROL_Y, 28, name, true, on) +
+    t(cx, CONTROL_Y + 50, label, { size: 12, weight: 600, fill: '#fff', anchor: 'middle' });
 }
-function contPill(on) {
-  const label = on ? '連続スキャン ON' : '連続スキャン';
-  const o = { size: 15, weight: 600, fill: '#fff' };
-  const w = 14 + 22 + 8 + measure(label, o) + 18;
-  return (on ? rect(16, 66, w, 44, { rx: 22, fill: C.accentFill }) : glass(16, 66, w, 44, true)) +
-    iconLabel(16 + w / 2 - 2, 93, 'repeat', 22, label, o);
+function scanControls(continuous, torch) {
+  return controlButton(92, 'photo', '写真から') +
+    controlButton(196.5, 'repeat', continuous ? '連続 ON' : '連続スキャン', continuous) +
+    controlButton(301, 'bolt', 'ライト', torch);
+}
+function privacyPill() {
+  return pillNote(86, 'shield', '読み取り内容は端末内だけで処理します', { size: 12, weight: 500, fill: '#fff', iconColor: C.accentOnDark }, 'rgba(0,0,0,0.45)', 32);
 }
 function scanA() {
-  const X = 66.5, Y = 236, S = 260;
+  const X = 66.5, Y = 200, S = 260;
   return cameraFeed() + dimOutside(X, Y, S) + reticle(X, Y, S) +
     rect(X + 20, Y + 148, S - 40, 2.5, { rx: 1.25, fill: 'url(#scanLine)' }) +
-    statusBar(true) + contPill(false) +
-    circleBtn(299, 88, 'photo') + circleBtn(355, 88, 'bolt') +
-    t(196.5, 540, 'コードを枠内に合わせてください', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
-    t(196.5, 566, 'QRコード・バーコード 11種類に対応', { size: 13, fill: 'rgba(255,255,255,0.75)', anchor: 'middle' }) +
-    pillNote(722, 'shield', '読み取り内容は端末内だけで処理します', { size: 12, weight: 500, fill: '#fff', iconColor: C.accentOnDark }, 'rgba(0,0,0,0.45)', 34) +
+    statusBar(true) + privacyPill() +
+    t(196.5, 504, 'コードを枠内に合わせてください', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' }) +
+    t(196.5, 530, 'QRコード・バーコード 11種類に対応', { size: 13, fill: 'rgba(255,255,255,0.75)', anchor: 'middle' }) +
+    scanControls(false, false) +
     tabBar(0, true);
 }
 function trayRow(y, kind, ic, title, meta, isNew) {
@@ -84,21 +87,21 @@ function trayRow(y, kind, ic, title, meta, isNew) {
     (isNew ? rect(318, y + 6, 44, 20, { rx: 10, fill: C.accentOnDark }) + t(340, y + 20, '新規', { size: 11, weight: 700, fill: '#06281F', anchor: 'middle' }) : icon('chevron', 336, y + 7, 18, 'rgba(255,255,255,0.5)'));
 }
 function scanB() {
-  const X = 66.5, Y = 232, S = 260;
+  const X = 86.5, Y = 132, S = 220;
   return cameraFeed() + dimOutside(X, Y, S) + reticle(X, Y, S, C.accentOnDark) +
-    statusBar(true) + contPill(true) +
-    circleBtn(299, 88, 'photo') + circleBtn(355, 88, 'bolt', true) +
+    statusBar(true) + privacyPill() +
     // toast
-    pillNote(511, 'checkCircle', '読み取りました（重複は記録しません）', { size: 13, weight: 600, fill: C.label, iconColor: C.accent }, 'rgba(255,255,255,0.95)', 40) +
+    pillNote(398, 'checkCircle', '読み取りました（重複は記録しません）', { size: 13, weight: 600, fill: C.label, iconColor: C.accent }, 'rgba(255,255,255,0.95)', 40) +
     // tray
-    rect(12, 540, 369, 204, { rx: 22, fill: 'rgba(28,28,30,0.94)' }) +
-    t(28, 570, '今回の読み取り', { size: 15, weight: 700, fill: '#fff' }) +
-    rect(134, 555, 28, 20, { rx: 10, fill: 'rgba(255,255,255,0.18)' }) + t(148, 570, '3', { size: 13, weight: 700, fill: '#fff', anchor: 'middle' }) +
-    t(365, 570, '終了', { size: 15, weight: 600, fill: C.accentOnDark, anchor: 'end' }) +
-    `<line x1="28" y1="584" x2="365" y2="584" stroke="rgba(255,255,255,0.12)"/>` +
-    trayRow(594, 'text', 'barcode', '4901234567894', 'テキスト · EAN-13 · たった今', true) +
-    trayRow(642, 'url', 'link', 'https://www.example.co.jp/item/…', 'URL · QRコード · 12秒前') +
-    trayRow(690, 'text', 'barcode', '4909876543210', 'テキスト · EAN-13 · 25秒前') +
+    rect(12, 424, 369, 200, { rx: 22, fill: 'rgba(28,28,30,0.94)' }) +
+    t(28, 454, '今回の読み取り', { size: 15, weight: 700, fill: '#fff' }) +
+    rect(134, 439, 28, 20, { rx: 10, fill: 'rgba(255,255,255,0.18)' }) + t(148, 454, '3', { size: 13, weight: 700, fill: '#fff', anchor: 'middle' }) +
+    t(365, 454, '終了', { size: 15, weight: 600, fill: C.accentOnDark, anchor: 'end' }) +
+    `<line x1="28" y1="468" x2="365" y2="468" stroke="rgba(255,255,255,0.12)"/>` +
+    trayRow(478, 'text', 'barcode', '4901234567894', 'テキスト · EAN-13 · たった今', true) +
+    trayRow(526, 'url', 'link', 'https://www.example.co.jp/item/…', 'URL · QRコード · 12秒前') +
+    trayRow(574, 'text', 'barcode', '4909876543210', 'テキスト · EAN-13 · 25秒前') +
+    scanControls(true, true) +
     tabBar(0, true);
 }
 function scanC() {
@@ -122,11 +125,24 @@ function sheetBackdrop() {
 function sheetTop(y) {
   return `<path d="M0 ${y + 14}a14 14 0 0 1 14-14H379a14 14 0 0 1 14 14V852H0Z" fill="${C.bg}"/>` + rect(178.5, y + 6, 36, 5, { rx: 2.5, fill: C.grabber });
 }
+// Sheet toolbar: Close (xmark) on the leading edge (HIG Sheets, iOS: Cancel/Close belongs on the leading edge).
+function sheetClose(y) {
+  return glassCircle(38, y, 20, 'xmark', false);
+}
 function resultHeader(y, kind, ic, title, meta) {
   return tile(16, y, 48, C.kind[kind], ic, 12) +
     t(76, y + 21, title, { size: 22, weight: 800 }) +
-    t(76, y + 42, meta, { size: 13, fill: C.secondary }) +
-    glassCircle(355, y + 18, 20, 'xmark', false);
+    t(76, y + 42, meta, { size: 13, fill: C.secondary });
+}
+// Primary action and secondary tiles pinned to the bottom of the sheet (thumb reach at any detent).
+const PIN_Y = 676;
+function pinnedBar(y, h) {
+  return rect(0, y, 393, h, { fill: C.bg }) + `<line x1="0" y1="${y}" x2="393" y2="${y}" stroke="${C.separator}"/>`;
+}
+function resultPinned(ic, label, tiles) {
+  return pinnedBar(PIN_Y, 852 - PIN_Y) +
+    rect(16, PIN_Y + 12, 361, 54, { rx: 14, fill: C.accentFill }) + iconLabel(196.5, PIN_Y + 46, ic, 22, label, { size: 17, weight: 700, fill: '#fff' }) +
+    actionTriple(PIN_Y + 76, tiles);
 }
 function actionTriple(y, items) {
   const w = (361 - 16) / 3;
@@ -137,43 +153,41 @@ function actionTriple(y, items) {
   }).join('');
 }
 function resultURL() {
-  const Y = 236;
-  return sheetBackdrop() + sheetTop(Y) +
-    resultHeader(Y + 30, 'url', 'link', 'URL', 'QRコード · 2026/10/24 08:12') +
-    rect(16, Y + 98, 361, 214, { rx: 14, fill: C.card }) +
-    t(32, Y + 124, 'リンク先（全文・省略なし）', { size: 13, weight: 600, fill: C.secondary }) +
-    t(32, Y + 152, [{ s: 'https://' }, { s: 'www.example.co.jp', weight: 800 }, { s: '/campa' }], { size: 15, mono: true }) +
-    t(32, Y + 174, 'ign/2026/autumn?utm_source=qr&r', { size: 15, mono: true }) +
-    t(32, Y + 196, 'ef=store-1234&lang=ja', { size: 15, mono: true }) +
-    `<line x1="32" y1="${Y + 216}" x2="361" y2="${Y + 216}" stroke="${C.separator}"/>` +
-    t(32, Y + 242, 'ドメイン', { size: 15, fill: C.secondary }) + t(361, Y + 242, 'www.example.co.jp', { size: 15, weight: 700, anchor: 'end' }) +
-    `<line x1="32" y1="${Y + 258}" x2="361" y2="${Y + 258}" stroke="${C.separator}"/>` +
-    t(32, Y + 284, '方式', { size: 15, fill: C.secondary }) + icon('lock', 361 - measure('https（暗号化）', { size: 15, weight: 600 }) - 20, Y + 271, 16, C.accent) + t(361, Y + 284, 'https（暗号化）', { size: 15, weight: 600, anchor: 'end' }) +
-    icon('info', 18, Y + 326, 16, C.secondary) +
-    t(40, Y + 339, '「ブラウザで開く」を押すまで通信は発生しません。', { size: 13, fill: C.secondary }) +
-    rect(16, Y + 362, 361, 54, { rx: 14, fill: C.accentFill }) + iconLabel(196.5, Y + 396, 'external', 22, 'ブラウザで開く', { size: 17, weight: 700, fill: '#fff' }) +
-    actionTriple(Y + 428, [['copy', 'コピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
-    iconLabel(196.5, Y + 533, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 }) +
+  const Y = 236, H = Y + 46;
+  return sheetBackdrop() + sheetTop(Y) + sheetClose(Y + 30) +
+    resultHeader(H + 10, 'url', 'link', 'URL', 'QRコード · 2026/10/24 08:12') +
+    rect(16, H + 74, 361, 214, { rx: 14, fill: C.card }) +
+    t(32, H + 100, 'リンク先（全文・省略なし）', { size: 13, weight: 600, fill: C.secondary }) +
+    t(32, H + 128, [{ s: 'https://' }, { s: 'www.example.co.jp', weight: 800 }, { s: '/campa' }], { size: 15, mono: true }) +
+    t(32, H + 150, 'ign/2026/autumn?utm_source=qr&r', { size: 15, mono: true }) +
+    t(32, H + 172, 'ef=store-1234&lang=ja', { size: 15, mono: true }) +
+    `<line x1="32" y1="${H + 192}" x2="361" y2="${H + 192}" stroke="${C.separator}"/>` +
+    t(32, H + 218, 'ドメイン', { size: 15, fill: C.secondary }) + t(361, H + 218, 'www.example.co.jp', { size: 15, weight: 700, anchor: 'end' }) +
+    `<line x1="32" y1="${H + 234}" x2="361" y2="${H + 234}" stroke="${C.separator}"/>` +
+    t(32, H + 260, '方式', { size: 15, fill: C.secondary }) + icon('lock', 361 - measure('https（暗号化）', { size: 15, weight: 600 }) - 20, H + 247, 16, C.accent) + t(361, H + 260, 'https（暗号化）', { size: 15, weight: 600, anchor: 'end' }) +
+    icon('info', 18, H + 300, 16, C.secondary) +
+    t(40, H + 313, '「ブラウザで開く」を押すまで通信は発生しません。', { size: 13, fill: C.secondary }) +
+    iconLabel(196.5, H + 350, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 }) +
+    resultPinned('external', 'ブラウザで開く', [['copy', 'コピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
     L.homeIndicator(false);
 }
 function resultWiFi() {
-  const Y = 236;
+  const Y = 236, H = Y + 46;
   const row = (y, k, v, extra = '') => t(32, y, k, { size: 15, fill: C.secondary }) + t(extra ? 327 : 361, y, v, { size: 15, weight: 700, anchor: 'end' }) + extra;
-  return sheetBackdrop() + sheetTop(Y) +
-    resultHeader(Y + 30, 'wifi', 'wifi', 'Wi-Fi', 'QRコード · 2026/10/24 08:05') +
-    rect(16, Y + 98, 361, 178, { rx: 14, fill: C.card }) +
-    row(Y + 130, 'ネットワーク名', 'Seijitsu-Cafe_5G') +
-    `<line x1="32" y1="${Y + 146}" x2="377" y2="${Y + 146}" stroke="${C.separator}"/>` +
-    row(Y + 174, 'セキュリティ', 'WPA/WPA2/WPA3') +
-    `<line x1="32" y1="${Y + 190}" x2="377" y2="${Y + 190}" stroke="${C.separator}"/>` +
-    row(Y + 218, 'パスワード', '••••••••••', icon('eye', 339, Y + 204, 22, C.accent)) +
-    `<line x1="32" y1="${Y + 234}" x2="377" y2="${Y + 234}" stroke="${C.separator}"/>` +
-    row(Y + 260, 'ステルス（非公開）', 'いいえ') +
-    icon('info', 18, Y + 290, 16, C.secondary) +
-    t(40, Y + 303, '接続時にiOSの確認ダイアログが表示されます。', { size: 13, fill: C.secondary }) +
-    rect(16, Y + 326, 361, 54, { rx: 14, fill: C.accentFill }) + iconLabel(196.5, Y + 360, 'wifi', 22, 'このWi-Fiに接続', { size: 17, weight: 700, fill: '#fff' }) +
-    actionTriple(Y + 392, [['copy', 'パスワードをコピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
-    iconLabel(196.5, Y + 497, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 }) +
+  return sheetBackdrop() + sheetTop(Y) + sheetClose(Y + 30) +
+    resultHeader(H + 10, 'wifi', 'wifi', 'Wi-Fi', 'QRコード · 2026/10/24 08:05') +
+    rect(16, H + 74, 361, 178, { rx: 14, fill: C.card }) +
+    row(H + 106, 'ネットワーク名', 'Seijitsu-Cafe_5G') +
+    `<line x1="32" y1="${H + 122}" x2="377" y2="${H + 122}" stroke="${C.separator}"/>` +
+    row(H + 150, 'セキュリティ', 'WPA/WPA2/WPA3') +
+    `<line x1="32" y1="${H + 166}" x2="377" y2="${H + 166}" stroke="${C.separator}"/>` +
+    row(H + 194, 'パスワード', '••••••••••', icon('eye', 339, H + 180, 22, C.accent)) +
+    `<line x1="32" y1="${H + 210}" x2="377" y2="${H + 210}" stroke="${C.separator}"/>` +
+    row(H + 236, 'ステルス（非公開）', 'いいえ') +
+    icon('info', 18, H + 266, 16, C.secondary) +
+    t(40, H + 279, '接続時にiOSの確認ダイアログが表示されます。', { size: 13, fill: C.secondary }) +
+    iconLabel(196.5, H + 316, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 }) +
+    resultPinned('wifi', 'このWi-Fiに接続', [['copy', 'パスワードをコピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
     L.homeIndicator(false);
 }
 
@@ -320,17 +334,20 @@ function paywall(purchased) {
     feature(Y + 362, 'infinity', '履歴を無制限に保存', '無料版は直近30件まで') +
     feature(Y + 414, 'qr', 'すべての種類のQRコードを作成', 'Wi-Fi・連絡先・イベントにも対応') +
     feature(Y + 466, 'docText', '履歴のCSVエクスポート', '表計算アプリで開ける形式で書き出し') +
-    t(196.5, Y + 540, 'スキャンは無料版でも回数無制限です。', { size: 13, fill: C.secondary, anchor: 'middle' });
+    t(196.5, Y + 540, 'スキャンは無料版でも回数無制限です。', { size: 13, fill: C.secondary, anchor: 'middle' }) +
+    t(196.5, Y + 568, 'お支払いはAppleアカウントに1回だけ請求されます。', { size: 12, fill: C.secondary, anchor: 'middle' }) +
+    t(196.5, Y + 586, '同じAppleアカウントのiPhone・iPadで復元できます。', { size: 12, fill: C.secondary, anchor: 'middle' }) +
+    t(196.5, Y + 614, '利用規約 ・ プライバシーポリシー', { size: 12, weight: 600, fill: C.accent, anchor: 'middle' });
+  // Pinned purchase area (stays at the bottom while the content scrolls).
+  const B = 690;
+  s += rect(0, B, 393, 852 - B, { fill: C.sheet }) + `<line x1="0" y1="${B}" x2="393" y2="${B}" stroke="${C.separator}"/>`;
   if (purchased) {
-    s += rect(16, Y + 560, 361, 56, { rx: 14, fill: C.neutralFill }) + iconLabel(196.5, Y + 595, 'checkCircle', 24, '購入済みです', { size: 17, weight: 700, fill: C.accentDark, iconColor: C.accent });
+    s += rect(16, B + 12, 361, 56, { rx: 14, fill: C.neutralFill }) + iconLabel(196.5, B + 47, 'checkCircle', 24, '購入済みです', { size: 17, weight: 700, fill: C.accentDark, iconColor: C.accent });
   } else {
-    s += rect(16, Y + 560, 361, 56, { rx: 14, fill: C.accentFill }) +
-      t(196.5, Y + 595, '¥800 で購入（買い切り）', { size: 18, weight: 800, fill: '#fff', anchor: 'middle' });
+    s += rect(16, B + 12, 361, 56, { rx: 14, fill: C.accentFill }) +
+      t(196.5, B + 47, '¥800 で購入（買い切り）', { size: 18, weight: 800, fill: '#fff', anchor: 'middle' });
   }
-  s += t(196.5, Y + 652, '購入を復元', { size: 16, weight: 600, fill: C.accent, anchor: 'middle' }) +
-    t(196.5, Y + 690, 'お支払いはAppleアカウントに1回だけ請求されます。', { size: 12, fill: C.secondary, anchor: 'middle' }) +
-    t(196.5, Y + 708, '同じAppleアカウントのiPhone・iPadで復元できます。', { size: 12, fill: C.secondary, anchor: 'middle' }) +
-    t(196.5, Y + 740, '利用規約 ・ プライバシーポリシー', { size: 12, weight: 600, fill: C.accent, anchor: 'middle' }) +
+  s += t(196.5, B + 104, '購入を復元', { size: 16, weight: 600, fill: C.accent, anchor: 'middle' }) +
     L.homeIndicator(false);
   return s;
 }
@@ -363,7 +380,7 @@ function settings(purchased) {
 }
 
 // ---------- Write ----------
-module.exports = { scanA, scanB, scanC, resultURL, resultWiFi, historyA, historyB, createA, createB, paywall, settings, navLarge, histRow, chips, sheetBackdrop, sheetTop, actionTriple, fitSize, pillNote, group, sep, secHead, feature, cameraFeed };
+module.exports = { scanControls, privacyPill, sheetClose, resultPinned, pinnedBar, scanA, scanB, scanC, resultURL, resultWiFi, historyA, historyB, createA, createB, paywall, settings, navLarge, histRow, chips, sheetBackdrop, sheetTop, actionTriple, fitSize, pillNote, group, sep, secHead, feature, cameraFeed };
 if (require.main !== module) return;
 function write(name, title, sub, screens) {
   const w = canvasW(screens.length);
@@ -371,15 +388,15 @@ function write(name, title, sub, screens) {
   fs.writeFileSync(path.join(OUT, name), doc(w, CANVAS_H, body, title));
 }
 
-write('01_scan.svg', '01 スキャン', '起動直後に表示。オンボーディングなし。トーチ・写真読み取りは右上、連続スキャンは左上。', [
+write('01_scan.svg', '01 スキャン', '起動直後に表示（オンボーディング・演出なし）。写真・連続スキャン・ライトは親指の届く画面下部に配置。', [
   [scanA(), 'A. 通常スキャン'], [scanB(), 'B. 連続スキャン ON（トーチ点灯中）'], [scanC(), 'C. カメラ未許可']]);
-write('02_result.svg', '02 結果表示（シート）', 'URLは全文を等幅フォントで省略せず表示。ドメインを太字で併記。シート表示中はカメラ停止。', [
+write('02_result.svg', '02 結果表示（シート）', 'URLは全文を省略せず表示。閉じる×は左上、主な操作は下部に固定。シート表示中はカメラ停止。', [
   [resultURL(), 'A. URL'], [resultWiFi(), 'B. Wi-Fi']]);
 write('03_history.svg', '03 履歴', '検索（日時・種類・内容）、種類フィルタ、お気に入り、スワイプ削除、全件削除、CSV。', [
   [historyA(), 'A. 一覧（無料版バナー・スワイプ操作）'], [historyB(), 'B. 全件削除の確認']]);
 write('04_create.svg', '04 QR作成', '無料: テキスト・URL ／ Pro: Wi-Fi・連絡先・イベント。「作成」実行時に履歴へ保存。', [
   [createA(), 'A. 作成メニュー（無料版）'], [createB(), 'B. 生成結果']]);
-write('05_paywall.svg', '05 課金（Pro 買い切り）', 'ユーザー操作でのみ表示。価格はStoreKitのdisplayPriceをそのまま表示。誤認表現なし。', [
+write('05_paywall.svg', '05 課金（Pro 買い切り）', 'ユーザー操作でのみ表示。価格はdisplayPriceをそのまま表示。購入・復元は下部に固定。', [
   [paywall(false), 'A. 未購入'], [paywall(true), 'B. 購入済み']]);
 write('06_settings.svg', '06 設定', '購入／復元、音・振動、履歴の自動保存、規約リンク（URLは定数ファイル）。', [
   [settings(false), 'A. 未購入'], [settings(true), 'B. 購入済み']]);
