@@ -2399,6 +2399,17 @@
         }
       }
     },
+    "scan.preview.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ピンチでズーム、タップでピントを合わせます。ダブルタップで1倍に戻ります。"
+          }
+        }
+      }
+    },
     "scan.privacyFootnote": {
       "extractionState": "manual",
       "localizations": {
@@ -2516,6 +2527,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "カメラを利用できません"
+          }
+        }
+      }
+    },
+    "scan.zoom.reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1倍に戻します"
+          }
+        }
+      }
+    },
+    "scan.zoom.value": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@倍"
           }
         }
       }
