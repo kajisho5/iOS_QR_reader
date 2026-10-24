@@ -52,7 +52,7 @@ jobs:
         run: |
           set +e
           xcodebuild test -project SeijitsuQR.xcodeproj -scheme SeijitsuQR -destination "id=$IPHONE_UDID" \
-            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests -testLanguage ja -testRegion JP \
             CODE_SIGNING_ALLOWED=NO > xcodebuild-appstore-iphone.log 2>&1
           status=$?
           grep -E "error:|✔|✘|\*\* " xcodebuild-appstore-iphone.log | tail -40
@@ -62,7 +62,7 @@ jobs:
         run: |
           set +e
           xcodebuild test-without-building -project SeijitsuQR.xcodeproj -scheme SeijitsuQR -destination "id=$IPAD_UDID" \
-            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            -derivedDataPath build/DerivedData -only-testing:SeijitsuQRTests/ScreenSnapshotTests -testLanguage ja -testRegion JP \
             CODE_SIGNING_ALLOWED=NO > xcodebuild-appstore-ipad.log 2>&1
           status=$?
           grep -E "error:|✔|✘|\*\* " xcodebuild-appstore-ipad.log | tail -40

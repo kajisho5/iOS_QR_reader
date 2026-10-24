@@ -23,6 +23,8 @@ import UIKit
         let session = try? SKTestSession(configurationFileNamed: "Configuration")
         session?.disableDialogs = true
         session?.clearTransactions()
+        session?.storefront = "JPN"
+        session?.locale = Locale(identifier: "ja_JP")
 
         let scene = try #require(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
         let size = scene.coordinateSpace.bounds.size
@@ -44,14 +46,18 @@ import UIKit
         }
         let store = ProStore()
         await store.loadProduct()
-        var shots: [(String, AnyView)] = [
+        // iPad: the history opens with a record selected, so the list and its detail fill the screen.
+        let shots: [(String, AnyView)] = device == "ipad" ? [
+            ("history", AnyView(HistoryView(initialSelection: url.persistentModelID).environment(store))),
+            ("create", AnyView(RootView(initialTab: .create))),
+            ("purchase", AnyView(PaywallView().environment(store))),
+        ] : [
             ("history", AnyView(RootView(initialTab: .history))),
             ("result-url", AnyView(result(url))),
             ("result-wifi", AnyView(result(wifi))),
             ("create", AnyView(RootView(initialTab: .create))),
             ("purchase", AnyView(PaywallView().environment(store))),
         ]
-        if device == "ipad" { shots.removeAll { $0.0 == "result-wifi" } }
         for (index, (name, view)) in shots.enumerated() {
             let image = try await render(view.environment(settings).modelContainer(container), size: size, scale: scale, in: scene)
             let data = try #require(image.pngData())
