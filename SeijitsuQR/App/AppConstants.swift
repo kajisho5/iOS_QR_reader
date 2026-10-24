@@ -5,6 +5,6 @@ enum AppConstants {
     /// Non-consumable in-app purchase registered in App Store Connect.
     static let proProductID = "com.seventhwell.seijitsuqr.pro"
     // These literals are fixed, valid URLs, so force-unwrapping cannot fail at runtime.
-    static let privacyPolicyURL = URL(string: "https://example.com/seijitsuqr/privacy")!
-    static let termsOfUseURL = URL(string: "https://example.com/seijitsuqr/terms")!
+    static let privacyPolicyURL = URL(string: "https://seijitsuqr.kajisho5.workers.dev/privacy/")!
+    static let termsOfUseURL = URL(string: "https://seijitsuqr.kajisho5.workers.dev/terms/")!
 }

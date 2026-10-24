@@ -62,9 +62,24 @@ Mac なしで GitHub Actions からビルド・署名・TestFlight 送信を行�
 |---|---|---|
 | `project.yml` | `PRODUCT_BUNDLE_IDENTIFIER` | `com.seventhwell.seijitsuqr` |
 | `SeijitsuQR/App/AppConstants.swift` | `proProductID`（非消耗型 IAP の商品 ID） | `com.seventhwell.seijitsuqr.pro` |
-| `SeijitsuQR/App/AppConstants.swift` | `privacyPolicyURL` | `https://example.com/seijitsuqr/privacy` |
-| `SeijitsuQR/App/AppConstants.swift` | `termsOfUseURL` | `https://example.com/seijitsuqr/terms` |
+| `SeijitsuQR/App/AppConstants.swift` | `privacyPolicyURL` | `https://seijitsuqr.kajisho5.workers.dev/privacy/`（公開済み。`site/`） |
+| `SeijitsuQR/App/AppConstants.swift` | `termsOfUseURL` | `https://seijitsuqr.kajisho5.workers.dev/terms/`（公開済み。`site/`） |
 | `SeijitsuQR/Resources/Assets.xcassets/AppIcon.appiconset` | アプリアイコン（Default / Dark / Tinted） | fresnel で作成済み。元データと作り直し手順は `docs/design/icon/` |
+
+## 公開サイト（プライバシーポリシー・利用規約・サポート）
+
+`site/` にある Next.js の静的サイトを Cloudflare Workers で公開しています。設計とデザインは `docs/site/`。
+
+| ページ | URL | App Store Connect の項目 |
+|---|---|---|
+| トップ | https://seijitsuqr.kajisho5.workers.dev/ | マーケティング URL（任意） |
+| プライバシーポリシー | https://seijitsuqr.kajisho5.workers.dev/privacy/ | プライバシーポリシー URL（必須） |
+| 利用規約 | https://seijitsuqr.kajisho5.workers.dev/terms/ | — |
+| サポート | https://seijitsuqr.kajisho5.workers.dev/support/ | サポート URL（必須） |
+
+- 本文は `site/src/content/`（`privacy.ts` / `terms.ts` / `faq.ts` / `site.ts`）。改定したら `enactedOn` / `updatedOn` を更新する。
+- 問い合わせ先メールアドレスは `site.ts` の `contactEmail`。App Store 公開後は `appStoreURL` を入れると「App Store でダウンロード」に変わる。
+- 確認とデプロイ: `cd site && npm ci && npm run build`（CI でも PR ごとにビルド）→ `npx wrangler deploy`（`CLOUDFLARE_API_TOKEN` が必要）。
 
 ## StoreKit（Pro 買い切り）の設定手順
 

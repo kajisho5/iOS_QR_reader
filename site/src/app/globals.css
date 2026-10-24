@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Design tokens (docs/site/DESIGN.md §7). Dark mode follows the OS setting. */
+:root {
+  --bg: #f7f8f7;
+  --surface: #ffffff;
+  --text: #1c1f1e;
+  --sub: #5b6361;
+  --line: #e3e7e5;
+  --brand: #0f7f68;
+  --brand-soft: #e5f3ef;
+  --footer: #eef1f0;
+  --hero-from: #0f7f68;
+  --hero-to: #0a5f4e;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1211;
+    --surface: #151b19;
+    --text: #ecefee;
+    --sub: #a3acaa;
+    --line: #26302d;
+    --brand: #3cc7a6;
+    --brand-soft: #16302a;
+    --footer: #121816;
+    --hero-from: #0f5a4b;
+    --hero-to: #08372e;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-sub: var(--sub);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-footer: var(--footer);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Noto Sans CJK JP", sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.85;
+  font-feature-settings: "palt" 0;
+  line-break: strict;
+  overflow-wrap: anywhere;
+}
+
+.hero {
+  background: linear-gradient(160deg, var(--hero-from), var(--hero-to));
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}

@@ -1,6 +1,7 @@
 # 誠実QRリーダー 公開サイト 設計書（Step 1）
 
-> ステータス: **確認待ち（2026-10-24）**。§9 の未決事項に回答をもらってから Step 3（実装）に入る。
+> ステータス: **確定・実装済み（2026-10-24）**。§9 は 1〜3 を推奨案で確定（提供者 seventhwell、URL は workers.dev）。問い合わせ先メールアドレスのみ未確定（§10）。
+> 公開中: https://seijitsuqr.kajisho5.workers.dev
 > デザイン: `docs/site/01_mobile.svg`（スマートフォン幅 390pt：トップ・プライバシーポリシー・サポート・ダークモード）と `docs/site/02_desktop.svg`（1280px：トップ・プライバシーポリシー）。生成元は `docs/site/src/pages.js`（`node docs/site/src/pages.js`）。
 
 ## 1. 目的と要件
@@ -194,3 +195,14 @@ type SiteInfo = {
    - B. アカウントにある `sw-ars.com` のサブドメイン（例 `seijitsuqr.sw-ars.com`）
    - C. 別のドメイン
 4. **制定日**: 案「2026 年 11 月 1 日」（公開日に合わせてもよい）
+
+## 10. 実装での決定と設計からの差分
+
+| 項目 | 内容 |
+|---|---|
+| 制定日 | 案の 2026-11-01 ではなく、公開日の 2026-10-24 にした（公開前の日付を制定日として掲げないため） |
+| 目次の現在位置 | デスクトップの目次で、読んでいる節を強調する処理だけクライアント側の JS（`TocHighlighter`、IntersectionObserver）で行う。JS が無効でも目次はリンクとして動き、本文はすべて読める |
+| 問い合わせ先 | `site.ts` の `contactEmail` が空の間は、サポートページにアドレスを出さない。決まりしだい入れてデプロイする |
+| アイコン | `public/app-icon.png`（520px、角丸済み）。ファビコンは `src/app/icon.png`（Next.js が `/icon.png` として出力） |
+| Pro の説明文 | デスクトップで 1 文字だけ改行されないよう「すべての種類の作成」を「全種類の作成」に短縮 |
+| CI | `.github/workflows/site.yml` で、`site/` を変更した PR ごとに型チェックとビルドを行う。デプロイは手動（`npx wrangler deploy`） |
