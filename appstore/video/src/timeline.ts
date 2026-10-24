@@ -9,13 +9,13 @@ export const T = {
   lock: 45, // ② locked: mint, ripples
   grow: 50, // the screen grows out of the code, the corners move out to frame the phone
   result: 90, // ③ かざすだけ
-  noExtras: 180, // ④ 余計なものは、入れていない
-  oneTime: 270, // ⑤ 毎月の支払いは、いらない
-  onDevice: 360, // ⑥ 読んだ中身は、どこにも送らない
-  flood: 404, // ⑦ the screen fills with the icon's green
-  toIcon: 412, // the phone becomes the app icon
-  name: 424, // 誠実QRリーダー
-  dive: 434, // the icon grows past the frame edges and becomes scene ①
+  noExtras: 165, // ④ 余計なものは、入れていない
+  oneTime: 240, // ⑤ 毎月の支払いは、いらない
+  onDevice: 315, // ⑥ 読んだ中身は、どこにも送らない
+  flood: 372, // ⑦ the screen fills with the icon's green
+  toIcon: 380, // the phone becomes the app icon
+  name: 394, // 誠実QRリーダー
+  dive: 436, // the icon grows past the frame edges and becomes scene ①
 };
 
 /** The icon's own fill (docs/design/icon/icon.spec.json), also the video's background. */
