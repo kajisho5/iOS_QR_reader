@@ -36,30 +36,33 @@ def get(path, **query):
         return {}
 
 
-bundle_id = os.environ["BUNDLE_ID"]
-apps = get("/v1/apps", **{"filter[bundleId]": bundle_id}).get("data", [])
-if not apps:
-    raise SystemExit(f"No App Store Connect app for {bundle_id}")
-app = apps[0]
-print(f"App: {app['attributes'].get('name')} ({app['id']})")
+def main():
+    bundle_id = os.environ["BUNDLE_ID"]
+    apps = get("/v1/apps", **{"filter[bundleId]": bundle_id}).get("data", [])
+    if not apps:
+        raise SystemExit(f"No App Store Connect app for {bundle_id}")
+    app = apps[0]
+    print(f"App: {app['attributes'].get('name')} ({app['id']})")
 
-builds = get("/v1/builds", **{"filter[app]": app["id"], "sort": "-uploadedDate", "limit": "5",
-                              "include": "buildBetaDetail,preReleaseVersion"})
-included = {(i["type"], i["id"]): i for i in builds.get("included", [])}
-for b in builds.get("data", []):
-    a = b["attributes"]
-    rel = b.get("relationships", {})
-    detail = included.get(("buildBetaDetails", (rel.get("buildBetaDetail", {}).get("data") or {}).get("id")), {}).get("attributes", {})
-    pre = included.get(("preReleaseVersions", (rel.get("preReleaseVersion", {}).get("data") or {}).get("id")), {}).get("attributes", {})
-    print(f"\nBuild {pre.get('version')} ({a.get('version')}) uploaded {a.get('uploadedDate')}")
-    print(f"  processingState: {a.get('processingState')}  expired: {a.get('expired')}")
-    print(f"  usesNonExemptEncryption: {a.get('usesNonExemptEncryption')}")
-    print(f"  internalBuildState: {detail.get('internalBuildState')}  externalBuildState: {detail.get('externalBuildState')}")
-    groups = get(f"/v1/builds/{b['id']}/betaGroups").get("data", [])
-    print("  beta groups: " + (", ".join(g["attributes"].get("name", "") for g in groups) or "(none)"))
+    builds = get("/v1/builds", **{"filter[app]": app["id"], "sort": "-uploadedDate", "limit": "5",
+                                  "include": "buildBetaDetail,preReleaseVersion"})
+    included = {(i["type"], i["id"]): i for i in builds.get("included", [])}
+    for b in builds.get("data", []):
+        a = b["attributes"]
+        rel = b.get("relationships", {})
+        detail = included.get(("buildBetaDetails", (rel.get("buildBetaDetail", {}).get("data") or {}).get("id")), {}).get("attributes", {})
+        pre = included.get(("preReleaseVersions", (rel.get("preReleaseVersion", {}).get("data") or {}).get("id")), {}).get("attributes", {})
+        print(f"\nBuild {pre.get('version')} ({a.get('version')}) uploaded {a.get('uploadedDate')}")
+        print(f"  processingState: {a.get('processingState')}  expired: {a.get('expired')}")
+        print(f"  usesNonExemptEncryption: {a.get('usesNonExemptEncryption')}")
+        print(f"  internalBuildState: {detail.get('internalBuildState')}  externalBuildState: {detail.get('externalBuildState')}")
 
-print("\nBeta groups of the app:")
-for g in get(f"/v1/apps/{app['id']}/betaGroups").get("data", []):
-    ga = g["attributes"]
-    testers = get(f"/v1/betaGroups/{g['id']}/betaTesters", limit="50").get("data", [])
-    print(f"  {ga.get('name')}: internal={ga.get('isInternalGroup')} allBuilds={ga.get('hasAccessToAllBuilds')} testers={len(testers)}")
+    print("\nBeta groups of the app:")
+    for g in get(f"/v1/apps/{app['id']}/betaGroups").get("data", []):
+        ga = g["attributes"]
+        testers = get(f"/v1/betaGroups/{g['id']}/betaTesters", limit="50").get("data", [])
+        print(f"  {ga.get('name')}: internal={ga.get('isInternalGroup')} allBuilds={ga.get('hasAccessToAllBuilds')} testers={len(testers)}")
+
+
+if __name__ == "__main__":
+    main()
