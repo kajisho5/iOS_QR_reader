@@ -1,6 +1,6 @@
 # App Store 用動画（ヘッダ・検索結果）設計書（Step 1）
 
-> ステータス: **確認待ち（2026-10-24）**。絵コンテは `docs/design/appstore/storyboard-header.svg`（ヘッダ 21:9）と
+> ステータス: **確定・実装済み（2026-10-24）**。実装は `appstore/video/`（`npm run render:header` / `npm run render:search`）。絵コンテは `docs/design/appstore/storyboard-header.svg`（ヘッダ 21:9）と
 > `storyboard-search.svg`（検索結果 3:2）。生成元は `docs/design/appstore/src/storyboard.js`。
 
 ## 1. 目的と仕様

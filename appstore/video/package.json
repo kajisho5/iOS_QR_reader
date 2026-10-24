@@ -1,0 +1,20 @@
+{
+  "name": "seijitsuqr-appstore-video",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "typecheck": "tsc --noEmit",
+    "render:header": "remotion render Header out/header-3840x1646.mp4 --codec h264 --pixel-format yuv420p --crf 16",
+    "render:search": "remotion render Search out/search-3840x2560.mp4 --codec h264 --pixel-format yuv420p --crf 16"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.538"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "6.0.3"
+  }
+}
