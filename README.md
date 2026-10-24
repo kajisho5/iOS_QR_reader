@@ -81,6 +81,19 @@ Mac なしで GitHub Actions からビルド・署名・TestFlight 送信を行�
 - 問い合わせ先メールアドレスは `site.ts` の `contactEmail`。App Store 公開後は `appStoreURL` を入れると「App Store でダウンロード」に変わる。
 - 確認とデプロイ: `cd site && npm ci && npm run build`（CI でも PR ごとにビルド）→ `npx wrangler deploy`（`CLOUDFLARE_API_TOKEN` が必要）。
 
+## App Store の掲載情報（API で管理）
+
+掲載内容は `appstore/listing.json` にまとめ、App Store Connect API で反映します（このブランチに push すると自動で実行。main では Actions から手動実行）。
+
+| ワークフロー | 内容 |
+|---|---|
+| `asc-listing` | `listing.json` を反映：サブタイトル・説明文・キーワード・プロモーション用テキスト・著作権・カテゴリ・年齢制限・配信国（日本のみ）・無料価格・最新ビルドの添付・App 内課金の表示名と審査メモ |
+| `appstore-screenshots` | 6.9 インチ iPhone と 13 インチ iPad で撮影（日本語・日本の表示）。コミットメッセージに `[asc-upload]` を含めるか手動実行したときだけ App Store Connect に送信（App 内課金の審査用スクリーンショットも） |
+| `asc-inspect` | 現在の設定を表示するだけ（変更しない） |
+| `asc-app-urls` | プライバシーポリシー・サポート・マーケティング URL を設定 |
+
+App Store Connect の画面でしかできないこと：審査用の連絡先（氏名・電話番号）の登録、App のプライバシー、初回の App 内課金をバージョンに追加して「審査へ提出」。
+
 ## StoreKit（Pro 買い切り）の設定手順
 
 アプリ内課金は非消耗型（Non-Consumable）1 点だけです。サブスクリプションは使いません。
