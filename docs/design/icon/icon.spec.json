@@ -1,0 +1,16 @@
+{
+  "background": "gradient:#16A386,#0A5F4E",
+  "darkBackground": "gradient:#123F36,#05201A",
+  "groups": [
+    {
+      "name": "Viewfinder",
+      "props": { "translucency": { "enabled": true, "value": 0.2 } },
+      "layers": [{ "file": "src/viewfinder.svg", "name": "Viewfinder", "props": { "glass": true } }]
+    },
+    {
+      "name": "QR",
+      "props": { "translucency": { "enabled": true, "value": 0.35 }, "blur-material": 0.2 },
+      "layers": [{ "file": "src/qr.svg", "name": "QR", "props": { "glass": true, "opacity": 0.95 } }]
+    }
+  ]
+}

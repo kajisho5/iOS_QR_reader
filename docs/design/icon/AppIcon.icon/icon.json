@@ -1,0 +1,69 @@
+{
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "image-name" : "viewfinder.svg",
+          "name" : "Viewfinder"
+        }
+      ],
+      "name" : "Viewfinder",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    },
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "image-name" : "qr.svg",
+          "name" : "QR",
+          "opacity" : 0.95
+        }
+      ],
+      "name" : "QR",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.35
+      },
+      "blur-material" : 0.2
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  },
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "srgb:0.08627,0.63922,0.52549,1.00000",
+          "srgb:0.03922,0.37255,0.30588,1.00000"
+        ]
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "srgb:0.07059,0.24706,0.21176,1.00000",
+          "srgb:0.01961,0.12549,0.10196,1.00000"
+        ]
+      }
+    }
+  ]
+}

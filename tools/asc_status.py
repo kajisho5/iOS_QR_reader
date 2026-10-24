@@ -62,6 +62,10 @@ def main():
         ga = g["attributes"]
         testers = get(f"/v1/betaGroups/{g['id']}/betaTesters", limit="50").get("data", [])
         print(f"  {ga.get('name')}: internal={ga.get('isInternalGroup')} allBuilds={ga.get('hasAccessToAllBuilds')} testers={len(testers)}")
+        for t in testers:
+            ta = t["attributes"]
+            # state: e.g. INVITED / ACCEPTED / INSTALLED (no email printed)
+            print(f"    tester {t['id'][:8]}…: inviteType={ta.get('inviteType')} state={ta.get('state')}")
 
 
 if __name__ == "__main__":

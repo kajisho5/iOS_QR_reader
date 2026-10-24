@@ -80,3 +80,17 @@ for u in admins:
     else:
         added += 1
 print(f"Testers already in group: {len(existing_emails)}, added: {added}")
+
+# Send (or re-send) the TestFlight invitation to testers who have not accepted yet.
+_, current = call("GET", f"/v1/betaGroups/{group['id']}/betaTesters", limit="200")
+for t in current.get("data", []):
+    state = t["attributes"].get("state")
+    if state in ("ACCEPTED", "INSTALLED"):
+        continue
+    status, res = call("POST", "/v1/betaTesterInvitations", {"data": {
+        "type": "betaTesterInvitations",
+        "relationships": {"app": {"data": {"type": "apps", "id": app_id}},
+                          "betaTester": {"data": {"type": "betaTesters", "id": t["id"]}}}}})
+    print(f"Send invitation (state {state}): HTTP {status}")
+    if status >= 300:
+        print(res)

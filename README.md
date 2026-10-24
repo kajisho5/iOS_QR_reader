@@ -64,7 +64,7 @@ Mac なしで GitHub Actions からビルド・署名・TestFlight 送信を行�
 | `SeijitsuQR/App/AppConstants.swift` | `proProductID`（非消耗型 IAP の商品 ID） | `com.seventhwell.seijitsuqr.pro` |
 | `SeijitsuQR/App/AppConstants.swift` | `privacyPolicyURL` | `https://example.com/seijitsuqr/privacy` |
 | `SeijitsuQR/App/AppConstants.swift` | `termsOfUseURL` | `https://example.com/seijitsuqr/terms` |
-| `SeijitsuQR/Resources/Assets.xcassets/AppIcon.appiconset` | アプリアイコン（仮） | `docs/design/src/app_icon.svg` から生成 |
+| `SeijitsuQR/Resources/Assets.xcassets/AppIcon.appiconset` | アプリアイコン（Default / Dark / Tinted） | fresnel で作成済み。元データと作り直し手順は `docs/design/icon/` |
 
 ## StoreKit（Pro 買い切り）の設定手順
 

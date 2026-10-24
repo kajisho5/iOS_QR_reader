@@ -24,18 +24,25 @@ final class CaptureController {
     @ObservationIgnored let engine = CaptureEngine()
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
     @ObservationIgnored private var onDetect: ((DetectedCode) -> Void)?
+    /// Incremented by every stop(). A start that was overtaken by a stop (e.g. the user left the
+    /// scan tab while the camera was still starting) must not report `.running` afterwards:
+    /// the session is stopped by then, and a stale `.running` would make the next start a no-op.
+    @ObservationIgnored private var generation = 0
 
     var session: AVCaptureSession { engine.session }
 
     func start(onDetect: @escaping (DetectedCode) -> Void) async {
         self.onDetect = onDetect
         guard state != .running, state != .starting else { return }
+        let startGeneration = generation
 
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             break
         case .notDetermined:
-            guard await AVCaptureDevice.requestAccess(for: .video) else {
+            let granted = await AVCaptureDevice.requestAccess(for: .video)
+            guard startGeneration == generation else { return }
+            guard granted else {
                 state = .denied
                 return
             }
@@ -55,6 +62,8 @@ final class CaptureController {
         let result = await engine.start { [weak self] code in
             Task { @MainActor in self?.onDetect?(code) }
         }
+        // stop() ran while the session was starting; its stopRunning is queued after this start.
+        guard startGeneration == generation else { return }
         switch result {
         case .running(let reference):
             device = reference.device
@@ -66,6 +75,7 @@ final class CaptureController {
     }
 
     func stop() {
+        generation += 1
         engine.stop()
         isTorchOn = false
         for observer in observers {
