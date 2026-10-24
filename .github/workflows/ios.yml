@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Select Xcode
         run: |
@@ -54,7 +54,7 @@ jobs:
 
       - name: Upload logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: xcodebuild-logs
           path: xcodebuild-*.log
@@ -66,7 +66,7 @@ jobs:
     timeout-minutes: 45
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Show installed Xcode and simulators
         run: |
@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: xcodebuild-latest-logs
           path: xcodebuild-latest-*.log
