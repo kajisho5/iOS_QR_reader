@@ -46,6 +46,10 @@ def main():
             show(f"versionLocalization {loc['attributes'].get('locale')}", attrs({"data": loc}))
             sets = safe(f"/v1/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets").get("data", [])
             show("screenshotSets", [s["attributes"] for s in sets])
+            for screenshot_set in sets:
+                shots = safe(f"/v1/appScreenshotSets/{screenshot_set['id']}/appScreenshots").get("data", [])
+                show(f"screenshots {screenshot_set['attributes']['screenshotDisplayType']}",
+                     [(x["attributes"].get("fileName"), (x["attributes"].get("assetDeliveryState") or {}).get("state")) for x in shots])
     show("priceSchedule", safe(f"/v1/apps/{app['id']}/appPriceSchedule"))
     show("priceSchedule.manualPrices", safe(f"/v1/appPriceSchedules/{app['id']}/manualPrices", include="appPricePoint"))
     show("availability", attrs(safe(f"/v1/apps/{app['id']}/appAvailabilityV2")))
@@ -55,7 +59,8 @@ def main():
         show("IAP.localizations", attrs(safe(f"/v2/inAppPurchases/{iap['id']}/inAppPurchaseLocalizations")))
         show("IAP.manualPrices", safe(f"/v1/inAppPurchasePriceSchedules/{iap['id']}/manualPrices", include="inAppPurchasePricePoint"))
         show("IAP.availability", safe(f"/v2/inAppPurchases/{iap['id']}/inAppPurchaseAvailability"))
-        show("IAP.reviewScreenshot", attrs(safe(f"/v2/inAppPurchases/{iap['id']}/appStoreReviewScreenshot")))
+        review = attrs(safe(f"/v2/inAppPurchases/{iap['id']}/appStoreReviewScreenshot"))
+        show("IAP.reviewScreenshot", review and {"fileName": review.get("fileName"), "state": (review.get("assetDeliveryState") or {}).get("state")})
     show("builds", [{"version": b["attributes"].get("version"), "state": b["attributes"].get("processingState")}
                     for b in safe("/v1/builds", **{"filter[app]": app["id"], "limit": "3", "sort": "-uploadedDate"}).get("data", [])])
 
