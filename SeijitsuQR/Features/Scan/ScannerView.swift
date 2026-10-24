@@ -28,6 +28,11 @@ struct ScannerView: View {
     @State private var contactToAdd: ContactRequest?
 
     private var presentsSheet: Bool { horizontalSizeClass != .regular }
+    /// iPhone Duo outer display (and other vertical-bar contexts): the system lays toolbars out
+    /// vertically on the trailing edge (HIG "Designing for iPhone Duo"), so the scan controls stay
+    /// in the toolbar there instead of the bottom row.
+    @State private var hasVerticalBar = false
+    private var showsBottomControls: Bool { presentsSheet && !hasVerticalBar }
 
     var body: some View {
         NavigationStack {
@@ -39,12 +44,14 @@ struct ScannerView: View {
                 }
             }
             .toolbar {
-                if !presentsSheet { toolbarContent }
+                if !showsBottomControls { toolbarContent }
             }
-            .toolbar(presentsSheet ? .hidden : .automatic, for: .navigationBar)
+            .toolbar(showsBottomControls ? .hidden : .automatic, for: .navigationBar)
+            .toolbarColorScheme(presentsSheet && hasVerticalBar ? .dark : nil, for: .navigationBar)
             .toolbarBackground(.hidden, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
         }
+        .detectsVerticalToolbar($hasVerticalBar)
         .onAppear {
             isVisible = true
             updateCoordinator()
@@ -239,7 +246,7 @@ struct ScannerView: View {
                         NoticeCapsule(text: L10n.scanPrivacyNote, systemImage: "checkmark.shield")
                     }
                 }
-                if presentsSheet {
+                if showsBottomControls {
                     controlBar
                 }
             }
@@ -453,3 +460,33 @@ private struct ScanControlButton: View {
         .accessibilityValue(accessibilityValue ?? "")
     }
 }
+
+private extension View {
+    /// Sets `hasVerticalBar` when the system places toolbars in a vertical bar (iOS 27.1+).
+    @ViewBuilder
+    func detectsVerticalToolbar(_ hasVerticalBar: Binding<Bool>) -> some View {
+        #if compiler(>=6.4)
+        if #available(iOS 27.1, *) {
+            modifier(VerticalToolbarProbe(hasVerticalBar: hasVerticalBar))
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
+    }
+}
+
+#if compiler(>=6.4)
+@available(iOS 27.1, *)
+private struct VerticalToolbarProbe: ViewModifier {
+    @Environment(\.toolbarVerticalEdge) private var edge
+    @Binding var hasVerticalBar: Bool
+
+    func body(content: Content) -> some View {
+        content.onChange(of: edge, initial: true) { _, edge in
+            hasVerticalBar = edge != nil
+        }
+    }
+}
+#endif
