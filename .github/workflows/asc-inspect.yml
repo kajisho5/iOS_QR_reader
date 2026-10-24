@@ -1,0 +1,27 @@
+# Prints the current App Store listing state (tools/asc_inspect.py). Read-only.
+name: asc-inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/new-session-6aeoeq]
+    paths: [tools/asc_inspect.py, .github/workflows/asc-inspect.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - run: pip install --quiet pyjwt cryptography
+      - name: Show App Store listing state
+        working-directory: tools
+        run: python3 asc_inspect.py
+        env:
+          BUNDLE_ID: com.seventhwell.seijitsuqr
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}

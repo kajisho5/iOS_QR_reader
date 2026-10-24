@@ -98,7 +98,7 @@ struct SettingsView: View {
 
     private var proStatus: String {
         if store.isPro { return L10n.settingsProStatusPurchased }
-        if let price = store.product?.displayPrice { return L10n.settingsProStatusFreeWithPrice(price) }
+        if let price = store.displayPrice { return L10n.settingsProStatusFreeWithPrice(price) }
         return L10n.settingsProStatusFree
     }
 

@@ -124,14 +124,14 @@ struct PaywallView: View {
                 .foregroundStyle(AppColor.accentOnSoft)
                 .frame(maxWidth: .infinity, minHeight: 56)
                 .background(Color(.tertiarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        } else if let product = store.product {
+        } else if store.product != nil, let price = store.displayPrice {
             Button {
                 Task { notice = await store.purchase(with: purchase) }
             } label: {
                 if store.isWorking {
                     ProgressView().tint(.white)
                 } else {
-                    Text(L10n.paywallBuy(product.displayPrice))
+                    Text(L10n.paywallBuy(price))
                 }
             }
             .buttonStyle(PrimaryButtonStyle())

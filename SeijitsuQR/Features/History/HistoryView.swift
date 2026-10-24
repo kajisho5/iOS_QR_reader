@@ -17,6 +17,11 @@ struct HistoryView: View {
     @State private var selection: PersistentIdentifier?
     @State private var isConfirmingDeleteAll = false
 
+    /// `initialSelection` opens a record's detail right away (used by the App Store screenshot test).
+    init(initialSelection: PersistentIdentifier? = nil) {
+        _selection = State(initialValue: initialSelection)
+    }
+
     var body: some View {
         NavigationSplitView {
             list

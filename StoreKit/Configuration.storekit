@@ -1,8 +1,6 @@
 {
   "identifier" : "5E1A2B3C",
-  "nonRenewingSubscriptions" : [
-
-  ],
+  "nonRenewingSubscriptions" : [],
   "products" : [
     {
       "displayPrice" : "800",
@@ -21,11 +19,10 @@
     }
   ],
   "settings" : {
-
+    "_locale" : "ja",
+    "_storefront" : "JPN"
   },
-  "subscriptionGroups" : [
-
-  ],
+  "subscriptionGroups" : [],
   "version" : {
     "major" : 2,
     "minor" : 0
