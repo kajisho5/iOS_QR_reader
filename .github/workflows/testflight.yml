@@ -1,0 +1,24 @@
+# Builds, signs and uploads to TestFlight through kajisho5/runway (no Mac needed).
+# Secrets (ASC_*, APPLE_TEAM_ID, MATCH_GIT_TOKEN) are distributed by runway's sync-secrets.
+name: testflight
+
+on:
+  workflow_dispatch:      # Actions tab / GitHub app on iPhone
+  push:
+    tags: ["v*"]          # e.g. v1.0.0
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    uses: kajisho5/runway/.github/workflows/apple-testflight.yml@main
+    with:
+      bundle_id: com.seventhwell.seijitsuqr
+      project: SeijitsuQR.xcodeproj
+      scheme: SeijitsuQR
+      # The Xcode project is generated from project.yml.
+      pre_build: brew install xcodegen && xcodegen generate
+      runner: macos-26
+      xcode: "26"
+    secrets: inherit

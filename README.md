@@ -44,6 +44,18 @@ UI の文字列はすべて `SeijitsuQR/Resources/Localizable.xcstrings` で管�
 python3 tools/gen_l10n.py
 ```
 
+## TestFlight への配布（kajisho5/runway）
+
+Mac なしで GitHub Actions からビルド・署名・TestFlight 送信を行います（`.github/workflows/testflight.yml` → `kajisho5/runway` の共通ワークフロー）。Secrets は runway の `repos.txt` に登録済みで、sync-secrets が配ります。
+
+初回だけ必要な手作業（runway の README「新しいアプリを足すとき」の 1〜3）:
+
+1. developer.apple.com → Identifiers で Bundle ID `com.seventhwell.seijitsuqr`（Explicit）を登録し、Capabilities で **Hotspot Configuration** をオンにする（Wi-Fi 接続機能で使用）
+2. App Store Connect で新規 App を作成（Bundle ID は 1 のもの）。App 内課金 `com.seventhwell.seijitsuqr.pro`（非消耗型）も作成
+3. TestFlight → 内部テストにグループを作り、自分を追加して自動配信をオン
+
+実行: Actions → testflight → Run workflow（iPhone の GitHub アプリからも可）。`v1.0.0` のようなタグの push でも実行されます。ビルド番号は TestFlight 上の最大値 +1 が自動で付きます。
+
 ## 設定済みの識別子と差し替えが必要な定数
 
 | 場所 | 項目 | 現在の値 |
