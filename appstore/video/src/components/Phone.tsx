@@ -1,72 +1,132 @@
 import { Img, staticFile } from "remotion";
+import { BRAND, mix } from "../timeline";
 
-/** iPhone frame whose screen slides between screenshots like app navigation. */
+export type Slide = { from: string; to: string; progress: number; direction: 1 | -1 };
+
+/**
+ * One device shape that grows out of the code, behaves as an iPhone, and turns into the app icon tile:
+ * body (cx, cy, w, h, radius) with a black bezel of `bezel` px around the screen.
+ * `island` (0…1) widens the Dynamic Island into a pill with a lock. `flood` (0…1) fills the screen with the icon's green
+ * from the island outwards; `globalFill` (0…1) moves that gradient from the tile's own height to the whole frame's, so the
+ * tile matches the background once it covers the frame.
+ */
 export const Phone = ({
-  height,
-  screens,
-  from,
-  to,
-  progress,
-  direction,
+  cx,
+  cy,
+  w,
+  h,
+  radius,
+  bezel,
+  slide,
+  island,
+  flood,
+  globalFill,
+  frameH,
+  shadow,
 }: {
-  height: number;
-  screens: string[];
-  /** Index of the screen shown before the current transition. */
-  from: number;
-  /** Index of the screen shown after it. */
-  to: number;
-  /** 0…1 progress of the slide from `from` to `to`. */
-  progress: number;
-  /** 1 = new screen comes from the right (push), -1 = from the left (back). */
-  direction: 1 | -1;
+  cx: number;
+  cy: number;
+  w: number;
+  h: number;
+  radius: number;
+  bezel: number;
+  slide: Slide;
+  island: number;
+  flood: number;
+  globalFill: number;
+  frameH: number;
+  shadow: number;
 }) => {
-  const width = height * 0.4795;
-  const bezel = height * 0.018;
-  const radius = height * 0.085;
-  const screenW = width - bezel * 2;
-  const shot = (index: number, x: number) => (
-    <Img
-      src={staticFile(screens[index])}
-      style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", transform: `translateX(${x}px)` }}
-    />
+  const innerW = w - bezel * 2;
+  const innerH = h - bezel * 2;
+  const innerTop = cy - h / 2 + bezel;
+  const innerR = Math.max(0, radius - bezel);
+  const shot = (src: string, x: number) => (
+    <Img src={staticFile(src)} style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", objectFit: "cover", translate: `${x}px 0` }} />
   );
+  const p = slide.progress;
+  // The island in a real iPhone screen: 11 pt below the top, 126 x 37 pt of a 402 x 874 pt screen.
+  const deviceH = Math.max(h, 1);
+  const islandW = mix(0.31, 0.6, island) * w;
+  const islandH = mix(0.042, 0.06, island) * deviceH;
+  const islandTop = 0.014 * deviceH;
+  const floodR = flood * Math.hypot(innerW, innerH) * 1.05;
+  const gradientH = mix(innerH, frameH, globalFill);
+  const gradientY = mix(0, -innerTop, globalFill);
   return (
     <div
       style={{
-        width,
-        height,
+        position: "absolute",
+        left: cx - w / 2,
+        top: cy - h / 2,
+        width: w,
+        height: h,
         borderRadius: radius,
-        background: "#111614",
-        padding: bezel,
-        boxSizing: "border-box",
-        boxShadow: `0 ${height * 0.04}px ${height * 0.08}px rgba(0, 20, 15, 0.35), inset 0 0 0 ${height * 0.003}px rgba(255,255,255,0.12)`,
-        position: "relative",
+        background: "#101513",
+        boxShadow: shadow > 0 ? `0 ${h * 0.03}px ${h * 0.07}px rgba(0, 30, 22, ${0.35 * shadow})` : "none",
       }}
     >
-      <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: radius - bezel, overflow: "hidden", background: "#F2F2F7" }}>
-        {from === to || progress <= 0 ? (
-          shot(from, 0)
+      <div style={{ position: "absolute", left: bezel, top: bezel, width: innerW, height: innerH, borderRadius: innerR, overflow: "hidden", background: "#F2F2F7" }}>
+        {p <= 0 ? (
+          shot(slide.from, 0)
+        ) : p >= 1 ? (
+          shot(slide.to, 0)
         ) : (
           <>
-            {shot(from, -direction * screenW * 0.3 * progress)}
-            <div style={{ position: "absolute", inset: 0, transform: `translateX(${direction * screenW * (1 - progress)}px)`, boxShadow: "-24px 0 48px rgba(0,0,0,0.12)" }}>
-              {shot(to, 0)}
+            {shot(slide.from, -slide.direction * innerW * 0.3 * p)}
+            <div style={{ position: "absolute", inset: 0, translate: `${slide.direction * innerW * (1 - p)}px 0`, boxShadow: "-24px 0 48px rgba(0,0,0,0.14)" }}>
+              {shot(slide.to, 0)}
             </div>
           </>
         )}
+        {island >= 0 && h > 0 && bezel > 0.5 ? (
+          <div
+            style={{
+              position: "absolute",
+              left: innerW / 2 - islandW / 2,
+              top: islandTop,
+              width: islandW,
+              height: islandH,
+              borderRadius: islandH / 2,
+              background: "#000",
+              opacity: Math.min(1, bezel / 6),
+            }}
+          >
+            {island > 0.05 ? <Lock size={islandH * 0.62} x={islandW / 2} y={islandH / 2} scale={island} /> : null}
+          </div>
+        ) : null}
+        {flood > 0 ? (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `linear-gradient(${BRAND.top}, ${BRAND.bottom})`,
+              backgroundSize: `100% ${gradientH}px`,
+              backgroundPosition: `0 ${gradientY}px`,
+              backgroundRepeat: "no-repeat",
+              backgroundColor: BRAND.bottom,
+              clipPath: `circle(${floodR}px at 50% ${islandTop + islandH / 2}px)`,
+            }}
+          />
+        ) : null}
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: bezel * 1.8,
-          left: "50%",
-          width: width * 0.32,
-          height: height * 0.026,
-          marginLeft: -width * 0.16,
-          borderRadius: height * 0.013,
-          background: "#000",
-        }}
-      />
     </div>
   );
 };
+
+const Lock = ({ size, x, y, scale }: { size: number; x: number; y: number; scale: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={BRAND.mint}
+    strokeWidth={2.4}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ position: "absolute", left: x - size / 2, top: y - size / 2, scale: String(scale) }}
+  >
+    <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+    <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+  </svg>
+);

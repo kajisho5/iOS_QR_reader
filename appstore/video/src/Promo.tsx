@@ -1,224 +1,175 @@
 import { AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { Caption } from "./components/Caption";
-import { LockIcon } from "./components/LockIcon";
-import { Phone } from "./components/Phone";
-import { IconMark } from "./components/IconMark";
-import { BRAND, FONT, T, mix, pop, ramp, rise } from "./timeline";
+import { GlassCorners, iconBox } from "./components/GlassCorners";
+import { MaskedLines } from "./components/MaskedLines";
+import { Phone, type Slide } from "./components/Phone";
+import { BRAND, T, camera, ease, linear, mix, mixBox, shape, type Box } from "./timeline";
 
 type Layout = "header" | "search";
 
-const SCREENS = ["shot-02-result-url.jpg", "shot-01-history.jpg", "shot-04-create.jpg"];
-
-/** Positions as fractions of the frame; sizes in px (both compositions are 3840 wide). */
+/** Sizes in px (both compositions are 3840 wide). docs/design/appstore/VIDEO.md §5, storyboard-v2-*.svg. */
 const LAYOUTS = {
   header: {
-    qrCenter: { x: 0.5, y: 0.5, size: 400 },
-    qrSide: { x: 0.36, y: 0.42, size: 230 },
-    scanCaption: { x: 0.36, y: 0.75, size: 150 },
-    phoneIn: { x: 0.64, y: 0.56, h: 1500 },
-    phoneMain: { x: 0.67, y: 0.56, h: 1500 },
-    text: { x: 0.4, y: 0.6, size: 140, sub: 76, oneLine: false },
-    lock: { x: 0.4, y: 0.27, size: 230 },
-    end: { iconY: 0.3, icon: 400, nameY: 0.66, name: 170, subY: 0.79, sub: 96 },
+    mark: { x: 1920, y: 823, px: 1204, gap: 150 }, // scene ①: the icon's mark, the code 400px wide
+    phone: { x0: 2590, x1: 2500, y0: 850, y1: 850, h: 1400 }, // drifts from (x0, y0) to (x1, y1) during ③–⑥
+    frame: { mx: 70, my: 60, px: 840 }, // the corners around the phone
+    text: { x: 1440, top: 560, size: 150, sub: 80 },
+    icon: { x: 1920, y: 610, size: 440 },
+    name: { top: 940, size: 170, sub: 90 },
   },
   search: {
-    qrCenter: { x: 0.5, y: 0.45, size: 520 },
-    qrSide: { x: 0.3, y: 0.5, size: 400 },
-    scanCaption: { x: 0.3, y: 0.79, size: 170 },
-    phoneIn: { x: 0.64, y: 0.58, h: 2100 },
-    phoneMain: { x: 0.5, y: 0.64, h: 1800 },
-    text: { x: 0.5, y: 0.155, size: 150, sub: 84, oneLine: true },
-    lock: null,
-    end: { iconY: 0.32, icon: 520, nameY: 0.62, name: 210, subY: 0.72, sub: 110 },
+    mark: { x: 1920, y: 1203, px: 1566, gap: 190 },
+    phone: { x0: 1920, x1: 1920, y0: 1950, y1: 1900, h: 2000 }, // the bottom runs off the frame
+    frame: { mx: 80, my: 70, px: 1100 },
+    text: { x: 1920, top: 100, size: 180, sub: 92 },
+    icon: { x: 1920, y: 1000, size: 600 },
+    name: { top: 1440, size: 220, sub: 110 },
   },
 } as const;
 
-const MESSAGES = [
-  { start: T.noExtras, end: T.oneTime, lines: ["余計なものは、", "入れていない。"], sub: "広告も、アクセス解析も。" },
-  { start: T.oneTime, end: T.onDevice, lines: ["毎月の支払いは、", "いらない。"], sub: "必要なら、一度買うだけ。" },
-  { start: T.onDevice, end: T.endCard, lines: ["読んだ中身は、", "どこにも送らない。"], sub: "ぜんぶ、この iPhone の中で。" },
+const COPY = [
+  { at: T.result, out: T.noExtras, lines: ["かざすだけ。"] },
+  { at: T.noExtras, out: T.oneTime, lines: ["余計なものは、", "入れていない。"], sub: "広告も、アクセス解析も。" },
+  { at: T.oneTime, out: T.onDevice, lines: ["毎月の支払いは、", "いらない。"], sub: "必要なら、一度買うだけ。" },
+  { at: T.onDevice, out: T.flood + 2, lines: ["読んだ中身は、", "どこにも送らない。"], sub: "ぜんぶ、この iPhone の中で。" },
 ];
 
+const SCREENS = { url: "shot-02-result-url.jpg", history: "shot-01-history.jpg", create: "shot-04-create.jpg" };
+const PHONE_RATIO = 0.4795; // body width / height
+const ICON_RADIUS = 0.2237; // squircle corner radius / size
+
+/** Everything that moves, on a transparent background (the background is drawn outside the motion blur; see Root). */
 export const Promo = ({ layout }: { layout: Layout }) => {
   const f = useCurrentFrame();
-  const { width: W, height: H, durationInFrames } = useVideoConfig();
+  const { width: W, height: H } = useVideoConfig();
   const L = LAYOUTS[layout];
-  const looping = f >= T.loop;
+  const M = L.mark;
 
-  // Background: brand gradient with a slow glow that returns to its start every loop.
-  const angle = (f / durationInFrames) * Math.PI * 2;
-  const glowX = 50 + Math.sin(angle) * 8;
-  const glowY = 50 + Math.cos(angle) * 6;
+  // ---- Where each stage puts the shape ----
+  const drift = linear(f, T.result - 6, T.flood);
+  const phoneX = mix(L.phone.x0, L.phone.x1, drift);
+  const phoneY = mix(L.phone.y0, L.phone.y1, drift);
+  const phoneH = L.phone.h;
+  const phoneW = phoneH * PHONE_RATIO;
+  const phoneBox: Box = { x: phoneX - phoneW / 2, y: phoneY - phoneH / 2, w: phoneW, h: phoneH };
+  const frameBox: Box = { x: phoneBox.x - L.frame.mx, y: phoneBox.y - L.frame.my, w: phoneBox.w + L.frame.mx * 2, h: phoneBox.h + L.frame.my * 2 };
 
-  // ①② The reticle closes in on the code, locks (turns mint, ripples), then the code moves aside (③).
-  const toSide = looping ? 0 : rise(f, T.result + 4, 26);
-  const qrX = mix(L.qrCenter.x, L.qrSide.x, toSide) * W;
-  const qrY = mix(L.qrCenter.y, L.qrSide.y, toSide) * H;
-  const qrSize = mix(L.qrCenter.size, L.qrSide.size, toSide);
-  const approach = looping ? 0 : rise(f, 4, 36);
-  const locked = looping ? 0 : pop(f, T.lock, 18);
-  const markSize = qrSize * (1024 / 340);
-  const bracketScale = mix(1.45, 1.04, approach) * mix(1, 0.94, locked);
-  const reticleSize = markSize * (600 / 1024) * bracketScale; // span of the corners, for the ripples
-  const mintness = looping ? 0 : ramp(f, T.lock, T.lock + 6);
-  const reticleColor = mintness > 0.5 ? BRAND.mint : "#fff";
-  const qrOpacity = looping ? ramp(f, T.loop, durationInFrames) : 1 - ramp(f, T.noExtras - 10, T.noExtras);
-  const ripples = [T.lock + 2, T.lock + 10].map((start) => {
-    const p = ramp(f, start, start + 26);
-    return { scale: mix(0.9, 2.1, p), opacity: p > 0 && p < 1 ? (1 - p) * 0.55 : 0 };
+  // ① close in, ② lock (squeeze), then grow into the phone, ⑦ shrink into the icon, then dive into scene ①.
+  const close = shape(f, T.close, 26);
+  const squeeze = shape(f, T.lock, 8) - shape(f, T.lock + 6, 12);
+  const grow = camera(f, T.grow, 34);
+  const toIcon = shape(f, T.toIcon, 18);
+  const dive = ease(f, T.dive, 450, "inOut");
+
+  let corners: { box: Box; px: number };
+  const markBox = iconBox(M.x, M.y, M.px, mix(M.gap, 0, close) - squeeze * 20);
+  const iconAt = iconBox(L.icon.x, L.icon.y, L.icon.size);
+  if (f < T.toIcon) {
+    corners = { box: mixBox(markBox, frameBox, grow), px: mix(M.px, L.frame.px, grow) };
+  } else if (f < T.dive) {
+    corners = { box: mixBox(frameBox, iconAt, toIcon), px: mix(L.frame.px, L.icon.size, toIcon) };
+  } else {
+    corners = { box: mixBox(iconAt, iconBox(M.x, M.y, M.px, M.gap), dive), px: mix(L.icon.size, M.px, dive) };
+  }
+  const mint = ease(f, T.lock, T.lock + 4) * (1 - ease(f, T.lock + 22, T.lock + 40));
+
+  // The code: shown in ①②, covered by the growing screen, back inside the icon at ⑦ and growing with the dive.
+  const qrPop = shape(f, T.toIcon + 8, 16);
+  const qr =
+    f < T.grow + 12 ? { x: M.x, y: M.y, px: M.px, scale: 1 }
+    : f >= T.toIcon + 8 ? { x: mix(L.icon.x, M.x, dive), y: mix(L.icon.y, M.y, dive), px: mix(L.icon.size, M.px, dive), scale: qrPop }
+    : null;
+
+  // The device: grows out of the code (②→③), is the iPhone (③–⑥), becomes the icon tile (⑦), covers the frame (dive).
+  type Shape = { x: number; y: number; w: number; h: number; r: number };
+  const seed: Shape = { x: M.x, y: M.y, w: M.px * 0.3, h: M.px * 0.3, r: M.px * 0.03 };
+  const phone = { x: phoneX, y: phoneY, w: phoneW, h: phoneH, r: phoneH * 0.085 };
+  const tile = { x: L.icon.x, y: L.icon.y, w: L.icon.size, h: L.icon.size, r: L.icon.size * ICON_RADIUS };
+  const cover = Math.max(W, H) * 1.9;
+  const full = { x: M.x, y: M.y, w: cover, h: cover, r: cover * ICON_RADIUS };
+  const lerp = (a: Shape, b: Shape, t: number): Shape => ({ x: mix(a.x, b.x, t), y: mix(a.y, b.y, t), w: mix(a.w, b.w, t), h: mix(a.h, b.h, t), r: mix(a.r, b.r, t) });
+  const body = f < T.toIcon ? lerp(seed, phone, grow) : f < T.dive ? lerp(phone, tile, toIcon) : lerp(tile, full, dive);
+  const bezelFull = phoneH * 0.016;
+  const bezel = f < T.toIcon ? bezelFull * grow : bezelFull * (1 - toIcon);
+  const showDevice = f >= T.grow;
+
+  // Screens: the URL result, then push to history (④), create (⑤), back to history (⑥).
+  const push = (at: number) => ease(f, at + 1, at + 15, "inOut");
+  const slide: Slide =
+    f < T.noExtras ? { from: SCREENS.url, to: SCREENS.url, progress: 0, direction: 1 }
+    : f < T.oneTime ? { from: SCREENS.url, to: SCREENS.history, progress: push(T.noExtras), direction: 1 }
+    : f < T.onDevice ? { from: SCREENS.history, to: SCREENS.create, progress: push(T.oneTime), direction: 1 }
+    : { from: SCREENS.create, to: SCREENS.history, progress: push(T.onDevice), direction: -1 };
+  const island = shape(f, T.onDevice + 8, 16);
+  const flood = ease(f, T.flood, T.toIcon + 6);
+
+  // ② ripples from the centre.
+  const ripples = [T.lock + 1, T.lock + 8].map((start) => {
+    const p = linear(f, start, start + 28);
+    return { r: mix(0.36, 0.95, ease(f, start, start + 28)) * M.px, opacity: p > 0 && p < 1 ? (1 - p) * 0.55 : 0 };
   });
-
-  // ③ Caption under the code.
-  const scanCaptionIn = rise(f, T.result + 16, 22);
-  const scanCaptionOut = ramp(f, T.noExtras - 8, T.noExtras);
-
-  // Phone: rises at ③, moves to its main spot at ④, screens slide between scenes, leaves at ⑦.
-  const enter = pop(f, T.result, 30);
-  const settle = rise(f, T.noExtras, 24);
-  const leave = ramp(f, T.endCard, T.endCard + 12);
-  const phoneH = mix(L.phoneIn.h, L.phoneMain.h, settle);
-  const phoneX = mix(L.phoneIn.x, L.phoneMain.x, settle) * W;
-  const phoneY = mix(L.phoneIn.y, L.phoneMain.y, settle) * H + (1 - enter) * H * 0.95 + Math.sin((f / 120) * Math.PI * 2) * 8 + leave * 60;
-  const phoneOpacity = f < T.result ? 0 : ramp(f, T.result, T.result + 6) * (1 - leave);
-  const slide = (start: number) => rise(f, start + 2, 18);
-  const nav =
-    f < T.noExtras ? { from: 0, to: 0, progress: 0, direction: 1 as const }
-    : f < T.oneTime ? { from: 0, to: 1, progress: slide(T.noExtras), direction: 1 as const }
-    : f < T.onDevice ? { from: 1, to: 2, progress: slide(T.oneTime), direction: 1 as const }
-    : { from: 2, to: 1, progress: slide(T.onDevice), direction: -1 as const };
-
-  // ④⑤⑥ Messages fade up in, and drift up as they leave.
-  const message = (start: number, end: number) => ({
-    opacity: ramp(f, start + 6, start + 18) * (1 - ramp(f, end - 8, end)),
-    shift: (1 - rise(f, start + 6, 22)) * 40 - ramp(f, end - 8, end) * 24,
-  });
-
-  // ⑦ End card.
-  const endIn = rise(f, T.endCard + 6, 22);
-  const endOut = ramp(f, T.loop, T.loop + 10);
-  const iconPop = pop(f, T.endCard + 4, 26);
 
   return (
-    <AbsoluteFill
-      style={{
-        background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(60,199,166,0.38) 0%, rgba(60,199,166,0) 55%), linear-gradient(135deg, ${BRAND.from}, ${BRAND.to})`,
-        fontFamily: FONT,
-        overflow: "hidden",
-      }}
-    >
-      {/* Code and viewfinder */}
-      <div style={{ position: "absolute", left: qrX, top: qrY, opacity: qrOpacity }}>
-        {ripples.map((r, i) => (
+    <AbsoluteFill style={{ overflow: "hidden" }}>
+      {ripples.map((r, i) =>
+        r.opacity > 0 ? (
           <div
             key={i}
             style={{
               position: "absolute",
-              width: reticleSize,
-              height: reticleSize,
-              left: -reticleSize / 2,
-              top: -reticleSize / 2,
+              left: M.x - r.r,
+              top: M.y - r.r,
+              width: r.r * 2,
+              height: r.r * 2,
               borderRadius: "50%",
-              border: `${reticleSize * 0.012}px solid ${BRAND.mint}`,
-              transform: `scale(${r.scale})`,
+              border: `${M.px * 0.012}px solid ${BRAND.mint}`,
               opacity: r.opacity,
             }}
           />
-        ))}
-        <div style={{ position: "absolute", left: -markSize / 2, top: -markSize / 2 }}>
-          <IconMark size={markSize} bracketScale={bracketScale} bracketColor={reticleColor} />
-        </div>
-      </div>
+        ) : null,
+      )}
 
-      <Caption
-        x={L.scanCaption.x * W}
-        y={L.scanCaption.y * H}
-        lines={["かざすだけ。"]}
-        size={L.scanCaption.size}
-        subSize={0}
-        opacity={scanCaptionIn * (1 - scanCaptionOut)}
-        shift={(1 - scanCaptionIn) * 40 - scanCaptionOut * 24}
-      />
+      {qr && f < T.grow + 12 ? <Qr {...qr} /> : null}
 
-      {MESSAGES.map((m) => {
-        const { opacity, shift } = message(m.start, m.end);
-        if (opacity <= 0) return null;
-        return (
-          <Caption
-            key={m.start}
-            x={L.text.x * W}
-            y={L.text.y * H}
-            lines={L.text.oneLine ? [m.lines.join("")] : [...m.lines]}
-            sub={m.sub}
-            size={L.text.size}
-            subSize={L.text.sub}
-            opacity={opacity}
-            shift={shift}
-          />
-        );
-      })}
-
-      {L.lock ? (() => {
-        const { opacity } = message(T.onDevice, T.endCard);
-        const s = L.lock.size * mix(0.6, 1, pop(f, T.onDevice + 4, 24));
-        return opacity > 0 ? (
-          <div style={{ position: "absolute", left: L.lock.x * W - s / 2, top: L.lock.y * H - s / 2, opacity }}>
-            <LockIcon size={s} />
-          </div>
-        ) : null;
-      })() : null}
-
-      {phoneOpacity > 0 ? (
-        <div
-          style={{
-            position: "absolute",
-            left: phoneX,
-            top: phoneY,
-            transform: `translate(-50%, -50%) scale(${1 - leave * 0.06})`,
-            opacity: phoneOpacity,
-          }}
-        >
-          <Phone height={phoneH} screens={SCREENS} {...nav} />
-        </div>
+      {showDevice ? (
+        <Phone
+          cx={body.x}
+          cy={body.y}
+          w={body.w}
+          h={body.h}
+          radius={body.r}
+          bezel={bezel}
+          slide={slide}
+          island={f >= T.onDevice ? island : 0}
+          flood={flood}
+          globalFill={dive}
+          frameH={H}
+          shadow={1 - dive}
+        />
       ) : null}
 
-      {endIn > 0 && endOut < 1 ? (
-        <div style={{ position: "absolute", inset: 0, opacity: endIn * (1 - endOut) }}>
-          <div
-            style={{
-              position: "absolute",
-              width: L.end.icon * 2.2,
-              height: L.end.icon * 2.2,
-              left: W / 2 - L.end.icon * 1.1,
-              top: L.end.iconY * H - L.end.icon * 1.1,
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 62%)",
-              opacity: iconPop,
-            }}
-          />
-          <Img
-            src={staticFile("icon-glass.png")}
-            style={{
-              position: "absolute",
-              width: L.end.icon,
-              height: L.end.icon,
-              left: W / 2 - L.end.icon / 2,
-              top: L.end.iconY * H - L.end.icon / 2,
-              transform: `scale(${mix(0.7, 1, iconPop)})`,
-              filter: "drop-shadow(0 30px 60px rgba(0,30,20,0.4))",
-            }}
-          />
-          <Caption
-            x={W / 2}
-            y={mix(L.end.nameY, L.end.subY, 0.5) * H}
-            lines={["誠実QRリーダー"]}
-            sub="ちゃんと、読むだけ。"
-            size={L.end.name}
-            subSize={L.end.sub}
-            opacity={1}
-            shift={(1 - endIn) * 40}
-          />
-        </div>
-      ) : null}
+      {qr && f >= T.toIcon + 8 ? <Qr {...qr} /> : null}
+
+      <GlassCorners box={corners.box} px={corners.px} mint={mint} />
+
+      {COPY.map((c) => (
+        <MaskedLines
+          key={c.at}
+          x={L.text.x}
+          top={L.text.top + (c.lines.length === 1 ? L.text.size * 0.6 : 0)}
+          lines={c.lines}
+          sub={c.sub}
+          size={L.text.size}
+          subSize={L.text.sub}
+          inAt={c.at + 2}
+          outAt={c.out}
+        />
+      ))}
+      <MaskedLines x={W / 2} top={L.name.top} lines={["誠実QRリーダー"]} sub="ちゃんと、読むだけ。" size={L.name.size} subSize={L.name.sub} inAt={T.name} outAt={T.dive - 2} sink />
     </AbsoluteFill>
   );
 };
+
+/** The icon's glass QR (a full 1024 icon grid image, `px` wide, centred). */
+const Qr = ({ x, y, px, scale }: { x: number; y: number; px: number; scale: number }) => (
+  <Img src={staticFile("mark-qr.png")} style={{ position: "absolute", left: x - px / 2, top: y - px / 2, width: px, height: px, scale: String(scale) }} />
+);

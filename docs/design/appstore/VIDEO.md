@@ -1,8 +1,8 @@
 # App Store 用動画（ヘッダ・検索結果）設計書（Step 1）
 
-> **v2（ワンカット版）を提案中（2026-10-24）→ §5。** 下の §1〜§4 は実装済みの v1。
+> **現行は v2（ワンカット版・実装済み 2026-10-24）→ §5。** §1 の仕様・§2 の文言は v2 でもそのまま。§2 の動き・§3 の構成は v1 のもの（v1 は git の履歴に残る）。
 >
-> v1 ステータス: **確定・実装済み（2026-10-24）**。実装は `appstore/video/`（`npm run render:header` / `npm run render:search`）。絵コンテは `docs/design/appstore/storyboard-header.svg`（ヘッダ 21:9）と
+> v1 ステータス: 確定・実装済み（2026-10-24）、v2 に置き換え。実装は `appstore/video/`（`npm run render:header` / `npm run render:search`）。絵コンテは `docs/design/appstore/storyboard-header.svg`（ヘッダ 21:9）と
 > `storyboard-search.svg`（検索結果 3:2）。生成元は `docs/design/appstore/src/storyboard.js`。
 
 ## 1. 目的と仕様
@@ -72,7 +72,7 @@ appstore/video/
 1. この構成（7 シーン・15 秒）と文言でよいか
 2. ヘッダと検索結果を同じ流れにしてよいか（検索結果は別の内容にもできる）
 
-## 5. v2（ワンカット版）設計（Step 1・確認待ち）
+## 5. v2（ワンカット版）設計（確定・実装済み）
 
 絵コンテ: `storyboard-v2-header.svg`（ヘッダ）・`storyboard-v2-search.svg`（検索結果）。生成元は `src/storyboard-v2.js`。
 
@@ -111,20 +111,16 @@ appstore/video/
 
 - **カメラ**: ②→③で一度引き、③〜⑥はごくゆっくり一方向に流す（合計 100px 程度・戻らない）、⑦の終わりはアイコンの拡大で「中に入る」。急な寄り引きの往復はしない
 - **フェードは使わない**（透明度で出し入れしない）。出入りはすべてマスク・送り・変形・画面外への移動で行う
-- **モーションブラー**: `<HtmlInCanvasMotionBlur>`（サンプル 6・シャッター角 180°）。書き出しに使う Chromium で HTML-in-canvas が使えるかを最初に 1 コマで確かめ、使えなければブラーなしで進める（その場合は報告する）
+- **モーションブラー**: `<CameraMotionBlur>`（サンプル 10・シャッター角 180°）。`<HtmlInCanvasMotionBlur>` はこの環境の書き出し用 Chromium で「No cached paint record」になり使えなかった。動かない背景はブラーの外に置く（10 枚の平均でグラデーションに縞が出るため）
 - **文字の大きさ**: ヘッダ 見出し 150px・補足 80px（v1 と同等、iPhone と並べるため）。検索結果 見出し 180px（2 行）・補足 92px（v1 の 150px 1 行から大きくする）。iPhone は下が画面の外に少し切れる
 - 言うこと・文言・使う画面は v1 と同じ（Apple のガイドラインの扱いも §1 のまま）
 
-### 5.4 実装の変更点（承認後）
+### 5.4 実装
 
 | ファイル | 変更 |
 |---|---|
 | `src/timeline.ts` | 拍（0.5 秒）とばねの定数（形 0.72/0.35 秒、カメラ 1.0/0.6 秒）を追加 |
-| `src/Promo.tsx` | 全面的に書き直し: カメラ（1 つの入れ物に拡大・位置）、四隅、画面の広がり、文字のマスク、アイコンへの変形 |
-| `src/components/` | `GlassCorners`（四隅の配置）、`MaskedLines`（せり上がる文字）、`Phone`（アイランドの伸び縮みを追加）。`IconMark` は使わなくなる |
-| `src/Root.tsx` | `<HtmlInCanvasMotionBlur>` で包む。`@remotion/motion-blur` を追加 |
-| `public/` | `mark-corner-*.png`・`mark-qr.png` を追加（済み） |
-
-確認したいこと:
-1. この流れ（四隅がずっと残り、最後はアイコンの中に戻る）でよいか
-2. 背景をアイコンの地の色（少し明るい緑）に変えてよいか
+| `src/Promo.tsx` | 全面的に書き直し: 各段階での形の位置・大きさ（カメラの引き・流れはこの位置の補間で表す）、四隅、波紋、文字の出入り |
+| `src/components/` | `GlassCorners`（四隅の配置）、`MaskedLines`（せり上がる文字）、`Phone`（画面の広がり・アイランドの鍵・緑で満たす・アイコンへの変形）。`IconMark`・`Caption`・`LockIcon` は削除 |
+| `src/Root.tsx` | 背景の上に `<CameraMotionBlur>` で包んだ `Promo`。`@remotion/motion-blur` を追加 |
+| `public/` | `mark-corner-*.png`（白とミント）・`mark-qr.png` を追加 |
