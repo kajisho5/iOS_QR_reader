@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches: [claude/new-session-6aeoeq]
-    paths: [SeijitsuQRTests/ScreenSnapshotTests.swift, tools/asc_screenshots.py, .github/workflows/appstore-screenshots.yml]
+    paths: [SeijitsuQR/**, SeijitsuQRTests/ScreenSnapshotTests.swift, StoreKit/**, project.yml, tools/asc_screenshots.py, .github/workflows/appstore-screenshots.yml]
 
 permissions:
   contents: read

@@ -46,13 +46,15 @@ def main():
             show(f"versionLocalization {loc['attributes'].get('locale')}", attrs({"data": loc}))
             sets = safe(f"/v1/appStoreVersionLocalizations/{loc['id']}/appScreenshotSets").get("data", [])
             show("screenshotSets", [s["attributes"] for s in sets])
-    show("priceSchedule", safe(f"/v1/apps/{app['id']}/appPriceSchedule", include="manualPrices,baseTerritory"))
+    show("priceSchedule", safe(f"/v1/apps/{app['id']}/appPriceSchedule"))
+    show("priceSchedule.manualPrices", safe(f"/v1/appPriceSchedules/{app['id']}/manualPrices", include="appPricePoint"))
     show("availability", attrs(safe(f"/v1/apps/{app['id']}/appAvailabilityV2")))
     iaps = safe(f"/v1/apps/{app['id']}/inAppPurchasesV2").get("data", [])
     for iap in iaps:
         show(f"IAP {iap['attributes'].get('productId')}", attrs({"data": iap}))
         show("IAP.localizations", attrs(safe(f"/v2/inAppPurchases/{iap['id']}/inAppPurchaseLocalizations")))
-        show("IAP.priceSchedule", safe(f"/v2/inAppPurchases/{iap['id']}/iapPriceSchedule", include="manualPrices"))
+        show("IAP.manualPrices", safe(f"/v1/inAppPurchasePriceSchedules/{iap['id']}/manualPrices", include="inAppPurchasePricePoint"))
+        show("IAP.availability", safe(f"/v2/inAppPurchases/{iap['id']}/inAppPurchaseAvailability"))
         show("IAP.reviewScreenshot", attrs(safe(f"/v2/inAppPurchases/{iap['id']}/appStoreReviewScreenshot")))
     show("builds", [{"version": b["attributes"].get("version"), "state": b["attributes"].get("processingState")}
                     for b in safe("/v1/builds", **{"filter[app]": app["id"], "limit": "3", "sort": "-uploadedDate"}).get("data", [])])
