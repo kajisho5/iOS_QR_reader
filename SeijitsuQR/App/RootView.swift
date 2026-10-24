@@ -11,7 +11,7 @@ struct RootView: View {
             HistoryView()
                 .tabItem { Label(L10n.tabHistory, systemImage: "clock") }
                 .tag(AppTab.history)
-            PlaceholderView(systemImage: "plus.square")
+            CreateView()
                 .tabItem { Label(L10n.tabCreate, systemImage: "plus.square") }
                 .tag(AppTab.create)
             PlaceholderView(systemImage: "gearshape")

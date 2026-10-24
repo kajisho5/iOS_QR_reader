@@ -28,7 +28,7 @@ enum ParsedPayload: Equatable, Sendable {
 }
 
 struct WiFiNetwork: Equatable, Sendable {
-    enum Security: Equatable, Sendable {
+    enum Security: Hashable, Sendable {
         /// WPA, WPA2 and WPA3 personal all join with a passphrase.
         case wpa
         case wep

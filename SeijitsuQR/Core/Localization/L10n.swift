@@ -120,6 +120,39 @@ enum L10n {
     static var kindUrl: String { String(localized: "kind.url") }
     static var kindWifi: String { String(localized: "kind.wifi") }
     static var metaSeparator: String { String(localized: "meta.separator") }
+    static func paywallBuy(_ p1: String) -> String {
+        String(format: String(localized: "paywall.buy"), p1)
+    }
+    static var paywallFailedMessage: String { String(localized: "paywall.failed.message") }
+    static var paywallFailedTitle: String { String(localized: "paywall.failed.title") }
+    static var paywallFeatureCreateDetail: String { String(localized: "paywall.feature.create.detail") }
+    static var paywallFeatureCreateTitle: String { String(localized: "paywall.feature.create.title") }
+    static var paywallFeatureCsvDetail: String { String(localized: "paywall.feature.csv.detail") }
+    static var paywallFeatureCsvTitle: String { String(localized: "paywall.feature.csv.title") }
+    static var paywallFeatureHistoryDetail: String { String(localized: "paywall.feature.history.detail") }
+    static var paywallFeatureHistoryTitle: String { String(localized: "paywall.feature.history.title") }
+    static var paywallFeaturesHeader: String { String(localized: "paywall.features.header") }
+    static var paywallFooterCharge: String { String(localized: "paywall.footer.charge") }
+    static var paywallFooterRestore: String { String(localized: "paywall.footer.restore") }
+    static var paywallHonestNoAds: String { String(localized: "paywall.honest.noAds") }
+    static var paywallHonestOneTime: String { String(localized: "paywall.honest.oneTime") }
+    static var paywallLoadFailed: String { String(localized: "paywall.loadFailed") }
+    static var paywallNothingToRestoreMessage: String { String(localized: "paywall.nothingToRestore.message") }
+    static var paywallNothingToRestoreTitle: String { String(localized: "paywall.nothingToRestore.title") }
+    static var paywallPendingMessage: String { String(localized: "paywall.pending.message") }
+    static var paywallPendingTitle: String { String(localized: "paywall.pending.title") }
+    static var paywallPrivacy: String { String(localized: "paywall.privacy") }
+    static var paywallPurchased: String { String(localized: "paywall.purchased") }
+    static var paywallRestore: String { String(localized: "paywall.restore") }
+    static var paywallRestoreFailedMessage: String { String(localized: "paywall.restoreFailed.message") }
+    static var paywallRestoreFailedTitle: String { String(localized: "paywall.restoreFailed.title") }
+    static var paywallRestoredMessage: String { String(localized: "paywall.restored.message") }
+    static var paywallRestoredTitle: String { String(localized: "paywall.restored.title") }
+    static var paywallRetry: String { String(localized: "paywall.retry") }
+    static var paywallScanFree: String { String(localized: "paywall.scanFree") }
+    static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
+    static var paywallTerms: String { String(localized: "paywall.terms") }
+    static var paywallTitle: String { String(localized: "paywall.title") }
     static var placeholderMessage: String { String(localized: "placeholder.message") }
     static var placeholderTitle: String { String(localized: "placeholder.title") }
     static var resultContactAdd: String { String(localized: "result.contact.add") }
@@ -208,6 +241,28 @@ enum L10n {
     static var scanTrayTitle: String { String(localized: "scan.tray.title") }
     static var scanUnavailableMessage: String { String(localized: "scan.unavailable.message") }
     static var scanUnavailableTitle: String { String(localized: "scan.unavailable.title") }
+    static var settingsAboutHeader: String { String(localized: "settings.about.header") }
+    static var settingsAboutPrivacy: String { String(localized: "settings.about.privacy") }
+    static var settingsAboutPromise: String { String(localized: "settings.about.promise") }
+    static var settingsAboutTerms: String { String(localized: "settings.about.terms") }
+    static var settingsAboutVersion: String { String(localized: "settings.about.version") }
+    static var settingsHistoryAutosave: String { String(localized: "settings.history.autosave") }
+    static var settingsHistoryFooter: String { String(localized: "settings.history.footer") }
+    static var settingsHistoryHeader: String { String(localized: "settings.history.header") }
+    static var settingsProBuy: String { String(localized: "settings.pro.buy") }
+    static var settingsProFooter: String { String(localized: "settings.pro.footer") }
+    static var settingsProHeader: String { String(localized: "settings.pro.header") }
+    static var settingsProName: String { String(localized: "settings.pro.name") }
+    static var settingsProRestore: String { String(localized: "settings.pro.restore") }
+    static var settingsProStatusFree: String { String(localized: "settings.pro.status.free") }
+    static func settingsProStatusFreeWithPrice(_ p1: String) -> String {
+        String(format: String(localized: "settings.pro.status.freeWithPrice"), p1)
+    }
+    static var settingsProStatusPurchased: String { String(localized: "settings.pro.status.purchased") }
+    static var settingsScanHaptics: String { String(localized: "settings.scan.haptics") }
+    static var settingsScanHeader: String { String(localized: "settings.scan.header") }
+    static var settingsScanSound: String { String(localized: "settings.scan.sound") }
+    static var settingsTitle: String { String(localized: "settings.title") }
     static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
     static var sourcePhoto: String { String(localized: "source.photo") }
@@ -339,6 +394,37 @@ enum L10n {
         "kind.url",
         "kind.wifi",
         "meta.separator",
+        "paywall.buy",
+        "paywall.failed.message",
+        "paywall.failed.title",
+        "paywall.feature.create.detail",
+        "paywall.feature.create.title",
+        "paywall.feature.csv.detail",
+        "paywall.feature.csv.title",
+        "paywall.feature.history.detail",
+        "paywall.feature.history.title",
+        "paywall.features.header",
+        "paywall.footer.charge",
+        "paywall.footer.restore",
+        "paywall.honest.noAds",
+        "paywall.honest.oneTime",
+        "paywall.loadFailed",
+        "paywall.nothingToRestore.message",
+        "paywall.nothingToRestore.title",
+        "paywall.pending.message",
+        "paywall.pending.title",
+        "paywall.privacy",
+        "paywall.purchased",
+        "paywall.restore",
+        "paywall.restoreFailed.message",
+        "paywall.restoreFailed.title",
+        "paywall.restored.message",
+        "paywall.restored.title",
+        "paywall.retry",
+        "paywall.scanFree",
+        "paywall.subtitle",
+        "paywall.terms",
+        "paywall.title",
         "placeholder.message",
         "placeholder.title",
         "result.contact.add",
@@ -425,6 +511,26 @@ enum L10n {
         "scan.tray.title",
         "scan.unavailable.message",
         "scan.unavailable.title",
+        "settings.about.header",
+        "settings.about.privacy",
+        "settings.about.promise",
+        "settings.about.terms",
+        "settings.about.version",
+        "settings.history.autosave",
+        "settings.history.footer",
+        "settings.history.header",
+        "settings.pro.buy",
+        "settings.pro.footer",
+        "settings.pro.header",
+        "settings.pro.name",
+        "settings.pro.restore",
+        "settings.pro.status.free",
+        "settings.pro.status.freeWithPrice",
+        "settings.pro.status.purchased",
+        "settings.scan.haptics",
+        "settings.scan.header",
+        "settings.scan.sound",
+        "settings.title",
         "source.camera",
         "source.created",
         "source.photo",
