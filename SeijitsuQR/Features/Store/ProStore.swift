@@ -35,6 +35,12 @@ final class ProStore {
     private(set) var product: Product?
     private(set) var productState: ProductState = .loading
     private(set) var isWorking = false
+    /// Price text used instead of the App Store's in the App Store screenshot test, where the simulator reads the
+    /// sandbox storefront of its own region rather than Japan's. Never set by the app itself.
+    var screenshotDisplayPrice: String?
+
+    /// The price as the App Store gives it (or the screenshot override).
+    var displayPrice: String? { screenshotDisplayPrice ?? product?.displayPrice }
 
     @ObservationIgnored private var updatesTask: Task<Void, Never>?
 

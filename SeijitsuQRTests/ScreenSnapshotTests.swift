@@ -46,6 +46,7 @@ import UIKit
         }
         let store = ProStore()
         await store.loadProduct()
+        store.screenshotDisplayPrice = "¥800"  // the Japanese App Store price (the simulator's sandbox is the US store)
         // iPad: the history opens with a record selected, so the list and its detail fill the screen.
         let shots: [(String, AnyView)] = device == "ipad" ? [
             ("history", AnyView(HistoryView(initialSelection: url.persistentModelID).environment(store))),
@@ -67,7 +68,7 @@ import UIKit
                 try data.write(to: URL(fileURLWithPath: directory).appendingPathComponent("iap-review.png"))
             }
         }
-        try "device: \(device) size: \(size) scale: \(scale) price: \(store.product?.displayPrice ?? "none")"
+        try "device: \(device) size: \(size) scale: \(scale) sandbox price: \(store.product?.displayPrice ?? "none")"
             .write(toFile: directory + "/diagnostics-appstore-\(device).txt", atomically: true, encoding: .utf8)
     }
 
