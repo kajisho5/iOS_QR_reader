@@ -267,7 +267,7 @@ enum ParsedPayload {
 | 操作の位置 | 一覧に作用する操作（CSV・選択）は一覧ペインの上に置き、詳細に作用する操作は後縁の縦バーへ（HIG「操作は対象コンテンツの近くに」） |
 | 折り目（部分的に折りたたみ） | 標準のスプリットビューは列幅を折り目基準で左右対称に自動調整。カメラ｜結果の分割は `ArrangementView` が折り目を避けて配置。独自ビューで重要要素が折り目にかかる場合のみ `ReservedRegion` で回避 |
 | カメラ | 外側カメラ領域は常に予約領域。開閉・回転で表示ディスプレイとカメラの向きが変わるため、スキャンは背面カメラを向きで選択し、プレビューの回転を追従させる（[Choosing a camera by the direction it faces](https://developer.apple.com/documentation/AVKit/choosing-a-camera-by-the-direction-it-faces)） |
-| 画面寸法 | Apple は pt 値を公開していない。モックアップは公開ピクセル値（外側 1398×2034、内側 1878×2670）を @3x 換算した**推定値**（外側 466×678pt、内側 890×626pt）。実装は寸法に依存しない |
+| 画面寸法 | iPhone Duo シミュレータ（Xcode 27.1）での**実測値**：外側 466×678pt（compact／regular）、内側 951×669pt（regular／regular）、どちらも @3x・安全領域は右 84pt・下 34pt（2026-10 計測。kajisho5/flight-deck `references/iphone-duo.md`）。当初の推定値（内側 890×626pt）から修正。実装は寸法に依存しない |
 
 ### 12.4 実装上の制約（事実）
 - `ArrangementView`、`ReservedRegion`、`toolbarVerticalBehavior(_:)`、`toolbarVerticalEdge` は **iOS / iPadOS 27.1 以降**（Apple Developer Documentation の platform 情報）。最低OSは iOS 17 のまま、`if #available(iOS 27.1, *)` で分岐し、未対応OSでは `HStack` による分割で代替する。

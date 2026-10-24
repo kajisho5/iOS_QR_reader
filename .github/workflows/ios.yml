@@ -133,3 +133,93 @@ jobs:
         with:
           name: xcodebuild-latest-logs
           path: xcodebuild-latest-*.log
+
+  # Captures the main screens on both iPhone Duo displays (folded = outer, unfolded = inner).
+  # Preview runner, so it reports without blocking the PR, like latest-xcode.
+  iphone-duo:
+    name: Screen snapshots (iPhone Duo simulator)
+    runs-on: xcode-27
+    timeout-minutes: 45
+    continue-on-error: true
+    env:
+      TEST_RUNNER_SNAPSHOT_DIR: ${{ github.workspace }}/snapshots-duo
+      TEST_RUNNER_SNAPSHOT_PROFILE: duo
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Show Xcode
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-version
+
+      - name: Find the iPhone Duo simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          for runtime in sorted((r for r in devices if "iOS" in r), reverse=True):
+              for d in devices[runtime]:
+                  if d["name"] == "iPhone Duo" and d.get("isAvailable"):
+                      print(d["udid"]); sys.exit(0)
+          sys.exit("iPhone Duo simulator not found")
+          ')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      # The simulator boots folded: capture the outer display first.
+      - name: Build and capture (folded, outer display)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-duo-outer.log
+          cat snapshots-duo/diagnostics-duo-*.txt
+          test -f snapshots-duo/screen-duo-outer-history.png || { echo "::error::outer display was not captured"; exit 1; }
+
+      # Xcode has no supported command to unfold the simulator. duo-hinge (tosbaha/duo-fold-control, MIT)
+      # sends the hinge event over the simulator's HID service. CI only, pinned to a reviewed commit, never shipped.
+      - name: Unfold the simulator (duo-hinge)
+        run: |
+          git init -q "$RUNNER_TEMP/duo-fold-control"
+          git -C "$RUNNER_TEMP/duo-fold-control" fetch -q --depth 1 https://github.com/tosbaha/duo-fold-control 6207cc897648959c3c2213ac3a2dcf38f6f9eb41
+          git -C "$RUNNER_TEMP/duo-fold-control" checkout -q FETCH_HEAD
+          clang -fobjc-arc -framework Foundation -o "$RUNNER_TEMP/duo-hinge" "$RUNNER_TEMP/duo-fold-control/tools/duo-hinge.m"
+          xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b
+          DEVELOPER_DIR="$(xcode-select -p)" "$RUNNER_TEMP/duo-hinge" -d "${{ steps.sim.outputs.udid }}" flat
+          sleep 5
+
+      - name: Capture (unfolded, inner display)
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            -only-testing:SeijitsuQRTests/ScreenSnapshotTests \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-duo-inner.log
+          cat snapshots-duo/diagnostics-duo-*.txt
+          ls snapshots-duo
+          test -f snapshots-duo/screen-duo-inner-history.png || { echo "::error::inner display was not captured (simulator still folded?)"; exit 1; }
+
+      - name: Upload snapshots and logs
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: snapshots-duo
+          path: |
+            snapshots-duo
+            xcodebuild-duo-*.log
+          if-no-files-found: ignore
