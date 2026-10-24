@@ -1,0 +1,58 @@
+name: iOS
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.6.app
+          xcodebuild -version
+
+      - name: Check generated localization code
+        run: python3 tools/gen_l10n.py --check
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Test on iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-iphone.log
+
+      - name: Build for iPad simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M4),OS=26.5' \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-ipad.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: xcodebuild-*.log

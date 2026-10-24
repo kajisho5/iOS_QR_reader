@@ -1,0 +1,61 @@
+{
+  "sourceLanguage": "ja",
+  "strings": {
+    "CFBundleDisplayName": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "誠実QRリーダー"
+          }
+        }
+      }
+    },
+    "CFBundleName": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "誠実QRリーダー"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRコードとバーコードを読み取るためにカメラを使用します。読み取った内容が外部に送信されることはありません"
+          }
+        }
+      }
+    },
+    "NSContactsUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った連絡先を連絡先アプリに追加するために使用します"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryAddUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作成したQRコードの画像を写真ライブラリに保存するために使用します"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

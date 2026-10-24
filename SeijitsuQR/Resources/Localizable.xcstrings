@@ -1,0 +1,1348 @@
+{
+  "sourceLanguage": "ja",
+  "strings": {
+    "common.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャンセル"
+          }
+        }
+      }
+    },
+    "common.close": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
+        }
+      }
+    },
+    "common.copied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーしました"
+          }
+        }
+      }
+    },
+    "common.copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピー"
+          }
+        }
+      }
+    },
+    "common.no": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いいえ"
+          }
+        }
+      }
+    },
+    "common.off": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ"
+          }
+        }
+      }
+    },
+    "common.on": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オン"
+          }
+        }
+      }
+    },
+    "common.openSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定を開く"
+          }
+        }
+      }
+    },
+    "common.share": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共有"
+          }
+        }
+      }
+    },
+    "common.yes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "はい"
+          }
+        }
+      }
+    },
+    "kind.contact": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連絡先"
+          }
+        }
+      }
+    },
+    "kind.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メール"
+          }
+        }
+      }
+    },
+    "kind.event": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カレンダーイベント"
+          }
+        }
+      }
+    },
+    "kind.geo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地図座標"
+          }
+        }
+      }
+    },
+    "kind.phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話"
+          }
+        }
+      }
+    },
+    "kind.sms": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMS"
+          }
+        }
+      }
+    },
+    "kind.text": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "テキスト"
+          }
+        }
+      }
+    },
+    "kind.url": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL"
+          }
+        }
+      }
+    },
+    "kind.wifi": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi-Fi"
+          }
+        }
+      }
+    },
+    "meta.separator": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " ・ "
+          }
+        }
+      }
+    },
+    "placeholder.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この画面は次の実装ステップで追加します。"
+          }
+        }
+      }
+    },
+    "placeholder.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "準備中"
+          }
+        }
+      }
+    },
+    "result.contact.add": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連絡先に追加"
+          }
+        }
+      }
+    },
+    "result.contact.address": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "住所"
+          }
+        }
+      }
+    },
+    "result.contact.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メール"
+          }
+        }
+      }
+    },
+    "result.contact.name": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前"
+          }
+        }
+      }
+    },
+    "result.contact.organization": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "勤務先"
+          }
+        }
+      }
+    },
+    "result.contact.phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話"
+          }
+        }
+      }
+    },
+    "result.contact.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "役職"
+          }
+        }
+      }
+    },
+    "result.contact.url": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web"
+          }
+        }
+      }
+    },
+    "result.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内容"
+          }
+        }
+      }
+    },
+    "result.domain": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドメイン"
+          }
+        }
+      }
+    },
+    "result.email.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文"
+          }
+        }
+      }
+    },
+    "result.email.compose": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メールを作成"
+          }
+        }
+      }
+    },
+    "result.email.subject": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "件名"
+          }
+        }
+      }
+    },
+    "result.email.to": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宛先"
+          }
+        }
+      }
+    },
+    "result.favorite": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入り"
+          }
+        }
+      }
+    },
+    "result.favorite.add": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りに追加"
+          }
+        }
+      }
+    },
+    "result.favorite.remove": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りから外す"
+          }
+        }
+      }
+    },
+    "result.geo.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "場所"
+          }
+        }
+      }
+    },
+    "result.geo.latitude": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "緯度"
+          }
+        }
+      }
+    },
+    "result.geo.longitude": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "経度"
+          }
+        }
+      }
+    },
+    "result.geo.openMaps": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "マップで開く"
+          }
+        }
+      }
+    },
+    "result.linkFull": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リンク先（全文・省略なし）"
+          }
+        }
+      }
+    },
+    "result.notSaved": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴の自動保存はオフです"
+          }
+        }
+      }
+    },
+    "result.openFailed.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末では、このリンクを開けるアプリが見つかりませんでした。"
+          }
+        }
+      }
+    },
+    "result.openFailed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開けませんでした"
+          }
+        }
+      }
+    },
+    "result.openInBrowser": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウザで開く"
+          }
+        }
+      }
+    },
+    "result.openNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「ブラウザで開く」を押すまで通信は発生しません。"
+          }
+        }
+      }
+    },
+    "result.phone.call": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話をかける"
+          }
+        }
+      }
+    },
+    "result.phone.number": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話番号"
+          }
+        }
+      }
+    },
+    "result.saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴に保存しました"
+          }
+        }
+      }
+    },
+    "result.scheme": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "方式"
+          }
+        }
+      }
+    },
+    "result.scheme.http": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http（暗号化なし）"
+          }
+        }
+      }
+    },
+    "result.scheme.https": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https（暗号化）"
+          }
+        }
+      }
+    },
+    "result.sms.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文"
+          }
+        }
+      }
+    },
+    "result.sms.compose": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMSを作成"
+          }
+        }
+      }
+    },
+    "result.sms.number": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宛先"
+          }
+        }
+      }
+    },
+    "result.wifi.connect": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このWi-Fiに接続"
+          }
+        }
+      }
+    },
+    "result.wifi.connectNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接続時にiOSの確認ダイアログが表示されます。"
+          }
+        }
+      }
+    },
+    "result.wifi.connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接続しました"
+          }
+        }
+      }
+    },
+    "result.wifi.copyPassword": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードをコピー"
+          }
+        }
+      }
+    },
+    "result.wifi.failed.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ネットワーク名とパスワードを確認して、もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "result.wifi.failed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接続できませんでした"
+          }
+        }
+      }
+    },
+    "result.wifi.hidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ステルス（非公開）"
+          }
+        }
+      }
+    },
+    "result.wifi.password": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワード"
+          }
+        }
+      }
+    },
+    "result.wifi.password.hide": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードを隠す"
+          }
+        }
+      }
+    },
+    "result.wifi.password.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし"
+          }
+        }
+      }
+    },
+    "result.wifi.password.show": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードを表示"
+          }
+        }
+      }
+    },
+    "result.wifi.security": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "セキュリティ"
+          }
+        }
+      }
+    },
+    "result.wifi.security.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし（暗号化なし）"
+          }
+        }
+      }
+    },
+    "result.wifi.security.wep": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WEP"
+          }
+        }
+      }
+    },
+    "result.wifi.security.wpa": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WPA/WPA2/WPA3"
+          }
+        }
+      }
+    },
+    "result.wifi.ssid": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ネットワーク名"
+          }
+        }
+      }
+    },
+    "scan.continuous": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連続スキャン"
+          }
+        }
+      }
+    },
+    "scan.continuous.on": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "連続スキャン ON"
+          }
+        }
+      }
+    },
+    "scan.denied.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRコードとバーコードを読み取るには、設定でカメラの使用を許可してください。"
+          }
+        }
+      }
+    },
+    "scan.denied.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラへのアクセスが許可されていません"
+          }
+        }
+      }
+    },
+    "scan.detected.announcement": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取りました。種類：%@"
+          }
+        }
+      }
+    },
+    "scan.detected.toast": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取りました（重複は記録しません）"
+          }
+        }
+      }
+    },
+    "scan.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを枠内に合わせてください"
+          }
+        }
+      }
+    },
+    "scan.imageLoadFailed.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の画像を選んでお試しください。"
+          }
+        }
+      }
+    },
+    "scan.imageLoadFailed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像を読み込めませんでした"
+          }
+        }
+      }
+    },
+    "scan.multipleCodes.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示するコードを選んでください。"
+          }
+        }
+      }
+    },
+    "scan.multipleCodes.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "複数のコードが見つかりました"
+          }
+        }
+      }
+    },
+    "scan.multitasking.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全画面表示に戻すと、スキャンを再開します。画像からの読み取りはこのまま使えます。"
+          }
+        }
+      }
+    },
+    "scan.multitasking.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "他のアプリと同時に表示中はカメラを使えません"
+          }
+        }
+      }
+    },
+    "scan.noCode.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の画像を選ぶか、コードが大きくはっきり写った画像でお試しください。"
+          }
+        }
+      }
+    },
+    "scan.noCode.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "別の画像を選ぶ"
+          }
+        }
+      }
+    },
+    "scan.noCode.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードが見つかりませんでした"
+          }
+        }
+      }
+    },
+    "scan.pane.empty.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを枠内に合わせると、ここに結果が表示されます。"
+          }
+        }
+      }
+    },
+    "scan.pane.empty.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ読み取っていません"
+          }
+        }
+      }
+    },
+    "scan.pane.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取り結果"
+          }
+        }
+      }
+    },
+    "scan.photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写真から読み取る"
+          }
+        }
+      }
+    },
+    "scan.preview": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラのプレビュー"
+          }
+        }
+      }
+    },
+    "scan.privacyFootnote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った内容が外部に送信されることはありません。"
+          }
+        }
+      }
+    },
+    "scan.privacyNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取り内容は端末内だけで処理します"
+          }
+        }
+      }
+    },
+    "scan.restricted.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スクリーンタイムなどの設定でカメラが制限されているため、この端末では読み取れません。画像からの読み取りは使えます。"
+          }
+        }
+      }
+    },
+    "scan.restricted.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラの使用が制限されています"
+          }
+        }
+      }
+    },
+    "scan.supported": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRコード・バーコード 11種類に対応"
+          }
+        }
+      }
+    },
+    "scan.torch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ライト"
+          }
+        }
+      }
+    },
+    "scan.tray.end": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終了"
+          }
+        }
+      }
+    },
+    "scan.tray.new": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新規"
+          }
+        }
+      }
+    },
+    "scan.tray.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今回の読み取り"
+          }
+        }
+      }
+    },
+    "scan.unavailable.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末ではカメラを使用できません。画像からの読み取りは使えます。"
+          }
+        }
+      }
+    },
+    "scan.unavailable.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カメラを利用できません"
+          }
+        }
+      }
+    },
+    "source.created": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作成"
+          }
+        }
+      }
+    },
+    "symbology.aztec": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aztec"
+          }
+        }
+      }
+    },
+    "symbology.code128": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code 128"
+          }
+        }
+      }
+    },
+    "symbology.code39": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code 39"
+          }
+        }
+      }
+    },
+    "symbology.code93": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code 93"
+          }
+        }
+      }
+    },
+    "symbology.dataMatrix": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data Matrix"
+          }
+        }
+      }
+    },
+    "symbology.ean13": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EAN-13"
+          }
+        }
+      }
+    },
+    "symbology.ean8": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EAN-8"
+          }
+        }
+      }
+    },
+    "symbology.itf14": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITF-14"
+          }
+        }
+      }
+    },
+    "symbology.pdf417": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF417"
+          }
+        }
+      }
+    },
+    "symbology.qr": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRコード"
+          }
+        }
+      }
+    },
+    "symbology.upce": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UPC-E"
+          }
+        }
+      }
+    },
+    "tab.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "作成"
+          }
+        }
+      }
+    },
+    "tab.history": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴"
+          }
+        }
+      }
+    },
+    "tab.scan": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スキャン"
+          }
+        }
+      }
+    },
+    "tab.settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
