@@ -35,11 +35,19 @@ final class CaptureController {
     /// scan tab while the camera was still starting) must not report `.running` afterwards:
     /// the session is stopped by then, and a stale `.running` would make the next start a no-op.
     @ObservationIgnored private var generation = 0
+    /// Codes are passed on only while this is true; it turns off as soon as the scan screen is left,
+    /// even while the camera is still kept running for a moment (see `stop(after:)`).
+    @ObservationIgnored private var isDetecting = false
+    @ObservationIgnored private var pendingStop: Task<Void, Never>?
 
     var session: AVCaptureSession { engine.session }
 
     func start(onDetect: @escaping (DetectedCode) -> Void) async {
         self.onDetect = onDetect
+        // Coming back within the grace period of stop(after:): the session is still running.
+        pendingStop?.cancel()
+        pendingStop = nil
+        isDetecting = true
         guard state != .running, state != .starting else { return }
         let startGeneration = generation
 
@@ -67,7 +75,10 @@ final class CaptureController {
         state = .starting
         observeInterruptions()
         let result = await engine.start { [weak self] code in
-            Task { @MainActor in self?.onDetect?(code) }
+            Task { @MainActor in
+                guard let self, self.isDetecting else { return }
+                self.onDetect?(code)
+            }
         }
         // stop() ran while the session was starting; its stopRunning is queued after this start.
         guard startGeneration == generation else { return }
@@ -86,7 +97,24 @@ final class CaptureController {
         }
     }
 
+    /// Leaving the scan screen: stops reading codes and turns the torch off at once, but keeps the
+    /// session running for `delay`, so switching tabs back and forth does not restart the camera
+    /// (starting a capture session takes a noticeable moment, longer with multi-camera devices).
+    func stop(after delay: Duration) {
+        isDetecting = false
+        if isTorchOn { Task { await setTorch(false) } }
+        pendingStop?.cancel()
+        pendingStop = Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard !Task.isCancelled else { return }
+            self?.stop()
+        }
+    }
+
     func stop() {
+        pendingStop?.cancel()
+        pendingStop = nil
+        isDetecting = false
         generation += 1
         engine.stop()
         isTorchOn = false
@@ -121,7 +149,11 @@ final class CaptureController {
     }
 
     func toggleTorch() async {
-        isTorchOn = await engine.setTorch(!isTorchOn)
+        await setTorch(!isTorchOn)
+    }
+
+    private func setTorch(_ isOn: Bool) async {
+        isTorchOn = await engine.setTorch(isOn)
     }
 
     private func observeSubjectArea(of camera: AVCaptureDevice) {
