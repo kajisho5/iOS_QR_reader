@@ -56,3 +56,72 @@ jobs:
         with:
           name: xcodebuild-logs
           path: xcodebuild-*.log
+
+  # Newest Xcode/iOS available on GitHub-hosted runners. The `xcode-27` image is still a preview
+  # (capacity-limited), so a failure or queueing here is reported but does not block the PR.
+  latest-xcode:
+    runs-on: xcode-27
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show installed Xcode and simulators
+        run: |
+          ls -d /Applications/Xcode*.app
+          xcodebuild -version
+          xcrun simctl list runtimes
+
+      - name: Pick the newest iPhone and iPad simulators
+        run: |
+          xcrun simctl list devices available -j > devices.json
+          python3 - <<'PY' >> "$GITHUB_ENV"
+          import json, re
+          devices = json.load(open("devices.json"))["devices"]
+          def version(runtime):
+              match = re.search(r"iOS-(\d+)-(\d+)", runtime)
+              return tuple(map(int, match.groups())) if match else None
+          runtimes = sorted((v, r) for r in devices if (v := version(r)))
+          def newest(prefix):
+              for v, runtime in reversed(runtimes):
+                  names = [d["name"] for d in devices[runtime] if d["name"].startswith(prefix) and "Duo" not in d["name"]]
+                  if names:
+                      return f"platform=iOS Simulator,name={names[-1]},OS={v[0]}.{v[1]}"
+              raise SystemExit(f"No {prefix} simulator found")
+          print(f"IPHONE_DESTINATION={newest('iPhone')}")
+          print(f"IPAD_DESTINATION={newest('iPad')}")
+          PY
+          cat "$GITHUB_ENV"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Test on iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPHONE_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-iphone.log
+
+      - name: Build for iPad simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project SeijitsuQR.xcodeproj \
+            -scheme SeijitsuQR \
+            -destination "$IPAD_DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee xcodebuild-latest-ipad.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-latest-logs
+          path: xcodebuild-latest-*.log

@@ -29,6 +29,13 @@ xcodebuild test -project SeijitsuQR.xcodeproj -scheme SeijitsuQR \
 
 GitHub Actions（`.github/workflows/ios.yml`）でプルリクエストごとに、iPhone シミュレータでのビルド＋テストと iPad シミュレータでのビルドを実行します。
 
+| ジョブ | ランナー | Xcode / シミュレータ | 位置づけ |
+|---|---|---|---|
+| `build-and-test` | `macos-26`（正式版） | Xcode 26.6 / iOS 26.5 | 必須。失敗したらマージしない |
+| `latest-xcode` | `xcode-27`（GitHub のプレビュー版イメージ） | イメージの既定 Xcode 27 系 / 入っている最新の iOS ランタイムの iPhone・iPad | 参考。プレビュー版のため失敗・待ち時間があっても PR は止めない |
+
+GitHub の正式版ランナー（`macos-26`）にはまだ Xcode 27 が入っていないため、最新環境の確認はプレビュー版のランナーで行っています。
+
 ## 文字列の追加・変更
 
 UI の文字列はすべて `SeijitsuQR/Resources/Localizable.xcstrings` で管理し、コードからは生成された `L10n` を通して参照します。カタログを編集したら次を実行してください（CI で差分がないことを検査します）。
