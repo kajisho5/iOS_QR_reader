@@ -153,8 +153,6 @@ enum L10n {
     static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
     static var paywallTerms: String { String(localized: "paywall.terms") }
     static var paywallTitle: String { String(localized: "paywall.title") }
-    static var placeholderMessage: String { String(localized: "placeholder.message") }
-    static var placeholderTitle: String { String(localized: "placeholder.title") }
     static var resultContactAdd: String { String(localized: "result.contact.add") }
     static var resultContactAddress: String { String(localized: "result.contact.address") }
     static var resultContactEmail: String { String(localized: "result.contact.email") }
@@ -425,8 +423,6 @@ enum L10n {
         "paywall.subtitle",
         "paywall.terms",
         "paywall.title",
-        "placeholder.message",
-        "placeholder.title",
         "result.contact.add",
         "result.contact.address",
         "result.contact.email",

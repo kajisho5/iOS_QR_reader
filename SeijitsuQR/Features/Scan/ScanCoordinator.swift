@@ -91,6 +91,7 @@ final class ScanCoordinator {
         }
 
         feedback.playSuccess(sound: settings.isSoundEnabled, haptic: settings.isHapticsEnabled)
+        settings.successfulScans += 1
         let payload = PayloadParser.parse(code.content)
         var result = ScanResult(code: code, source: source, payload: payload, date: .now)
         if settings.isAutosaveEnabled {

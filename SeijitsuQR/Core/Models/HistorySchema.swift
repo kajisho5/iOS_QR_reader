@@ -62,10 +62,19 @@ enum HistoryContainer {
     }
 
     static func make(inMemory: Bool = false) throws -> ModelContainer {
+        if inMemory {
+            let schema = Schema(versionedSchema: HistorySchemaV1.self)
+            let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try ModelContainer(for: schema, migrationPlan: HistoryMigrationPlan.self, configurations: [configuration])
+        }
+        return try make(at: storeURL())
+    }
+
+    /// Opens (or creates) the on-disk store at `url`. The app always uses `storeURL()`;
+    /// tests pass a temporary location.
+    static func make(at url: URL) throws -> ModelContainer {
         let schema = Schema(versionedSchema: HistorySchemaV1.self)
-        let configuration = inMemory
-            ? ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            : ModelConfiguration(schema: schema, url: try storeURL(), cloudKitDatabase: .none)
+        let configuration = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: HistoryMigrationPlan.self, configurations: [configuration])
     }
 }

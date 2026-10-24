@@ -1552,28 +1552,6 @@
         }
       }
     },
-    "placeholder.message": {
-      "extractionState": "manual",
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "この画面は次の実装ステップで追加します。"
-          }
-        }
-      }
-    },
-    "placeholder.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "準備中"
-          }
-        }
-      }
-    },
     "result.contact.add": {
       "extractionState": "manual",
       "localizations": {

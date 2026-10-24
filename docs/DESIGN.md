@@ -1,6 +1,7 @@
 # 誠実QRリーダー 設計書（Step 1）
 
-> ステータス: **確定（2026-10-24）**。Q1〜Q8 は推奨案（A）で確定。§14 の標準対応要件を追加。実装は ①スキャン から順に進める。
+> ステータス: **確定（2026-10-24）**。Q1〜Q8 は推奨案（A）で確定。§14 の標準対応要件を追加。
+> 実装: **①〜⑤ 完了**（各ステップ CI グリーン）。設計からの差分は §15 に記録。
 
 ## 0. 前提と3原則の実装上の担保
 
@@ -210,6 +211,8 @@ enum ParsedPayload {
 | ④ 課金 | ProStore・Paywall・各ゲート接続・復元2箇所・.storekit | CIグリーン |
 | ⑤ 仕上げ | 設定画面・レビュー依頼・PrivacyInfo・アイコン・README・掲載文 | CIグリーン |
 
+実装状況（2026-10-24）: ①〜⑤ すべて完了。CI（GitHub Actions、Xcode 26.6、iPhone 17 / iPad Air 11-inch (M4)、iOS 26.5 シミュレータ）でビルドとユニットテストが通ることを各ステップで確認した。実機での動作確認（カメラ、Wi-Fi 接続、連絡先追加、写真保存、購入）は未実施で、利用者側での確認が必要。
+
 ## 10. 本設計で決めた事項（異論があれば指摘ください）
 
 | # | 事項 | 決定内容 | 理由 |
@@ -268,7 +271,7 @@ enum ParsedPayload {
 
 ### 12.4 実装上の制約（事実）
 - `ArrangementView`、`ReservedRegion`、`toolbarVerticalBehavior(_:)`、`toolbarVerticalEdge` は **iOS / iPadOS 27.1 以降**（Apple Developer Documentation の platform 情報）。最低OSは iOS 17 のまま、`if #available(iOS 27.1, *)` で分岐し、未対応OSでは `HStack` による分割で代替する。
-- 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。**CI（GitHub Actions）のランナーにその Xcode が載っているかは未確認**で、実装時に確認する。
+- 「Xcode 26 以前でビルドするとステータスバーとカメラの下まで描画しない」（Preparing your app for iPhone Duo）。Duo 最適化には iOS 27.1 SDK を含む Xcode でのビルドが必要。実装時に確認した結果、CI のランナーは Xcode 26.6（iOS 26.5 SDK）で iOS 27.1 SDK を含まないため、§15 のとおり Duo 専用 API の採用は見送った。
 - iPad 寸法（1180×820pt）は Apple 公開の 2360×1640px（iPad Air 11インチ）を @2x 換算した値。
 
 ## 13. 画面の向き・iPad マルチタスク（デザイン: `docs/design/09_ipad_multitasking.svg`）
@@ -365,10 +368,19 @@ enum ParsedPayload {
 
 ### 14.6 プライバシーマニフェスト（`PrivacyInfo.xcprivacy`）
 - `NSPrivacyTracking` = false、`NSPrivacyTrackingDomains` = 空、`NSPrivacyCollectedDataTypes` = 空。
-- `NSPrivacyAccessedAPITypes`: `NSPrivacyAccessedAPICategoryUserDefaults`（理由 `CA92.1`：アプリ自身だけが読み書きする設定値）。実装中に他の必須理由 API（ファイルの日時、空き容量、起動時刻など）を使う場合は、その時点で追記する。
+- `NSPrivacyAccessedAPITypes`: `NSPrivacyAccessedAPICategoryUserDefaults`（理由 `CA92.1`：アプリ自身だけが読み書きする設定値）。実装完了時点で、ほかの必須理由 API（ファイルの日時、空き容量、起動時刻、キーボード一覧、ディスク容量）は使っていないことをソース検索で確認した。
 
 ### 14.7 履歴データの保持（バックアップ・アップデート・機種変更）
 - SwiftData のストアは `Application Support/History.store` に明示的に置く。このフォルダは iCloud バックアップと端末間の移行の対象で、`isExcludedFromBackup` は設定しない（`Caches` や `tmp` には置かない）。
 - バックアップは利用者自身の iCloud に保存され、開発者は内容にアクセスできない。アプリ自体はネットワーク通信を行わない（原則「端末内完結」と両立）。CloudKit による同期は行わない。
-- アップデートで消えないよう、初版から `VersionedSchema`（SchemaV1）と `SchemaMigrationPlan` を用意し、以後の変更は移行ステージを追加して行う。移行のユニットテストを書く。
+- アップデートで消えないよう、初版から `VersionedSchema`（SchemaV1）と `SchemaMigrationPlan` を用意し、以後の変更は移行ステージを追加して行う。現時点はスキーマが V1 のみで移行ステージがないため、ユニットテスト（`HistoryStoreTests`）では「ストアの場所が Application Support でバックアップ除外されていないこと」「ストアを開き直しても記録とお気に入りが残ること」を検証する。V2 を追加するときに V1→V2 の移行テストを追加する。
 - 事実として、アプリを削除すると端末内のデータは OS によって削除される（バックアップからの復元は可能）。この点は設定画面の「履歴」欄の注記で利用者に伝える。
+
+## 15. 実装時の設計からの差分
+
+| # | 箇所 | 設計 | 実装 | 理由 |
+|---|---|---|---|---|
+| X1 | iPhone Duo 専用 API（§12.4） | iOS 27.1 以降で `ArrangementView` / `ReservedRegion` 等を `#available` で使用 | 使用せず、サイズクラスによる 1 カラム⇔2 カラム切り替えのみ | CI の Xcode 26.6 に iOS 27.1 SDK がなく、ビルドを検証できないため。iOS 27.1 SDK を含む Xcode が使えるようになった時点で追加する |
+| X2 | 履歴ツールバー | 選択アイコン | 「すべて削除」（ゴミ箱）ボタン。単体削除は一覧のスワイプと詳細画面のゴミ箱ボタン | 仕様の「削除（単体/全件）」を最短の操作で満たすため |
+| X3 | 課金のユニットテスト | `.storekit` を使った StoreKitTest で購入・復元を自動テスト | Pro 判定ルール（検証済み・未返金・Pro 製品のみ）の純粋なテスト。購入・復元・返金は README の手順で手動確認 | CI のシミュレータで StoreKitTest のセッションが反映されず（商品が取得できない）、XcodeGen ではテストアクションに StoreKit 設定を指定できないため |
+| X4 | レビュー依頼のタイミング | 成功スキャン 10 回超の自然なタイミングで 1 回 | 結果シートを閉じた時・連続スキャン終了時・スキャン画面を離れた時のいずれか最初の 1 回（シートの閉じる動作を待って 0.6 秒後に表示）。表示するかは OS が決める | スキャン中に割り込まないため |

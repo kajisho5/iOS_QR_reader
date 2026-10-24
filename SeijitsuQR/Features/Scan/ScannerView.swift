@@ -1,4 +1,5 @@
 import PhotosUI
+import StoreKit
 import SwiftData
 import SwiftUI
 import UIKit
@@ -12,6 +13,7 @@ struct ScannerView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.isProUnlocked) private var isPro
+    @Environment(\.requestReview) private var requestReview
 
     @State private var capture = CaptureController()
     @State private var coordinator = ScanCoordinator()
@@ -47,13 +49,22 @@ struct ScannerView: View {
         .onDisappear {
             isVisible = false
             capture.stop()
+            requestReviewIfDue()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { startCamera() } else if phase == .background { capture.stop() }
         }
         .onChange(of: coordinator.presented == nil) { _, isClosed in
             // The camera pauses while a result sheet is open, so the same code is not read again.
-            if isClosed { startCamera() } else { capture.stop() }
+            if isClosed {
+                startCamera()
+                requestReviewIfDue()
+            } else {
+                capture.stop()
+            }
+        }
+        .onChange(of: coordinator.isContinuous) { _, isOn in
+            if !isOn { requestReviewIfDue() }
         }
         .sheet(item: $coordinator.presented) { result in
             NavigationStack {
@@ -231,6 +242,18 @@ struct ScannerView: View {
         let coordinator = coordinator
         Task {
             await capture.start { code in coordinator.handle(code, source: .camera) }
+        }
+    }
+
+    /// Asks for a rating at a pause (a result was closed, continuous scanning ended, or the
+    /// scan screen was left), at most once, and only after more than ten successful scans.
+    private func requestReviewIfDue() {
+        guard ReviewPromptPolicy.shouldRequest(successfulScans: settings.successfulScans, alreadyRequested: settings.hasRequestedReview) else { return }
+        settings.hasRequestedReview = true
+        Task {
+            // Let the sheet finish dismissing so the system prompt is not presented over it.
+            try? await Task.sleep(for: .seconds(0.6))
+            requestReview()
         }
     }
 

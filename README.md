@@ -4,6 +4,7 @@
 
 - 設計書: [`docs/DESIGN.md`](docs/DESIGN.md)
 - 画面デザイン: [`docs/design/`](docs/design/)
+- App Store 掲載文の案: [`docs/AppStoreListing.md`](docs/AppStoreListing.md)
 
 ## ビルド手順
 
@@ -64,3 +65,17 @@ python3 tools/gen_l10n.py
 4. 審査提出時、App 内課金をアプリのバージョンと一緒に提出します。
 
 アプリは購入状態を独自に保存せず、毎回 StoreKit の検証済みトランザクション（`Transaction.currentEntitlements`）で判定します。復元ボタンは課金画面と設定画面にあり、`AppStore.sync()` を呼びます。
+
+## 提出前のチェック
+
+CI ではシミュレータでのビルドとユニットテストだけを確認しています。次は実機で確認してください。
+
+- [ ] カメラで QR コード・各種バーコードを読み取れる（連続スキャン、ライト、写真から読み取りを含む）
+- [ ] カメラを「許可しない」にしたとき、「設定を開く」「写真から読み取る」が表示される
+- [ ] Wi-Fi の QR コードで「Wi-Fiに接続」が動く（Hotspot Configuration の entitlement が付いたプロビジョニングが必要）
+- [ ] 連絡先の追加、写真への保存、共有、CSV エクスポートが動く
+- [ ] Sandbox アカウントで購入・復元ができ、Pro の機能が使えるようになる
+- [ ] ダークモード、最大の文字サイズ、VoiceOver で操作できる
+- [ ] iPad で回転・ウィンドウのサイズ変更をしてもレイアウトが崩れない
+
+App Store Connect の「App のプライバシー」は「データの収集なし」を選びます（アプリ自身は外部サーバーと通信せず、通信は購入・復元時の StoreKit と、利用者がリンクを開いたときの OS 標準アプリだけです。`PrivacyInfo.xcprivacy` でも収集データなしを宣言しています）。
