@@ -233,8 +233,11 @@ final class CaptureEngine: NSObject, @unchecked Sendable {
             if camera.isFocusModeSupported(.continuousAutoFocus) {
                 camera.focusMode = .continuousAutoFocus
             }
+            // No focus range restriction: `.near` speeds up close codes but keeps far ones (a poster
+            // across the room, a code read with zoom) from coming into focus. Close codes still get
+            // the macro lens switch of multi-camera devices.
             if camera.isAutoFocusRangeRestrictionSupported {
-                camera.autoFocusRangeRestriction = .near
+                camera.autoFocusRangeRestriction = .none
             }
             // Lets the app return to continuous autofocus after a tap-to-focus.
             camera.isSubjectAreaChangeMonitoringEnabled = true
