@@ -166,7 +166,7 @@ enum ParsedPayload {
 
 ## 6. 課金仕様（StoreKit 2）
 
-- 商品: 非消耗型 1点。商品ID は `AppConstants.proProductID`（初期値 `com.example.seijitsuqr.pro`、要差し替え）。
+- 商品: 非消耗型 1点。商品ID は `AppConstants.proProductID`（`com.seventhwell.seijitsuqr.pro`。2026-10-24 確定）。
 - 価格表示: `product.displayPrice` をボタンにそのまま表示（例「¥800で購入」）。ハードコードしない。
 - 課金画面の必須文言: 「これは買い切りです。毎月・毎週の支払いは発生しません」「広告は今後も入れません」。
 - 使わない表現: 無料お試し / 期間限定 / 今だけ / 割引 / カウントダウン / ×ボタンを小さく隠す等。
@@ -234,7 +234,7 @@ enum ParsedPayload {
 | Q3 | http/https 以外のURLスキーム（独自スキーム・`javascript:` 等） | A: テキスト扱い（コピー・共有のみ。開くボタンなし） / B: すべて「開く」可能 | **A**（誤タップで他アプリ起動させない） |
 | Q4 | メール／電話／SMS／地図座標のアクション（仕様はURL・Wi-Fi・連絡先・コピー・共有のみ） | A: 追加する（メール作成・電話・SMS作成・Appleマップで開く。いずれも押した時のみ） / B: 仕様通りコピー・共有のみ | **A**（種類判定の意味が出る。通信はOS標準アプリ側で、ユーザー操作時のみ） |
 | Q5 | CSV形式 | A: UTF-8（BOM付き）、列＝日時, 種類, 内容, コード形式, 取得元, お気に入り / B: BOMなし | **A**（Excelで日本語が文字化けしない） |
-| Q6 | Bundle ID / 商品ID | 仮値 `com.example.seijitsuqr` / `com.example.seijitsuqr.pro` で実装し README の差し替え一覧に記載 | 確定値があれば指示ください |
+| Q6 | Bundle ID / 商品ID | 2026-10-24 確定: `com.seventhwell.seijitsuqr` / `com.seventhwell.seijitsuqr.pro`（テストは `com.seventhwell.seijitsuqr.tests`） | 確定 |
 | Q7 | Wi-Fi接続（Hotspot Configuration entitlement） | A: 入れる（有料 Developer Program 前提） / B: 外してパスワードコピーのみ | **A**（仕様の「Wi-Fiに接続」を満たす唯一の公開API） |
 | Q8 | iPhone 版モックアップ（01〜06）の見た目 | A: iPad/Duo と揃えて iOS 26 以降の Liquid Glass 表現（浮遊タブバー、ガラスのボタン）に更新し、課金画面の「閉じる」テキストをシステム標準の×ボタンに変更 / B: 現状のまま | **A**（HIG Toolbars「標準の Back/Close ボタンを使い、テキストラベルにしない」。最新 Xcode でビルドすると実機は Liquid Glass 表示になるため、モックアップとの差が出る） |
 
