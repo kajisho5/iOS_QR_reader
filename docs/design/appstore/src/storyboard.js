@@ -53,22 +53,30 @@ const safeArea = (W, H) => `<rect x="${W * 0.2}" y="0" width="${W * 0.6}" height
 
 // ---- Header (3840x1646) keyframes ----
 const HW = 3840, HH = 1646;
+const sub = (x, y, str, size) => text(x, y, str, size, { weight: 500, opacity: 0.85 });
 const header = [
   ['① 0.0 秒 読み取り', () => qr(HW / 2, HH / 2, 520) + reticle(HW / 2, HH / 2, 900, '#fff')],
   ['② 1.5 秒 読み取れた', () => qr(HW / 2, HH / 2, 520) + reticle(HW / 2, HH / 2, 680, '#7FF0D2', true)],
-  ['③ 3.0 秒 結果', () => qr(HW * 0.32, HH / 2, 300, 0.85) + reticle(HW * 0.32, HH / 2, 400, '#7FF0D2') +
-    phone(HW / 2, HH * 0.56, 1500, SHOTS.url)],
-  ['④ 6.0 秒 広告なし', () => text(HW * 0.4, HH * 0.55, '広告なし。', 180) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.history)],
-  ['⑤ 9.0 秒 サブスクなし', () => text(HW * 0.4, HH * 0.55, 'サブスクなし。', 180) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.create)],
-  ['⑥ 12.0 秒 端末の中だけ', () => lock(HW * 0.4, HH * 0.3, 240) + text(HW * 0.4, HH * 0.55, '読み取った内容は、', 130) +
-    text(HW * 0.4, HH * 0.66, '端末の外に出ない。', 130) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.history)],
+  ['③ 3.0 秒 かざすだけ', () => qr(HW * 0.36, HH * 0.42, 300, 0.9) + reticle(HW * 0.36, HH * 0.42, 400, '#7FF0D2') +
+    text(HW * 0.36, HH * 0.74, 'かざすだけ。', 150) + phone(HW * 0.64, HH * 0.56, 1500, SHOTS.url)],
+  ['④ 6.0 秒 余計なものはない', () => text(HW * 0.4, HH * 0.52, '余計なものは、', 140) + text(HW * 0.4, HH * 0.63, '入れていない。', 140) +
+    sub(HW * 0.4, HH * 0.75, '広告も、アクセス解析も。', 76) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.history)],
+  ['⑤ 9.0 秒 買い切り', () => text(HW * 0.4, HH * 0.52, '毎月の支払いは、', 140) + text(HW * 0.4, HH * 0.63, 'いらない。', 140) +
+    sub(HW * 0.4, HH * 0.75, '必要なら、一度買うだけ。', 76) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.create)],
+  ['⑥ 12.0 秒 端末の中だけ', () => lock(HW * 0.4, HH * 0.3, 220) + text(HW * 0.4, HH * 0.54, '読んだ中身は、', 140) +
+    text(HW * 0.4, HH * 0.65, 'どこにも送らない。', 140) + sub(HW * 0.4, HH * 0.77, 'ぜんぶ、この iPhone の中で。', 76) + phone(HW * 0.67, HH * 0.56, 1500, SHOTS.history)],
+  ['⑦ 13.8 秒 締め（→ ① にループ）', () => `<image href="${SHOTS.icon}" x="${HW / 2 - 200}" y="${HH * 0.16}" width="400" height="400" clip-path="inset(0 round 90px)"/>` +
+    text(HW / 2, HH * 0.66, '誠実QRリーダー', 170) + sub(HW / 2, HH * 0.78, 'ちゃんと、読むだけ。', 96)],
 ];
 // ---- Search results (3840x2560) keyframes ----
 const SW = 3840, SH = 2560;
 const search = [
-  ['① 0.0〜3.0 秒 読み取り → 結果', () => qr(SW * 0.3, SH * 0.55, 520) + reticle(SW * 0.3, SH * 0.55, 700, '#7FF0D2', true) + phone(SW * 0.62, SH * 0.58, 2100, SHOTS.url)],
-  ['② 6.0 秒 広告なし', () => text(SW / 2, SH * 0.16, '広告なし。', 210) + phone(SW / 2, SH * 0.62, 1900, SHOTS.history)],
-  ['③ 12.0 秒 端末の中だけ', () => text(SW / 2, SH * 0.1, '読み取った内容は、', 150) + text(SW / 2, SH * 0.17, '端末の外に出ない。', 150) + phone(SW / 2, SH * 0.63, 1800, SHOTS.history)],
+  ['① 0.0〜3.0 秒 かざすだけ', () => qr(SW * 0.3, SH * 0.5, 520) + reticle(SW * 0.3, SH * 0.5, 700, '#7FF0D2', true) +
+    text(SW * 0.3, SH * 0.78, 'かざすだけ。', 170) + phone(SW * 0.64, SH * 0.58, 2100, SHOTS.url)],
+  ['② 6.0 秒 余計なものはない', () => text(SW / 2, SH * 0.12, '余計なものは、入れていない。', 150) + sub(SW / 2, SH * 0.19, '広告も、アクセス解析も。', 84) +
+    phone(SW / 2, SH * 0.64, 1800, SHOTS.history)],
+  ['③ 12.0 秒 端末の中だけ', () => text(SW / 2, SH * 0.12, '読んだ中身は、どこにも送らない。', 150) + sub(SW / 2, SH * 0.19, 'ぜんぶ、この iPhone の中で。', 84) +
+    phone(SW / 2, SH * 0.64, 1800, SHOTS.history)],
 ];
 
 function sheet(file, title, W, H, frames, cols, scale) {
