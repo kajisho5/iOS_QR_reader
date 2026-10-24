@@ -20,6 +20,8 @@ jobs:
         run: |
           sudo xcode-select -s /Applications/Xcode_26.6.app
           xcodebuild -version
+          xcrun swiftc --version
+          xcrun --sdk iphonesimulator --show-sdk-version
 
       - name: Check generated localization code
         run: python3 tools/gen_l10n.py --check
@@ -70,6 +72,8 @@ jobs:
         run: |
           ls -d /Applications/Xcode*.app
           xcodebuild -version
+          xcrun swiftc --version
+          xcrun --sdk iphonesimulator --show-sdk-version
           xcrun simctl list runtimes
 
       - name: Pick the newest iPhone and iPad simulators
