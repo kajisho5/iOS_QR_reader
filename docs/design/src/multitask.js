@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const L = require('./lib');
 const D = require('./devices');
-const { C, t, measure, iconLabel, rect, icon, tile, doc } = L;
-const { glass, glassCircle, camFeed, reticle, pill, urlDetail, rowsGroup, chips, CHIP_ITEMS, searchField, freeBanner, ROWS_TODAY, ROWS_YDAY, caps, uid } = D;
+const { C, t, measure, iconLabel, rect, icon, tile, doc, glass, glassCircle } = L;
+const { camFeed, reticle, pill, urlDetail, rowsGroup, chips, CHIP_ITEMS, searchField, freeBanner, ROWS_TODAY, ROWS_YDAY, caps, uid } = D;
 
 const OUT = process.argv[2];
 const LW = 1180, LH = 820;   // landscape
@@ -26,7 +26,7 @@ function topTabs(cx, active) {
   let s = glass(x, 34, total, 44, false);
   x += 4;
   labels.forEach((l, i) => {
-    if (i === active) s += rect(x, 38, ws[i], 36, { rx: 18, fill: 'rgba(14,124,102,0.12)' });
+    if (i === active) s += rect(x, 38, ws[i], 36, { rx: 18, fill: C.tabSel });
     s += t(x + ws[i] / 2, 61, l, { ...o, anchor: 'middle', fill: i === active ? C.accent : C.label });
     x += ws[i];
   });
@@ -39,7 +39,7 @@ function bottomTabs(x, y, w, active) {
   const iw = (w - 8) / items.length;
   items.forEach(([l, ic], i) => {
     const ix = x + 4 + i * iw;
-    if (i === active) s += rect(ix, y + 4, iw, 54, { rx: 27, fill: 'rgba(14,124,102,0.12)' });
+    if (i === active) s += rect(ix, y + 4, iw, 54, { rx: 27, fill: C.tabSel });
     const col = i === active ? C.accent : C.label;
     s += icon(ic, ix + iw / 2 - 12, y + 10, 24, col) + t(ix + iw / 2, y + 50, l, { size: 10, weight: 600, fill: col, anchor: 'middle' });
   });
@@ -100,7 +100,7 @@ function cameraUnavailable(w, h, tabs) {
   const lines = ['全画面表示に戻すと、スキャンを再開します。', '画像からの読み取りはこのまま使えます。'];
   lines.forEach((l, i) => { s += t(cx, ty + 64 + i * 22, l, { size: 15, fill: C.secondary, anchor: 'middle' }); });
   const bw = Math.min(w - 64, 320);
-  s += rect(cx - bw / 2, ty + 112, bw, 52, { rx: 14, fill: C.accent }) + iconLabel(cx, ty + 144, 'photo', 22, '写真から読み取る', { size: 17, weight: 700, fill: '#fff' });
+  s += rect(cx - bw / 2, ty + 112, bw, 52, { rx: 14, fill: C.accentFill }) + iconLabel(cx, ty + 144, 'photo', 22, '写真から読み取る', { size: 17, weight: 700, fill: '#fff' });
   return s + tabs;
 }
 // Compact history (same layout as iPhone).
@@ -133,7 +133,7 @@ function portraitScan() {
 // B. Portrait, full screen, history: split view keeps both columns (balanced).
 function portraitHistory() {
   const listW = 330;
-  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: '#F7F7FA' }) + `<line x1="${listW}" y1="0" x2="${listW}" y2="${PH}" stroke="${C.separator}"/>`;
+  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: C.listColumn }) + `<line x1="${listW}" y1="0" x2="${listW}" y2="${PH}" stroke="${C.separator}"/>`;
   const lx = 16, lw = listW - 32;
   s += glass(lx, 96, 44, 44, false) + icon('sidebar', lx + 11, 107, 22, C.label);
   s += glass(lx + lw - 96, 96, 96, 44, false) + icon('share', lx + lw - 84, 107, 22, C.label) + icon('selectCircle', lx + lw - 38, 107, 22, C.label);

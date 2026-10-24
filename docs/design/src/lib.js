@@ -4,12 +4,31 @@ const path = require('path');
 const FONT = "-apple-system, 'SF Pro Text', 'Hiragino Sans', 'IPAPGothic', sans-serif";
 const MONO = "'SF Mono', Menlo, 'IPAGothic', monospace";
 
+// Color tokens. Light values are the default; setTheme('dark') swaps them in place so every
+// generator reads the active theme at call time. Values mirror the asset catalog colors.
+const THEMES = {
+  light: {
+    accent: '#0E7C66', accentFill: '#0E7C66', accentDark: '#0A5F4E', accentSoft: '#E3F2EE', accentOnDark: '#3CC9A6',
+    label: '#1C1C1E', secondary: '#6B6B70', tertiary: '#AEAEB2', separator: '#E5E5EA', placeholder: '#6B6B70',
+    bg: '#F2F2F7', card: '#FFFFFF', fill: '#E3E3E8', red: '#D92D20', yellow: '#A87800', favFill: '#8F6500', green: '#2E9E4B',
+    neutralFill: '#EEF2F6', lockedTile: '#8E959E', grabber: '#C7C7CC', sheet: '#FFFFFF', sheetGroup: 'rgba(250,250,250,0.98)',
+    listColumn: '#F7F7FA', glassFill: 'rgba(255,255,255,0.82)', glassStroke: 'rgba(0,0,0,0.06)', glassInner: 'rgba(255,255,255,0.9)',
+    tabSel: 'rgba(14,124,102,0.12)', canvas: '#ECECEF', caption: '#3A3A3C', home: '#000000',
+  },
+  dark: {
+    accent: '#2BA083', accentFill: '#1C8269', accentDark: '#8FE3CB', accentSoft: '#10302A', accentOnDark: '#3CC9A6',
+    label: '#FFFFFF', secondary: '#A1A1A8', tertiary: '#636366', separator: '#38383A', placeholder: '#A1A1A8',
+    bg: '#000000', card: '#1C1C1E', fill: '#2C2C2E', red: '#FF6B61', yellow: '#FFD60A', favFill: '#8F6500', green: '#30D158',
+    neutralFill: '#2C2C2E', lockedTile: '#5A5F66', grabber: '#5A5A5E', sheet: '#1C1C1E', sheetGroup: 'rgba(44,44,46,0.98)',
+    listColumn: '#0F0F10', glassFill: 'rgba(44,44,46,0.80)', glassStroke: 'rgba(255,255,255,0.14)', glassInner: 'rgba(255,255,255,0.08)',
+    tabSel: 'rgba(43,160,131,0.22)', canvas: '#1A1A1C', caption: '#D1D1D6', home: '#FFFFFF',
+  },
+};
 const C = {
-  accent: '#0E7C66', accentDark: '#0A5F4E', accentSoft: '#E3F2EE', accentOnDark: '#3CC9A6',
-  label: '#1C1C1E', secondary: '#6B6B70', tertiary: '#AEAEB2', separator: '#E5E5EA',
-  bg: '#F2F2F7', card: '#FFFFFF', fill: '#E3E3E8', red: '#D92D20', yellow: '#F5B400',
+  ...THEMES.light,
   kind: { url: '#2563EB', wifi: '#0E7C66', contact: '#7C3AED', email: '#DB2777', phone: '#16A34A', sms: '#0891B2', geo: '#EA580C', text: '#6B7280', event: '#C2410C' },
 };
+function setTheme(name) { Object.assign(C, THEMES[name]); }
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -168,20 +187,32 @@ function statusBar(dark) {
 }
 
 function homeIndicator(dark) {
-  return rect(129.5, 838, 134, 5, { rx: 2.5, fill: dark ? '#fff' : '#000' });
+  return rect(129.5, 838, 134, 5, { rx: 2.5, fill: dark ? '#fff' : C.home });
 }
 
 const TABS = [['スキャン', 'viewfinder'], ['履歴', 'clock'], ['作成', 'plusSquare'], ['設定', 'gear']];
+// Liquid Glass control surface (bars, buttons). Content layers never use it (HIG Materials).
+function glass(x, y, w, h, dark, r) {
+  const rr = r ?? Math.min(w, h) / 2;
+  return `<g filter="url(#glass)">${rect(x, y, w, h, { rx: rr, fill: dark ? 'rgba(52,54,58,0.55)' : C.glassFill, stroke: dark ? 'rgba(255,255,255,0.28)' : C.glassStroke })}</g>` +
+    rect(x + 1, y + 1, w - 2, h - 2, { rx: rr - 1, stroke: dark ? 'rgba(255,255,255,0.10)' : C.glassInner });
+}
+function glassCircle(cx, cy, r, name, dark, on) {
+  const fg = on ? (dark ? '#1C1C1E' : '#fff') : (dark ? '#fff' : C.label);
+  return (on ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${dark ? '#fff' : C.accentFill}" filter="url(#glass)"/>` : glass(cx - r, cy - r, r * 2, r * 2, dark)) +
+    icon(name, cx - r * 0.5, cy - r * 0.5, r, fg, name === 'star');
+}
+// iOS 26+: tab bar floats above the content as a Liquid Glass capsule.
 function tabBar(active, dark) {
-  const bg = dark ? 'rgba(22,22,24,0.94)' : 'rgba(249,249,249,0.96)';
-  const inactive = dark ? '#8E8E93' : '#8E8E93';
-  const act = dark ? C.accentOnDark : C.accent;
-  let s = rect(0, 769, 393, 83, { fill: bg }) + `<line x1="0" y1="769.25" x2="393" y2="769.25" stroke="${dark ? '#38383A' : '#C6C6C8'}" stroke-width=".5"/>`;
+  const x = 21, y = 756, w = 351, h = 62;
+  let s = glass(x, y, w, h, dark);
+  const iw = (w - 8) / TABS.length;
   TABS.forEach(([label, ic], i) => {
-    const cx = 393 / 8 * (2 * i + 1);
-    const col = i === active ? act : inactive;
-    s += icon(ic, cx - 13, 777, 26, col);
-    s += t(cx, 817, label, { size: 10, weight: 500, fill: col, anchor: 'middle' });
+    const ix = x + 4 + i * iw, on = i === active;
+    if (on) s += rect(ix, y + 4, iw, h - 8, { rx: (h - 8) / 2, fill: dark ? 'rgba(255,255,255,0.18)' : C.tabSel });
+    const col = on ? (dark ? C.accentOnDark : C.accent) : (dark ? '#fff' : C.label);
+    s += icon(ic, ix + iw / 2 - 12, y + 9, 24, col);
+    s += t(ix + iw / 2, y + 49, label, { size: 10, weight: 600, fill: col, anchor: 'middle' });
   });
   return s + homeIndicator(dark);
 }
@@ -196,7 +227,7 @@ function phone(ox, oy, inner, caption) {
   <clipPath id="${id}"><rect x="0" y="0" width="393" height="852" rx="54"/></clipPath>
   <g clip-path="url(#${id})">${inner}</g>
   <rect x="136" y="11" width="121" height="35.5" rx="17.75" fill="#000"/>
-  </g>${caption ? t(ox + 196.5, oy + 900, caption, { size: 18, weight: 700, anchor: 'middle', fill: '#3A3A3C' }) : ''}`;
+  </g>${caption ? t(ox + 196.5, oy + 900, caption, { size: 18, weight: 700, anchor: 'middle', fill: C.caption }) : ''}`;
 }
 
 function doc(w, h, body, title) {
@@ -211,7 +242,7 @@ function doc(w, h, body, title) {
   <linearGradient id="camBg" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#3B4240"/><stop offset=".55" stop-color="#262B2A"/><stop offset="1" stop-color="#121514"/></linearGradient>
   <linearGradient id="scanLine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${C.accentOnDark}" stop-opacity="0"/><stop offset=".5" stop-color="${C.accentOnDark}"/><stop offset="1" stop-color="${C.accentOnDark}" stop-opacity="0"/></linearGradient>
 </defs>
-${rect(0, 0, w, h, { fill: '#ECECEF' })}
+${rect(0, 0, w, h, { fill: C.canvas })}
 ${body}
 </svg>
 `;
@@ -237,7 +268,7 @@ function fakeQR(x, y, size, n = 29, color = '#000', seed = 7) {
 }
 
 function toggle(x, y, on) {
-  return rect(x, y, 51, 31, { rx: 15.5, fill: on ? C.accent : '#E9E9EA' }) +
+  return rect(x, y, 51, 31, { rx: 15.5, fill: on ? C.accentFill : C.fill }) +
     `<circle cx="${on ? x + 35.5 : x + 15.5}" cy="${y + 15.5}" r="13.5" fill="#fff" filter="url(#shadow)"/>`;
 }
 
@@ -250,4 +281,4 @@ function iconLabel(cx, baseline, name, iconSize, label, o = {}) {
   return icon(name, x0, iy, iconSize, o.iconColor || o.fill || C.label, o.iconExtra) + t(x0 + iconSize + gap, baseline, label, o);
 }
 
-module.exports = { C, FONT, MONO, esc, t, measure, iconLabel, rect, icon, tile, statusBar, homeIndicator, tabBar, phone, doc, fakeQR, toggle, ICON };
+module.exports = { C, setTheme, glass, glassCircle, FONT, MONO, esc, t, measure, iconLabel, rect, icon, tile, statusBar, homeIndicator, tabBar, phone, doc, fakeQR, toggle, ICON };

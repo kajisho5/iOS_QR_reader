@@ -4,23 +4,13 @@
 const fs = require('fs');
 const path = require('path');
 const L = require('./lib');
-const { C, t, measure, iconLabel, rect, icon, tile, fakeQR, toggle, doc, esc } = L;
+const { C, t, measure, iconLabel, rect, icon, tile, fakeQR, toggle, doc, esc, glass, glassCircle } = L;
 
 const OUT = process.argv[2];
 let seq = 0;
 const uid = p => `${p}${seq++}`;
 
 // ---------- shared primitives ----------
-function glass(x, y, w, h, dark, r) {
-  const rr = r ?? Math.min(w, h) / 2;
-  return `<g filter="url(#glass)">${rect(x, y, w, h, { rx: rr, fill: dark ? 'rgba(52,54,58,0.55)' : 'rgba(255,255,255,0.82)', stroke: dark ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.06)' })}</g>` +
-    rect(x + 1, y + 1, w - 2, h - 2, { rx: rr - 1, stroke: dark ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.9)' });
-}
-function glassCircle(cx, cy, r, name, dark, on) {
-  const fg = on ? (dark ? C.label : '#fff') : (dark ? '#fff' : C.label);
-  return (on ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${dark ? '#fff' : C.accent}" filter="url(#glass)"/>` : glass(cx - r, cy - r, r * 2, r * 2, dark)) +
-    icon(name, cx - r * 0.5, cy - r * 0.5, r, fg, name === 'star');
-}
 function camFeed(w, h, qx, qy, qs = 150) {
   const id = uid('cam');
   return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#3B4240"/><stop offset=".55" stop-color="#262B2A"/><stop offset="1" stop-color="#121514"/></linearGradient></defs>` +
@@ -83,7 +73,7 @@ function urlDetail(x, y, w, o = {}) {
   cy += cardH + 14;
   s += icon('info', x + 2, cy, 16, C.secondary) + t(x + 24, cy + 13, '「ブラウザで開く」を押すまで通信は発生しません。', { size: 13, fill: C.secondary });
   cy += 30;
-  s += rect(x, cy, w, 52, { rx: 14, fill: C.accent }) + iconLabel(x + w / 2, cy + 33, 'external', 22, 'ブラウザで開く', { size: 17, weight: 700, fill: '#fff' });
+  s += rect(x, cy, w, 52, { rx: 14, fill: C.accentFill }) + iconLabel(x + w / 2, cy + 33, 'external', 22, 'ブラウザで開く', { size: 17, weight: 700, fill: '#fff' });
   if (o.actions) {
     cy += 64;
     const bw = (w - 16) / 3;
@@ -243,7 +233,7 @@ function duoResultClosed() {
     `<path d="M0 72a16 16 0 0 1 16-16H${OUT_W}V${OUT_H}H0Z" fill="${C.bg}"/>` +
     rect(cw / 2 - 18, 62, 36, 5, { rx: 2.5, fill: '#C7C7CC' }) +
     `<g transform="translate(0 -10)">${urlDetail(16, 92, cw - 24)}</g>` +
-    iconLabel(cw / 2, OUT_H - 20, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: '#34A853', gap: 6 }) +
+    iconLabel(cw / 2, OUT_H - 20, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 }) +
     verticalBars(OUT_W, OUT_H, COL, { island: true, toolbar: [['xmark'], ['copy', 'share', 'star']] });
 }
 // C. Closed: history (compact width = single column, same as iPhone).
@@ -278,7 +268,7 @@ function duoHistoryOpen(folded) {
   const half = IN_W / 2;
   const listW = folded ? half - 14 : 372;
   const detailX = folded ? half + 14 : listW;
-  let s = rect(0, 0, IN_W, IN_H, { fill: C.bg }) + rect(0, 0, listW, IN_H, { fill: '#F7F7FA' }) +
+  let s = rect(0, 0, IN_W, IN_H, { fill: C.bg }) + rect(0, 0, listW, IN_H, { fill: C.listColumn }) +
     `<line x1="${listW}" y1="0" x2="${listW}" y2="${IN_H}" stroke="${C.separator}"/>`;
   // Controls for the list stay above the list pane (HIG: locate controls near the content they affect).
   const lx = 20, lw = listW - 40;
@@ -345,7 +335,7 @@ function ipadScan() {
 }
 function ipadHistory() {
   const listW = 380;
-  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: '#F7F7FA' }) +
+  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: C.listColumn }) +
     `<line x1="${listW}" y1="0" x2="${listW}" y2="${PH}" stroke="${C.separator}"/>`;
   const lx = 20, lw = listW - 40;
   s += glass(lx, 96, 44, 44, false) + icon('sidebar', lx + 11, 107, 22, C.label);
@@ -361,7 +351,7 @@ function ipadHistory() {
 }
 function ipadCreate() {
   const listW = 380;
-  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: '#F7F7FA' }) +
+  let s = rect(0, 0, PW, PH, { fill: C.bg }) + rect(0, 0, listW, PH, { fill: C.listColumn }) +
     `<line x1="${listW}" y1="0" x2="${listW}" y2="${PH}" stroke="${C.separator}"/>`;
   const lx = 20, lw = listW - 40;
   s += t(lx, 178, '作成', { size: 34, weight: 800 }) + t(lx, 204, '作成したQRコードは履歴にも保存されます', { size: 14, fill: C.secondary });
@@ -370,7 +360,7 @@ function ipadCreate() {
   s += `<g filter="url(#shadow)">${rect(lx, gy, lw, items.length * 56, { rx: 14, fill: C.card })}</g>`;
   items.forEach(([k, ic, name, badge], i) => {
     const y = gy + i * 56, on = i === 1, locked = badge === 'Pro';
-    if (on) s += rect(lx, y, lw, 56, { rx: i === 0 ? 14 : 0, fill: C.accent });
+    if (on) s += rect(lx, y, lw, 56, { rx: i === 0 ? 14 : 0, fill: C.accentFill });
     s += tile(lx + 14, y + 12, 32, on ? 'rgba(255,255,255,0.22)' : (locked ? '#B9BEC4' : C.kind[k]), ic, 8);
     s += t(lx + 58, y + 34, name, { size: 16, weight: 600, fill: on ? '#fff' : (locked ? C.secondary : C.label) });
     s += locked ? rect(lx + lw - 70, y + 16, 56, 24, { rx: 12, fill: C.accentSoft }) + iconLabel(lx + lw - 42, y + 33, 'lock', 13, 'Pro', { size: 13, weight: 800, fill: C.accent, gap: 3 })
@@ -385,13 +375,13 @@ function ipadCreate() {
   const dx = listW + 40;
   s += t(dx, 178, 'URL', { size: 28, weight: 800 });
   s += t(dx + 16, 222, 'URL', { size: 13, weight: 600, fill: C.secondary }) + rect(dx, 230, 340, 48, { rx: 12, fill: C.card }) + t(dx + 16, 260, 'https://www.example.co.jp', { size: 16, mono: true });
-  s += rect(dx, 296, 340, 52, { rx: 14, fill: C.accent }) + t(dx + 170, 328, 'QRコードを作成', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' });
+  s += rect(dx, 296, 340, 52, { rx: 14, fill: C.accentFill }) + t(dx + 170, 328, 'QRコードを作成', { size: 17, weight: 700, fill: '#fff', anchor: 'middle' });
   const qx = dx + 380, qw = PW - qx - 40;
   s += `<g filter="url(#shadow)">${rect(qx, 200, qw, 420, { rx: 18, fill: C.card })}</g>` + fakeQR(qx + qw / 2 - 140, 230, 280, 29, '#000', 3) +
     t(qx + qw / 2, 548, 'https://www.example.co.jp', { size: 13, mono: true, fill: C.secondary, anchor: 'middle' }) +
-    iconLabel(qx + qw / 2, 580, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: '#34A853', gap: 6 });
+    iconLabel(qx + qw / 2, 580, 'checkCircle', 16, '履歴に保存しました', { size: 13, fill: C.secondary, iconColor: C.green, gap: 6 });
   const bw = (qw - 12) / 2;
-  s += rect(qx, 640, bw, 52, { rx: 14, fill: C.accent }) + iconLabel(qx + bw / 2, 672, 'download', 22, '写真に保存', { size: 17, weight: 700, fill: '#fff' });
+  s += rect(qx, 640, bw, 52, { rx: 14, fill: C.accentFill }) + iconLabel(qx + bw / 2, 672, 'download', 22, '写真に保存', { size: 17, weight: 700, fill: '#fff' });
   s += rect(qx + bw + 12, 640, bw, 52, { rx: 14, fill: C.card, stroke: C.separator }) + iconLabel(qx + bw + 12 + bw / 2, 672, 'share', 22, '共有', { size: 17, weight: 700, fill: C.accent });
   s += ipadStatus(false) + ipadTabs(2, false);
   return s;
@@ -402,7 +392,7 @@ function ipadPaywall() {
   s += `<g filter="url(#shadowLg)">${rect(x, y, w, h, { rx: 28, fill: '#fff' })}</g>`;
   s += glassCircle(x + 38, y + 38, 20, 'xmark', false);
   const cx = x + w / 2;
-  s += tile(cx - 34, y + 40, 68, C.accent, 'qr', 16) +
+  s += tile(cx - 34, y + 40, 68, C.accentFill, 'qr', 16) +
     t(cx, y + 144, '誠実QRリーダー Pro', { size: 26, weight: 800, anchor: 'middle' }) +
     t(cx, y + 170, '一回払いで、ずっと使えます', { size: 15, fill: C.secondary, anchor: 'middle' });
   const bx = x + 40, bw = w - 80;
@@ -418,7 +408,7 @@ function ipadPaywall() {
       t(bx + 52, fy + 15, a, { size: 16, weight: 700 }) + t(bx + 52, fy + 36, b, { size: 13, fill: C.secondary });
   });
   s += t(cx, y + 528, 'スキャンは無料版でも回数無制限です。', { size: 13, fill: C.secondary, anchor: 'middle' }) +
-    rect(bx, y + 546, bw, 56, { rx: 14, fill: C.accent }) + t(cx, y + 581, '¥800 で購入（買い切り）', { size: 18, weight: 800, fill: '#fff', anchor: 'middle' }) +
+    rect(bx, y + 546, bw, 56, { rx: 14, fill: C.accentFill }) + t(cx, y + 581, '¥800 で購入（買い切り）', { size: 18, weight: 800, fill: '#fff', anchor: 'middle' }) +
     t(cx, y + 636, '購入を復元', { size: 16, weight: 600, fill: C.accent, anchor: 'middle' }) +
     t(cx, y + 664, 'お支払いはAppleアカウントに1回だけ請求されます。', { size: 12, fill: C.secondary, anchor: 'middle' }) +
     t(cx, y + 682, '同じAppleアカウントのiPhone・iPadで復元できます。', { size: 12, fill: C.secondary, anchor: 'middle' });
