@@ -23,6 +23,16 @@ jobs:
           xcrun swiftc --version
           xcrun --sdk iphonesimulator --show-sdk-version
 
+      - name: Pick simulators
+        run: |
+          sdk=$(xcrun --sdk iphonesimulator --show-sdk-version)
+          if ! xcrun simctl list devices available -j | python3 tools/ci_destinations.py "$sdk" > destinations.env; then
+            # Runner images occasionally ship without a simulator runtime for this Xcode.
+            xcodebuild -downloadPlatform iOS
+            xcrun simctl list devices available -j | python3 tools/ci_destinations.py "$sdk" > destinations.env
+          fi
+          cat destinations.env | tee -a "$GITHUB_ENV"
+
       - name: Check generated localization code
         run: python3 tools/gen_l10n.py --check
 
@@ -38,7 +48,7 @@ jobs:
           xcodebuild test \
             -project SeijitsuQR.xcodeproj \
             -scheme SeijitsuQR \
-            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+            -destination "$IPHONE_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             | tee xcodebuild-iphone.log
 
@@ -48,7 +58,7 @@ jobs:
           xcodebuild build \
             -project SeijitsuQR.xcodeproj \
             -scheme SeijitsuQR \
-            -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M4),OS=26.5' \
+            -destination "$IPAD_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             | tee xcodebuild-ipad.log
 
@@ -76,30 +86,9 @@ jobs:
           xcrun --sdk iphonesimulator --show-sdk-version
           xcrun simctl list runtimes
 
-      - name: Pick the newest iPhone and iPad simulators
+      - name: Pick the newest simulators
         run: |
-          xcrun simctl list devices available -j > devices.json
-          python3 - <<'PY' >> "$GITHUB_ENV"
-          import json, re
-          devices = json.load(open("devices.json"))["devices"]
-          def version(runtime):
-              match = re.search(r"iOS-(\d+)-(\d+)", runtime)
-              return tuple(map(int, match.groups())) if match else None
-          runtimes = sorted((v, r) for r in devices if (v := version(r)))
-          def newest(prefix):
-              for v, runtime in reversed(runtimes):
-                  names = [d["name"] for d in devices[runtime] if d["name"].startswith(prefix) and "Duo" not in d["name"]]
-                  if names:
-                      return f"platform=iOS Simulator,name={names[-1]},OS={v[0]}.{v[1]}"
-              raise SystemExit(f"No {prefix} simulator found")
-          print(f"IPHONE_DESTINATION={newest('iPhone')}")
-          print(f"IPAD_DESTINATION={newest('iPad')}")
-          duo = [(v, d["name"]) for v, r in runtimes for d in devices[r] if "Duo" in d["name"]]
-          if duo:
-              v, name = duo[-1]
-              print(f"DUO_DESTINATION=platform=iOS Simulator,name={name},OS={v[0]}.{v[1]}")
-          PY
-          cat "$GITHUB_ENV"
+          xcrun simctl list devices available -j | python3 tools/ci_destinations.py | tee -a "$GITHUB_ENV"
 
       - name: Install XcodeGen
         run: brew install xcodegen
