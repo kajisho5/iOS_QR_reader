@@ -28,6 +28,12 @@ struct CameraPreview: UIViewRepresentable {
         return view
     }
 
+    /// Lets go of the session as soon as SwiftUI drops this preview, so a preview created in its
+    /// place (e.g. after a layout change) is not left waiting behind the old layer's connection.
+    static func dismantleUIView(_ view: PreviewView, coordinator: ()) {
+        view.previewLayer.session = nil
+    }
+
     func updateUIView(_ view: PreviewView, context: Context) {
         view.attach(device: device)
         view.zoomFactor = zoomFactor
