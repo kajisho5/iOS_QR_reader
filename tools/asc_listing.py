@@ -97,9 +97,12 @@ def main():
 
     # Free app (the only purchase is the Pro In-App Purchase).
     try:
-        call("GET", f"/v1/apps/{app_id}/appPriceSchedule")
-        print("price: schedule already exists (left as is)")
+        has_price = bool(call("GET", f"/v1/appPriceSchedules/{app_id}/manualPrices").get("data"))
     except SystemExit:
+        has_price = False  # 404 until a price has been set
+    if has_price:
+        print("price: already set (left as is)")
+    else:
         points = call("GET", f"/v1/apps/{app_id}/appPricePoints", **{"filter[territory]": "JPN", "limit": "200"})["data"]
         free = next(p for p in points if float(p["attributes"]["customerPrice"]) == 0)
         call("POST", "/v1/appPriceSchedules", {
