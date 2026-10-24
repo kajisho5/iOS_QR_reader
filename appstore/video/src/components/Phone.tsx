@@ -23,6 +23,7 @@ export const Phone = ({
   globalFill,
   frameH,
   shadow,
+  opacity = 1,
 }: {
   cx: number;
   cy: number;
@@ -36,6 +37,7 @@ export const Phone = ({
   globalFill: number;
   frameH: number;
   shadow: number;
+  opacity?: number;
 }) => {
   const innerW = w - bezel * 2;
   const innerH = h - bezel * 2;
@@ -63,6 +65,7 @@ export const Phone = ({
         height: h,
         borderRadius: radius,
         background: "#101513",
+        opacity,
         boxShadow: shadow > 0 ? `0 ${h * 0.03}px ${h * 0.07}px rgba(0, 30, 22, ${0.35 * shadow})` : "none",
       }}
     >

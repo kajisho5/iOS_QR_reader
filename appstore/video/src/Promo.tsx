@@ -144,6 +144,9 @@ export const Promo = ({ layout }: { layout: Layout }) => {
           globalFill={dive}
           frameH={H}
           shadow={1 - dive}
+          // By the end of the dive the tile's gradient is the background's, so it can vanish without a visible change
+          // (and the last frame has no motion-blur banding, matching the first).
+          opacity={1 - dive}
         />
       ) : null}
 
