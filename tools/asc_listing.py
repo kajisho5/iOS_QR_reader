@@ -65,7 +65,20 @@ def main():
     versions = call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
                                                                       "filter[appStoreState]": "PREPARE_FOR_SUBMISSION"})["data"]
     if not versions:
-        raise SystemExit("No version in PREPARE_FOR_SUBMISSION")
+        # In review (e.g. App Review asked for more information): everything else is locked, but the
+        # App Review notes can still be updated, as App Review asks for its answers there too.
+        versions = call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
+                                                                          "filter[versionString]": LISTING["versionString"]})["data"]
+        if not versions:
+            raise SystemExit(f"No version {LISTING['versionString']}")
+        version = versions[0]
+        print(f"version {LISTING['versionString']}: {version['attributes'].get('appVersionState') or version['attributes'].get('appStoreState')} "
+              "(not editable; updating the App Review notes only)")
+        detail = call("GET", f"/v1/appStoreVersions/{version['id']}/appStoreReviewDetail").get("data")
+        if not detail:
+            raise SystemExit("reviewDetail: not created yet")
+        patch("appStoreReviewDetails", detail["id"], detail["attributes"], {"notes": LISTING["review"]["notes"]}, "reviewDetail")
+        return
     version = versions[0]
     patch("appStoreVersions", version["id"], version["attributes"],
           {"versionString": LISTING["versionString"], "copyright": LISTING["copyright"]}, "version")
