@@ -2,6 +2,12 @@
 import Foundation
 
 enum L10n {
+    static var codeDisplayBrightness: String { String(localized: "codeDisplay.brightness") }
+    static func codeDisplayImage(_ p1: String) -> String {
+        String(format: String(localized: "codeDisplay.image"), p1)
+    }
+    static var codeDisplayNote: String { String(localized: "codeDisplay.note") }
+    static var codeDisplayShareImage: String { String(localized: "codeDisplay.shareImage") }
     static var commonCancel: String { String(localized: "common.cancel") }
     static var commonClose: String { String(localized: "common.close") }
     static var commonCopied: String { String(localized: "common.copied") }
@@ -155,6 +161,7 @@ enum L10n {
     static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
     static var paywallTerms: String { String(localized: "paywall.terms") }
     static var paywallTitle: String { String(localized: "paywall.title") }
+    static var resultCodePreviewHint: String { String(localized: "result.codePreviewHint") }
     static var resultContactAdd: String { String(localized: "result.contact.add") }
     static var resultContactAddress: String { String(localized: "result.contact.address") }
     static var resultContactEmail: String { String(localized: "result.contact.email") }
@@ -188,6 +195,10 @@ enum L10n {
     static var resultScheme: String { String(localized: "result.scheme") }
     static var resultSchemeHttp: String { String(localized: "result.scheme.http") }
     static var resultSchemeHttps: String { String(localized: "result.scheme.https") }
+    static var resultShowBarcode: String { String(localized: "result.showBarcode") }
+    static var resultShowCode: String { String(localized: "result.showCode") }
+    static var resultShowCodeUnavailable: String { String(localized: "result.showCodeUnavailable") }
+    static var resultShowCodeUnavailableNote: String { String(localized: "result.showCodeUnavailableNote") }
     static var resultSmsBody: String { String(localized: "result.sms.body") }
     static var resultSmsCompose: String { String(localized: "result.sms.compose") }
     static var resultSmsNumber: String { String(localized: "result.sms.number") }
@@ -288,9 +299,35 @@ enum L10n {
     static var tabHistory: String { String(localized: "tab.history") }
     static var tabScan: String { String(localized: "tab.scan") }
     static var tabSettings: String { String(localized: "tab.settings") }
+    static func urlRiskActualDomain(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.actualDomain"), p1)
+    }
+    static var urlRiskConfirmCancel: String { String(localized: "urlRisk.confirm.cancel") }
+    static var urlRiskConfirmOpen: String { String(localized: "urlRisk.confirm.open") }
+    static var urlRiskConfirmTitle: String { String(localized: "urlRisk.confirm.title") }
+    static func urlRiskDisguisedMessage(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.disguised.message"), p1)
+    }
+    static var urlRiskDisguisedTitle: String { String(localized: "urlRisk.disguised.title") }
+    static var urlRiskInsecureMessage: String { String(localized: "urlRisk.insecure.message") }
+    static var urlRiskInsecureTitle: String { String(localized: "urlRisk.insecure.title") }
+    static var urlRiskIpMessage: String { String(localized: "urlRisk.ip.message") }
+    static var urlRiskIpTitle: String { String(localized: "urlRisk.ip.title") }
+    static var urlRiskLookalikeMessage: String { String(localized: "urlRisk.lookalike.message") }
+    static var urlRiskLookalikeTitle: String { String(localized: "urlRisk.lookalike.title") }
+    static var urlRiskPortMessage: String { String(localized: "urlRisk.port.message") }
+    static func urlRiskPortTitle(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.port.title"), p1)
+    }
+    static var urlRiskShortenerMessage: String { String(localized: "urlRisk.shortener.message") }
+    static var urlRiskShortenerTitle: String { String(localized: "urlRisk.shortener.title") }
 
     /// Every key in the catalog, used by tests to verify each one resolves.
     static let allKeys: [String] = [
+        "codeDisplay.brightness",
+        "codeDisplay.image",
+        "codeDisplay.note",
+        "codeDisplay.shareImage",
         "common.cancel",
         "common.close",
         "common.copied",
@@ -434,6 +471,7 @@ enum L10n {
         "paywall.subtitle",
         "paywall.terms",
         "paywall.title",
+        "result.codePreviewHint",
         "result.contact.add",
         "result.contact.address",
         "result.contact.email",
@@ -467,6 +505,10 @@ enum L10n {
         "result.scheme",
         "result.scheme.http",
         "result.scheme.https",
+        "result.showBarcode",
+        "result.showCode",
+        "result.showCodeUnavailable",
+        "result.showCodeUnavailableNote",
         "result.sms.body",
         "result.sms.compose",
         "result.sms.number",
@@ -561,5 +603,21 @@ enum L10n {
         "tab.history",
         "tab.scan",
         "tab.settings",
+        "urlRisk.actualDomain",
+        "urlRisk.confirm.cancel",
+        "urlRisk.confirm.open",
+        "urlRisk.confirm.title",
+        "urlRisk.disguised.message",
+        "urlRisk.disguised.title",
+        "urlRisk.insecure.message",
+        "urlRisk.insecure.title",
+        "urlRisk.ip.message",
+        "urlRisk.ip.title",
+        "urlRisk.lookalike.message",
+        "urlRisk.lookalike.title",
+        "urlRisk.port.message",
+        "urlRisk.port.title",
+        "urlRisk.shortener.message",
+        "urlRisk.shortener.title",
     ]
 }

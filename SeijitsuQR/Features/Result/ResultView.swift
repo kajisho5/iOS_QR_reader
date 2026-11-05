@@ -27,12 +27,22 @@ struct ResultView: View {
     @State private var isAddingContact = false
     @State private var isConnecting = false
     @State private var alert: ResultAlert?
+    @State private var displayedCode: DisplayedCode?
+    @State private var riskyURL: URL?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                if style == .pane, canShowCode {
+                    codePreview
+                }
                 header
                 details
+                if !canShowCode {
+                    Label(L10n.resultShowCodeUnavailableNote, systemImage: "info.circle")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
                 if let note = noteText {
                     Label(note, systemImage: "info.circle")
                         .font(.footnote)
@@ -73,6 +83,15 @@ struct ResultView: View {
         } message: { alert in
             Text(alert.message)
         }
+        .fullScreenCover(item: $displayedCode) { code in
+            CodeDisplayView(image: code.image, title: code.title, subtitle: code.subtitle)
+        }
+        .confirmationDialog(L10n.urlRiskConfirmTitle, isPresented: isConfirmingRiskyURL, titleVisibility: .visible, presenting: riskyURL) { url in
+            Button(L10n.urlRiskConfirmOpen, role: .destructive) { open(url) }
+            Button(L10n.urlRiskConfirmCancel, role: .cancel) {}
+        } message: { _ in
+            Text(urlRisks.map { riskTitle($0.kind) }.joined(separator: L10n.metaSeparator))
+        }
     }
 
     /// Pinned on compact width. At accessibility text sizes the actions follow the content instead,
@@ -111,6 +130,9 @@ struct ResultView: View {
     private var details: some View {
         switch result.payload {
         case .url(let url):
+            ForEach(urlRisks, id: \.self) { risk in
+                URLRiskCard(risk: risk, title: riskTitle(risk.kind), message: riskMessage(risk.kind))
+            }
             ResultCard {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(L10n.resultLinkFull)
@@ -241,6 +263,17 @@ struct ResultView: View {
             .disabled(isConnecting)
         }
         AdaptiveStack(spacing: 8, alignment: .center) {
+            Button(action: showCode) {
+                VStack(spacing: 6) {
+                    Image(systemName: result.code.symbology == .qr ? "qrcode" : "barcode").font(.title3)
+                    Text(canShowCode ? showCodeTitle : L10n.resultShowCodeUnavailable).multilineTextAlignment(.center)
+                }
+            }
+            .buttonStyle(ActionTileStyle())
+            .foregroundStyle(canShowCode ? Color.accentColor : Color.secondary)
+            .disabled(!canShowCode)
+            .keyboardShortcut("e", modifiers: .command)
+
             Button(action: copy) {
                 VStack(spacing: 6) {
                     Image(systemName: "doc.on.doc").font(.title3)
@@ -277,6 +310,96 @@ struct ResultView: View {
         }
     }
 
+    // MARK: Showing the code again
+
+    private struct DisplayedCode: Identifiable {
+        let id = UUID()
+        let image: UIImage
+        let title: String
+        let subtitle: String
+    }
+
+    private var canShowCode: Bool {
+        CodeImageRenderer.canRender(result.code.symbology, content: result.code.content)
+    }
+
+    private var showCodeTitle: String {
+        result.code.symbology == .qr ? L10n.resultShowCode : L10n.resultShowBarcode
+    }
+
+    private var codeTitle: String {
+        switch result.payload {
+        case .wifi(let network): network.ssid
+        case .url(let url): url.host ?? result.payload.kind.title
+        default: result.payload.kind.title
+        }
+    }
+
+    private func showCode() {
+        guard let image = CodeImageRenderer.image(for: result.code.content, symbology: result.code.symbology) else { return }
+        displayedCode = DisplayedCode(image: image, title: codeTitle, subtitle: result.payload.kind.title)
+    }
+
+    /// History detail and the iPad pane show the code itself at the top; tap to enlarge.
+    private var codePreview: some View {
+        Button(action: showCode) {
+            VStack(spacing: 10) {
+                if let image = CodeImageRenderer.image(for: result.code.content, symbology: result.code.symbology, targetWidth: 400) {
+                    Image(uiImage: image)
+                        .interpolation(.none)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: 200, maxHeight: 200)
+                        .padding(8)
+                        .background(Color.white, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                Label(L10n.resultCodePreviewHint, systemImage: "arrow.up.left.and.arrow.down.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Color.accentColor)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity)
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(showCodeTitle)
+    }
+
+    // MARK: URL risks
+
+    private var urlRisks: [URLRisk] {
+        guard case .url(let url) = result.payload else { return [] }
+        return URLRiskAnalyzer.risks(in: result.code.content, url: url)
+    }
+
+    private var isConfirmingRiskyURL: Binding<Bool> {
+        Binding(get: { riskyURL != nil }, set: { if !$0 { riskyURL = nil } })
+    }
+
+    private func riskTitle(_ kind: URLRisk.Kind) -> String {
+        switch kind {
+        case .lookalikeCharacters: L10n.urlRiskLookalikeTitle
+        case .disguisedHost: L10n.urlRiskDisguisedTitle
+        case .shortener: L10n.urlRiskShortenerTitle
+        case .insecure: L10n.urlRiskInsecureTitle
+        case .ipAddress: L10n.urlRiskIpTitle
+        case .unusualPort(let port): L10n.urlRiskPortTitle(String(port))
+        }
+    }
+
+    private func riskMessage(_ kind: URLRisk.Kind) -> String {
+        switch kind {
+        case .lookalikeCharacters(let shown, let actual):
+            shown == actual ? L10n.urlRiskLookalikeMessage : L10n.urlRiskLookalikeMessage + "\n" + L10n.urlRiskActualDomain(actual)
+        case .disguisedHost(let shown, let actual):
+            L10n.urlRiskDisguisedMessage(shown) + "\n" + L10n.urlRiskActualDomain(actual)
+        case .shortener: L10n.urlRiskShortenerMessage
+        case .insecure: L10n.urlRiskInsecureMessage
+        case .ipAddress: L10n.urlRiskIpMessage
+        case .unusualPort: L10n.urlRiskPortMessage
+        }
+    }
+
     private var footer: some View {
         Group {
             if copiedMessageVisible {
@@ -301,7 +424,10 @@ struct ResultView: View {
     private var primaryAction: PrimaryAction? {
         switch result.payload {
         case .url(let url):
-            PrimaryAction(title: L10n.resultOpenInBrowser, systemImage: "arrow.up.right.square") { open(url) }
+            PrimaryAction(title: L10n.resultOpenInBrowser, systemImage: "arrow.up.right.square") {
+                // A URL with something to note asks once more before leaving the app.
+                if urlRisks.isEmpty { open(url) } else { riskyURL = url }
+            }
         case .wifi(let network):
             PrimaryAction(title: L10n.resultWifiConnect, systemImage: "wifi") { connect(network) }
         case .contact(let card):
@@ -447,5 +573,37 @@ struct AdaptiveStack<Content: View>: View {
         } else {
             HStack(alignment: alignment, spacing: spacing) { content }
         }
+    }
+}
+
+/// A note about a URL, shown above its details (docs/design/16_url_check.svg). Warnings are red, cautions amber.
+struct URLRiskCard: View {
+    let risk: URLRisk
+    let title: String
+    let message: String
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Image(systemName: risk.severity == .warning ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill")
+                .foregroundStyle(tint)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(tint)
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(14)
+        .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var tint: Color {
+        risk.severity == .warning ? Color(.systemRed) : Color(.systemOrange)
     }
 }

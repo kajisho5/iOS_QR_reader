@@ -1,6 +1,6 @@
 # 誠実QRリーダー 1.1 / 1.2 追加機能 設計書（Step 1）
 
-> ステータス: **提案中（2026-11-06）・確認待ち**。デザインは `docs/design/15_show_code.svg`〜`18_entry_points.svg`（生成元 `docs/design/src/v11.js`）。
+> ステータス: **確定（2026-11-06、§9 はすべて推奨案）。1.1（A・C）実装中**。デザインは `docs/design/15_show_code.svg`〜`18_entry_points.svg`（生成元 `docs/design/src/v11.js`）。
 > 1.0 の設計書は `docs/DESIGN.md`。3 原則（広告なし・サブスクなし・端末内完結）はそのまま守る。
 
 ## 0. 追加する機能と出す順番
