@@ -17,6 +17,7 @@ struct ResultView: View {
     var addContact: ((ContactCard) -> Void)?
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppSettings.self) private var settings
     @Environment(\.openURL) private var openURL
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -110,7 +111,7 @@ struct ResultView: View {
         AdaptiveStack(spacing: 12) {
             KindTile(kind: result.payload.kind, symbology: result.code.symbology, size: 48)
             VStack(alignment: .leading, spacing: 2) {
-                Text(result.payload.kind.title)
+                Text(headerTitle)
                     .font(.title2.bold())
                 Text(metaText)
                     .font(.footnote)
@@ -118,6 +119,20 @@ struct ResultView: View {
             }
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private var headerTitle: String {
+        if isBook { return L10n.resultBookTitle }
+        if isProductCode { return L10n.resultProductTitle }
+        return result.payload.kind.title
+    }
+
+    private var isProductCode: Bool { ProductCode.isProductCode(result.code.symbology) }
+    private var isBook: Bool { ProductCode.isISBN(result.code.content, symbology: result.code.symbology) }
+
+    private func webSearch(_ query: String) {
+        guard let url = settings.searchEngine.url(searching: query) else { return }
+        open(url)
     }
 
     private var metaText: String {
@@ -243,6 +258,7 @@ struct ResultView: View {
     }
 
     private var noteText: String? {
+        if isProductCode { return L10n.resultWebSearchNote(settings.searchEngine.title) }
         switch result.payload {
         case .url: L10n.resultOpenNote
         case .wifi: L10n.resultWifiConnectNote
@@ -263,6 +279,18 @@ struct ResultView: View {
             .disabled(isConnecting)
         }
         AdaptiveStack(spacing: 8, alignment: .center) {
+            if isBook {
+                Button {
+                    webSearch("ISBN " + result.code.content)
+                } label: {
+                    VStack(spacing: 6) {
+                        Image(systemName: "book").font(.title3)
+                        Text(L10n.resultBookSearch).multilineTextAlignment(.center)
+                    }
+                }
+                .buttonStyle(ActionTileStyle())
+                .foregroundStyle(Color.accentColor)
+            }
             Button(action: showCode) {
                 VStack(spacing: 6) {
                     Image(systemName: result.code.symbology == .qr ? "qrcode" : "barcode").font(.title3)
@@ -422,6 +450,10 @@ struct ResultView: View {
     }
 
     private var primaryAction: PrimaryAction? {
+        if isProductCode {
+            let code = result.code.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            return PrimaryAction(title: L10n.resultWebSearch, systemImage: "magnifyingglass") { webSearch(code) }
+        }
         switch result.payload {
         case .url(let url):
             PrimaryAction(title: L10n.resultOpenInBrowser, systemImage: "arrow.up.right.square") {

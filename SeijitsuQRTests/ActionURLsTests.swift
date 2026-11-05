@@ -28,4 +28,31 @@ struct ActionURLsTests {
         #expect(items.first(where: { $0.name == "ll" })?.value == "35.68124,139.76712")
         #expect(items.first(where: { $0.name == "q" })?.value == "東京駅")
     }
+
+    // MARK: Product codes (docs/DESIGN_1.1.md §2.5)
+
+    @Test(arguments: SearchEngine.allCases)
+    func webSearchCarriesOnlyTheQuery(_ engine: SearchEngine) throws {
+        let url = try #require(engine.url(searching: "ISBN 9784101010014"))
+        let components = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false))
+        #expect(components.scheme == "https")
+        #expect(components.queryItems?.count == 1)
+        #expect(components.queryItems?.first?.value == "ISBN 9784101010014")
+    }
+
+    @Test func searchHosts() {
+        #expect(SearchEngine.google.url(searching: "4901234567894")?.host == "www.google.com")
+        #expect(SearchEngine.yahooJapan.url(searching: "4901234567894")?.absoluteString == "https://search.yahoo.co.jp/search?p=4901234567894")
+        #expect(SearchEngine.duckDuckGo.url(searching: "4901234567894")?.host == "duckduckgo.com")
+        #expect(SearchEngine.bing.url(searching: "4901234567894")?.host == "www.bing.com")
+    }
+
+    @Test func productCodesAndBooks() {
+        #expect(ProductCode.isProductCode(.ean13) && ProductCode.isProductCode(.ean8) && ProductCode.isProductCode(.upce))
+        #expect(!ProductCode.isProductCode(.qr) && !ProductCode.isProductCode(.code128))
+        #expect(ProductCode.isISBN("9784101010014", symbology: .ean13))
+        #expect(!ProductCode.isISBN("9784101010015", symbology: .ean13))  // wrong check digit
+        #expect(!ProductCode.isISBN("4901234567894", symbology: .ean13))  // not a book
+        #expect(!ProductCode.isISBN("9784101010014", symbology: .code128))
+    }
 }

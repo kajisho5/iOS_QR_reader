@@ -1618,6 +1618,28 @@
         }
       }
     },
+    "result.book.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本（ISBN）"
+          }
+        }
+      }
+    },
+    "result.bookSearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本として検索"
+          }
+        }
+      }
+    },
     "result.codePreviewHint": {
       "extractionState": "manual",
       "localizations": {
@@ -1948,6 +1970,17 @@
         }
       }
     },
+    "result.product.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品コード"
+          }
+        }
+      }
+    },
     "result.saved": {
       "extractionState": "manual",
       "localizations": {
@@ -2065,6 +2098,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "宛先"
+          }
+        }
+      }
+    },
+    "result.webSearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウェブで検索"
+          }
+        }
+      }
+    },
+    "result.webSearchNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「ウェブで検索」を押すと、この番号が検索サイト（%@）に送られ、Safari で結果を開きます。押すまで、どこにも送りません。"
           }
         }
       }
@@ -2652,6 +2707,50 @@
         }
       }
     },
+    "searchEngine.bing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bing"
+          }
+        }
+      }
+    },
+    "searchEngine.duckDuckGo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DuckDuckGo"
+          }
+        }
+      }
+    },
+    "searchEngine.google": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google"
+          }
+        }
+      }
+    },
+    "searchEngine.yahooJapan": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yahoo! JAPAN"
+          }
+        }
+      }
+    },
     "settings.about.header": {
       "extractionState": "manual",
       "localizations": {
@@ -2850,6 +2949,17 @@
         }
       }
     },
+    "settings.scan.searchEngine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索サイト"
+          }
+        }
+      }
+    },
     "settings.scan.sound": {
       "extractionState": "manual",
       "localizations": {
@@ -2857,6 +2967,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み取り時の音"
+          }
+        }
+      }
+    },
+    "settings.searchEngine.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選んだサイトには、検索ボタンを押したときだけ番号が送られます。このアプリ自身は通信しません。"
+          }
+        }
+      }
+    },
+    "settings.searchEngine.header": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品コード・ISBN を調べるときに開くサイト"
           }
         }
       }

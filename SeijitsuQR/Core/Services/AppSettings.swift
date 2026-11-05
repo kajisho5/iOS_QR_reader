@@ -9,6 +9,7 @@ final class AppSettings {
         static let sound = "settings.sound"
         static let haptics = "settings.haptics"
         static let autosave = "settings.autosave"
+        static let searchEngine = "settings.searchEngine"
         static let successfulScans = "usage.successfulScans"
         static let reviewRequested = "usage.reviewRequested"
     }
@@ -27,6 +28,11 @@ final class AppSettings {
         didSet { defaults.set(isAutosaveEnabled, forKey: Key.autosave) }
     }
 
+    /// Where product codes are searched (only when the user taps "ウェブで検索").
+    var searchEngine: SearchEngine {
+        didSet { defaults.set(searchEngine.rawValue, forKey: Key.searchEngine) }
+    }
+
     /// Counted only to decide when to ask for a rating; never leaves the device.
     var successfulScans: Int {
         didSet { defaults.set(successfulScans, forKey: Key.successfulScans) }
@@ -42,6 +48,7 @@ final class AppSettings {
         isSoundEnabled = defaults.bool(forKey: Key.sound)
         isHapticsEnabled = defaults.bool(forKey: Key.haptics)
         isAutosaveEnabled = defaults.bool(forKey: Key.autosave)
+        searchEngine = defaults.string(forKey: Key.searchEngine).flatMap(SearchEngine.init(rawValue:)) ?? .google
         successfulScans = defaults.integer(forKey: Key.successfulScans)
         hasRequestedReview = defaults.bool(forKey: Key.reviewRequested)
     }

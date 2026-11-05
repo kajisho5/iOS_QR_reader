@@ -51,6 +51,11 @@ struct SettingsView: View {
                 Section(L10n.settingsScanHeader) {
                     Toggle(L10n.settingsScanSound, isOn: $settings.isSoundEnabled)
                     Toggle(L10n.settingsScanHaptics, isOn: $settings.isHapticsEnabled)
+                    NavigationLink {
+                        SearchEnginePicker()
+                    } label: {
+                        LabeledContent(L10n.settingsScanSearchEngine, value: settings.searchEngine.title)
+                    }
                 }
                 .tint(AppColor.accentFill)
 
@@ -108,5 +113,40 @@ struct SettingsView: View {
 
     private var isNoticePresented: Binding<Bool> {
         Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })
+    }
+}
+
+/// Chooses the site "ウェブで検索" opens (docs/design/19_product_search.svg F4).
+struct SearchEnginePicker: View {
+    @Environment(AppSettings.self) private var settings
+
+    var body: some View {
+        Form {
+            Section {
+                ForEach(SearchEngine.allCases) { engine in
+                    Button {
+                        settings.searchEngine = engine
+                    } label: {
+                        HStack {
+                            Text(engine.title).foregroundStyle(.primary)
+                            Spacer()
+                            if settings.searchEngine == engine {
+                                Image(systemName: "checkmark")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.accentColor)
+                                    .accessibilityHidden(true)
+                            }
+                        }
+                    }
+                    .accessibilityAddTraits(settings.searchEngine == engine ? .isSelected : [])
+                }
+            } header: {
+                Text(L10n.settingsSearchEngineHeader)
+            } footer: {
+                Text(L10n.settingsSearchEngineFooter)
+            }
+        }
+        .navigationTitle(L10n.settingsScanSearchEngine)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
