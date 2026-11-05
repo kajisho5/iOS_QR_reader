@@ -2031,7 +2031,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この種類のバーコード（JAN/EAN など）は、画像として表示できません。"
+            "value": "この種類のコード（Data Matrix）や、規格に合わない内容のコードは、画像として表示できません。"
           }
         }
       }

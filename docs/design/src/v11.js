@@ -95,11 +95,11 @@ function a4() {
   // A symbology iOS cannot draw (JAN/EAN): say so instead of showing a wrong image.
   const Y = 236, H = Y + 46;
   return S.sheetBackdrop() + S.sheetTop(Y) + S.sheetClose(Y + 30) +
-    resultHead(H + 10, 'text', 'barcode', 'テキスト', 'EAN-13 · 2026/11/06 07:58') +
-    rect(16, H + 74, 361, 70, { rx: 14, fill: C.card }) + t(32, H + 116, '4901234567894', { size: 20, weight: 700, mono: true }) +
+    resultHead(H + 10, 'text', 'qr', 'テキスト', 'Data Matrix · 2026/11/06 07:58') +
+    rect(16, H + 74, 361, 70, { rx: 14, fill: C.card }) + t(32, H + 116, 'LOT-20261106-0042', { size: 20, weight: 700, mono: true }) +
     rect(16, H + 158, 361, 70, { rx: 14, fill: C.neutralFill }) + icon('info', 30, H + 172, 20, C.secondary) +
-    t(60, H + 186, 'JAN/EAN などのバーコードは、', { size: 13, fill: C.secondary }) +
-    t(60, H + 206, '1.1 では画像として表示できません。', { size: 13, fill: C.secondary }) +
+    t(60, H + 186, 'この種類のコード（Data Matrix）は、', { size: 13, fill: C.secondary }) +
+    t(60, H + 206, '画像として表示できません。', { size: 13, fill: C.secondary }) +
     S.resultPinned('copy', 'コピー', [['qr', '表示できません', C.tertiary], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
     L.homeIndicator(false);
 }
@@ -270,7 +270,7 @@ function e2() {
 }
 
 write('15_show_code.svg', '15 読み取ったQRを再表示（1.1 案 A）', '結果シートと履歴の詳細に「QRを表示」。読み取った内容から作り直したQRを、白地・最大の明るさで全画面表示。保存・共有も。',
-  'QR・Code128・PDF417・Aztec は表示できる（iOS に作る機能がある）。JAN/EAN など作れない種類は「表示できません」と正直に出す。', [
+  'QR・Code128・PDF417・Aztec は iOS の機能で、JAN/EAN・UPC-E・Code39/93・ITF-14 は自前で描いて表示。Data Matrix など描けない種類は「表示できません」と正直に出す。', [
     [a1(), 'A1. 結果シート（「QRを表示」を追加）'], [a2(), 'A2. 全画面表示（白地・明るさ最大）'], [a3(), 'A3. 履歴の詳細（上にQR）'], [a4(), 'A4. 表示できない種類']]);
 write('16_url_check.svg', '16 URLの注意表示（1.1 案 C）', 'URLを開く前に、端末内だけで確認して注意を出す（通信して行き先を調べることはしない）。注意があるURLは「ブラウザで開く」で確認を挟む。',
   '対象：短縮URL・見た目の似た文字（IDN／punycode）・http・IPアドレス直接・「@」でドメインを偽装したURL・標準でないポート。', [

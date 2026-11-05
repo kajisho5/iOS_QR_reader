@@ -22,19 +22,23 @@
 - 全画面（A2）: 白地（ダークモードでも白。読み取る側のため）、QR は画面幅いっぱい、表示中は画面の明るさを最大にし、閉じたら元に戻す。「写真に保存」「画像を共有」。
 - 作り直した QR は中身が同じでも模様が元と違うことがある。その旨を画面に書く（誇張しない）。
 
-### 表示できる種類（事実：CoreImage にある生成フィルタ）
+### 表示できる種類
 | 種類 | 生成 | 1.1 の扱い |
 |---|---|---|
 | QR | `CIQRCodeGenerator` | 表示（誤り訂正 M。作成機能と同じ） |
 | Code 128 | `CICode128BarcodeGenerator` | 表示 |
 | PDF417 | `CIPDF417BarcodeGenerator` | 表示 |
 | Aztec | `CIAztecCodeGenerator` | 表示 |
-| EAN-13/8・UPC-E・Code 39/93・ITF-14・Data Matrix | iOS に生成機能なし | 「表示できません」（A4）。自前で描くかは 1.2 以降に判断 |
+| EAN-13（JAN）/ EAN-8・UPC-E・Code 39・Code 93・ITF-14 | iOS に生成機能がないため自前で描く（`LinearBarcodeEncoder`、規格どおりの符号表とチェック数字） | 表示（2026-11-06 追加で決定） |
+| Data Matrix | iOS に生成機能なし。自前で描くには誤り訂正（リード・ソロモン）まで要る | 「表示できません」（A4）。1.2 以降に判断 |
+
+規格に合わない中身（チェック数字の誤り、桁数違い、Code 39 で使えない文字など）は描かずに「表示できません」とする。描いた画像は、テストで Vision に読み直させて同じ中身になることを確かめる。
 
 ### 実装
 | ファイル | 内容 |
 |---|---|
-| `Core/Encoding/CodeImageRenderer.swift`（新規） | `CodeSymbology` と文字列から `CGImage?` を作る。既存 `QRCodeRenderer` を内部で使う。作れない種類は `nil` |
+| `Core/Encoding/CodeImageRenderer.swift`（新規） | `CodeSymbology` と文字列から画像を作る。既存 `QRCodeRenderer` を内部で使う。作れない種類は `nil` |
+| `Core/Encoding/LinearBarcodeEncoder.swift`（新規） | EAN-13/8・UPC-E・Code 39/93・ITF-14 をモジュール列（バー／スペース）に変換 |
 | `Features/Result/CodeDisplayView.swift`（新規） | 全画面表示。`UIScreen.brightness` を表示時に 1.0、`onDisappear` と `scenePhase` の変化で元の値へ戻す |
 | `Features/Result/ResultView.swift` | タイルを 4 つに。作れない種類は無効表示 |
 | `Features/History/HistoryView.swift`（詳細） | 上部に QR サムネイル |
@@ -115,5 +119,5 @@ SeijitsuQRTests/CodeImageRendererTests.swift   (1.1)
 
 1. 出す順番（1.1 = A・C、1.2 = B・D・E）でよいか
 2. 無料 / Pro の分け方（B だけ Pro）でよいか
-3. JAN/EAN など iOS で作れないバーコードは、1.1 では「表示できません」でよいか（自前で描くと作業が増える）
+3. JAN/EAN など iOS で作れないバーコードは → 線のバーコード6種類は自前で描く（2026-11-06 決定）。Data Matrix は「表示できません」
 4. ウィジェットに Wi-Fi のパスワード入りの QR を出せてよいか（出せるが、選ぶ画面で注意を書く案）
