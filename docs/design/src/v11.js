@@ -95,11 +95,11 @@ function a4() {
   // A symbology iOS cannot draw (JAN/EAN): say so instead of showing a wrong image.
   const Y = 236, H = Y + 46;
   return S.sheetBackdrop() + S.sheetTop(Y) + S.sheetClose(Y + 30) +
-    resultHead(H + 10, 'text', 'barcode', 'テキスト', 'EAN-13 · 2026/11/06 07:58') +
-    rect(16, H + 74, 361, 70, { rx: 14, fill: C.card }) + t(32, H + 116, '4901234567894', { size: 20, weight: 700, mono: true }) +
+    resultHead(H + 10, 'text', 'qr', 'テキスト', 'Data Matrix · 2026/11/06 07:58') +
+    rect(16, H + 74, 361, 70, { rx: 14, fill: C.card }) + t(32, H + 116, 'LOT-20261106-0042', { size: 20, weight: 700, mono: true }) +
     rect(16, H + 158, 361, 70, { rx: 14, fill: C.neutralFill }) + icon('info', 30, H + 172, 20, C.secondary) +
-    t(60, H + 186, 'JAN/EAN などのバーコードは、', { size: 13, fill: C.secondary }) +
-    t(60, H + 206, '1.1 では画像として表示できません。', { size: 13, fill: C.secondary }) +
+    t(60, H + 186, 'この種類のコード（Data Matrix）は、', { size: 13, fill: C.secondary }) +
+    t(60, H + 206, '画像として表示できません。', { size: 13, fill: C.secondary }) +
     S.resultPinned('copy', 'コピー', [['qr', '表示できません', C.tertiary], ['share', '共有'], ['star', 'お気に入り', C.yellow]]) +
     L.homeIndicator(false);
 }
@@ -269,8 +269,53 @@ function e2() {
   return s;
 }
 
+// ---------- 19 商品コードを検索（案 F） ----------
+function searchSheet(kind, meta, code, codeLabel, isBook) {
+  const Y = 236, H = Y + 46;
+  let s = S.sheetBackdrop() + S.sheetTop(Y) + S.sheetClose(Y + 30) +
+    resultHead(H + 10, 'text', 'barcode', isBook ? '本（ISBN）' : '商品コード', meta) +
+    rect(16, H + 74, 361, 112, { rx: 14, fill: C.card }) +
+    t(32, H + 100, codeLabel, { size: 13, weight: 600, fill: C.secondary }) +
+    t(32, H + 132, code, { size: 22, weight: 700, mono: true }) +
+    line(32, H + 150, 361, H + 150) +
+    t(32, H + 174, '種類', { size: 15, fill: C.secondary }) + t(361, H + 174, kind, { size: 15, weight: 600, anchor: 'end' }) +
+    icon('info', 18, H + 206, 16, C.secondary) +
+    t(40, H + 219, '「ウェブで検索」を押すと、この番号が検索サイト', { size: 13, fill: C.secondary }) +
+    t(40, H + 239, '（Google）に送られ、Safari で結果を開きます。', { size: 13, fill: C.secondary }) +
+    t(40, H + 259, '押すまで、どこにも送りません。', { size: 13, fill: C.secondary });
+  const tiles = isBook
+    ? [['text', '本として検索', null, true], ['qr', 'コードを表示'], ['copy', 'コピー'], ['star', 'お気に入り', C.yellow]]
+    : [['qr', 'コードを表示'], ['copy', 'コピー'], ['share', '共有'], ['star', 'お気に入り', C.yellow]];
+  return s + resultPinnedQuad('search', 'ウェブで検索', tiles) + L.homeIndicator(false);
+}
+function f1() { return searchSheet('JAN（EAN-13）', 'EAN-13 · 2026/11/06 10:20', '4901234567894', '商品コード（JAN）', false); }
+function f2() { return searchSheet('ISBN（書籍JAN）', 'EAN-13 · 2026/11/06 10:24', '9784101010014', 'ISBN（978 で始まる書籍コード）', true); }
+function f3() {
+  let s = rect(0, 0, 393, 852, { fill: C.bg }) + statusBar(false) +
+    glassCircle(38, 82, 22, 'chevronLeft', false) + t(196.5, 88, '検索サイト', { size: 17, weight: 700, anchor: 'middle' }) +
+    t(32, 136, '商品コード・ISBN を調べるときに開くサイト', { size: 13, fill: C.secondary }) +
+    S.group(146, 4 * 52);
+  const rows = [['Google', true], ['Yahoo! JAPAN'], ['DuckDuckGo'], ['Bing']];
+  rows.forEach(([name, on], i) => {
+    const y = 146 + i * 52;
+    s += t(32, y + 33, name, { size: 16 }) + (on ? icon('check', 341, y + 15, 22, C.accent) : '') + (i < 3 ? S.sep(y + 52) : '');
+  });
+  s += t(32, 380, '選んだサイトには、検索ボタンを押したときだけ', { size: 12, fill: C.secondary }) +
+    t(32, 398, '番号が送られます。このアプリ自身は通信しません。', { size: 12, fill: C.secondary });
+  return s + tabBar(3, false);
+}
+function f4() {
+  // Settings top level: a new row in the scan section.
+  let s = S.navLarge('設定') + S.secHead(164, 'スキャン') + S.group(172, 153) +
+    t(32, 207, '読み取り時の音', { size: 16 }) + L.toggle(310, 187, true) + S.sep(223) +
+    t(32, 258, '読み取り時の振動', { size: 16 }) + L.toggle(310, 238, true) + S.sep(274) +
+    t(32, 308, '検索サイト', { size: 16 }) + t(337, 308, 'Google', { size: 16, fill: C.secondary, anchor: 'end' }) + icon('chevron', 343, 293, 18, C.tertiary) +
+    newBadge(130, 293);
+  return s + tabBar(3, false);
+}
+
 write('15_show_code.svg', '15 読み取ったQRを再表示（1.1 案 A）', '結果シートと履歴の詳細に「QRを表示」。読み取った内容から作り直したQRを、白地・最大の明るさで全画面表示。保存・共有も。',
-  'QR・Code128・PDF417・Aztec は表示できる（iOS に作る機能がある）。JAN/EAN など作れない種類は「表示できません」と正直に出す。', [
+  'QR・Code128・PDF417・Aztec は iOS の機能で、JAN/EAN・UPC-E・Code39/93・ITF-14 は自前で描いて表示。Data Matrix など描けない種類は「表示できません」と正直に出す。', [
     [a1(), 'A1. 結果シート（「QRを表示」を追加）'], [a2(), 'A2. 全画面表示（白地・明るさ最大）'], [a3(), 'A3. 履歴の詳細（上にQR）'], [a4(), 'A4. 表示できない種類']]);
 write('16_url_check.svg', '16 URLの注意表示（1.1 案 C）', 'URLを開く前に、端末内だけで確認して注意を出す（通信して行き先を調べることはしない）。注意があるURLは「ブラウザで開く」で確認を挟む。',
   '対象：短縮URL・見た目の似た文字（IDN／punycode）・http・IPアドレス直接・「@」でドメインを偽装したURL・標準でないポート。', [
@@ -281,4 +326,7 @@ write('17_widget.svg', '17 ウィジェット（1.2 案 B・Pro）', 'お気に�
 write('18_entry_points.svg', '18 すぐ読める入口・共有シートから読む（案 D・E）', 'D：コントロールセンター・ロック画面・アクションボタンに「QRスキャン」（iOS 18 以降。iOS 17 はショートカットアプリから）。',
   'E：写真・Safari などの共有シートから画像のQRを読む。アプリを開かずに結果を表示し、履歴には次にアプリを開いたとき保存。', [
     [d1(), 'D1. コントロールセンター'], [d2(), 'D2. ロック画面'], [e1(), 'E1. 写真の共有シート'], [e2(), 'E2. 共有シート内の結果']]);
+write('19_product_search.svg', '19 商品コード・ISBN をウェブで検索（1.1 案 F）', 'JAN（EAN-13）・EAN-8・UPC-E の結果に「ウェブで検索」。押すと番号だけを検索サイトに渡して Safari で開く（アプリ自身は通信しない）。',
+  '978/979 で始まる JAN は書籍の ISBN なので「本として検索」（"ISBN 番号" で検索）も出す。検索サイトは設定で Google・Yahoo! JAPAN・DuckDuckGo・Bing から選ぶ。', [
+    [f1(), 'F1. 商品コード（JAN）'], [f2(), 'F2. 書籍（ISBN）'], [f4(), 'F3. 設定に「検索サイト」'], [f3(), 'F4. 検索サイトを選ぶ']]);
 console.log('ok');

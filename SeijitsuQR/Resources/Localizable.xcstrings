@@ -1,6 +1,50 @@
 {
   "sourceLanguage": "ja",
   "strings": {
+    "codeDisplay.brightness": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示中は画面を最大の明るさにしています"
+          }
+        }
+      }
+    },
+    "codeDisplay.image": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ のコードの画像"
+          }
+        }
+      }
+    },
+    "codeDisplay.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取った内容から作り直したコードです。模様が元と違うことがありますが、読み取ると同じ内容になります。"
+          }
+        }
+      }
+    },
+    "codeDisplay.shareImage": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像を共有"
+          }
+        }
+      }
+    },
     "common.cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -1574,6 +1618,39 @@
         }
       }
     },
+    "result.book.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本（ISBN）"
+          }
+        }
+      }
+    },
+    "result.bookSearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本として検索"
+          }
+        }
+      }
+    },
+    "result.codePreviewHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タップで大きく表示"
+          }
+        }
+      }
+    },
     "result.contact.add": {
       "extractionState": "manual",
       "localizations": {
@@ -1893,6 +1970,17 @@
         }
       }
     },
+    "result.product.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品コード"
+          }
+        }
+      }
+    },
     "result.saved": {
       "extractionState": "manual",
       "localizations": {
@@ -1937,6 +2025,50 @@
         }
       }
     },
+    "result.showBarcode": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを表示"
+          }
+        }
+      }
+    },
+    "result.showCode": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRを表示"
+          }
+        }
+      }
+    },
+    "result.showCodeUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示できません"
+          }
+        }
+      }
+    },
+    "result.showCodeUnavailableNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この種類のコード（Data Matrix）や、規格に合わない内容のコードは、画像として表示できません。"
+          }
+        }
+      }
+    },
     "result.sms.body": {
       "extractionState": "manual",
       "localizations": {
@@ -1966,6 +2098,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "宛先"
+          }
+        }
+      }
+    },
+    "result.webSearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ウェブで検索"
+          }
+        }
+      }
+    },
+    "result.webSearchNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「ウェブで検索」を押すと、この番号が検索サイト（%@）に送られ、Safari で結果を開きます。押すまで、どこにも送りません。"
           }
         }
       }
@@ -2553,6 +2707,50 @@
         }
       }
     },
+    "searchEngine.bing": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bing"
+          }
+        }
+      }
+    },
+    "searchEngine.duckDuckGo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DuckDuckGo"
+          }
+        }
+      }
+    },
+    "searchEngine.google": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google"
+          }
+        }
+      }
+    },
+    "searchEngine.yahooJapan": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yahoo! JAPAN"
+          }
+        }
+      }
+    },
     "settings.about.header": {
       "extractionState": "manual",
       "localizations": {
@@ -2751,6 +2949,17 @@
         }
       }
     },
+    "settings.scan.searchEngine": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "検索サイト"
+          }
+        }
+      }
+    },
     "settings.scan.sound": {
       "extractionState": "manual",
       "localizations": {
@@ -2758,6 +2967,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み取り時の音"
+          }
+        }
+      }
+    },
+    "settings.searchEngine.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選んだサイトには、検索ボタンを押したときだけ番号が送られます。このアプリ自身は通信しません。"
+          }
+        }
+      }
+    },
+    "settings.searchEngine.header": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品コード・ISBN を調べるときに開くサイト"
           }
         }
       }
@@ -2967,6 +3198,182 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定"
+          }
+        }
+      }
+    },
+    "urlRisk.actualDomain": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "実際のドメイン：%@"
+          }
+        }
+      }
+    },
+    "urlRisk.confirm.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開かない"
+          }
+        }
+      }
+    },
+    "urlRisk.confirm.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このまま開く"
+          }
+        }
+      }
+    },
+    "urlRisk.confirm.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注意があるURLです"
+          }
+        }
+      }
+    },
+    "urlRisk.disguised.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」は名前の部分で、実際の行き先ではありません。"
+          }
+        }
+      }
+    },
+    "urlRisk.disguised.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「@」の前は行き先ではありません"
+          }
+        }
+      }
+    },
+    "urlRisk.insecure.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "入力した内容が途中で見られる可能性があります。パスワードやカード番号は入れないでください。"
+          }
+        }
+      }
+    },
+    "urlRisk.insecure.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗号化されていない接続（http）です"
+          }
+        }
+      }
+    },
+    "urlRisk.ip.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お店や会社の正式なサイトは、ふつうドメイン名を使います。家庭やお店の機器の設定画面なら問題ありません。"
+          }
+        }
+      }
+    },
+    "urlRisk.ip.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドメイン名ではなく IP アドレスです"
+          }
+        }
+      }
+    },
+    "urlRisk.lookalike.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本物のサイトに似せた、別のサイトのことがあります。見覚えのあるサイトでも、ドメインをよく確かめてください。"
+          }
+        }
+      }
+    },
+    "urlRisk.lookalike.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "英字以外の文字が入ったドメインです"
+          }
+        }
+      }
+    },
+    "urlRisk.port.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正規のサイトでも使われることがありますが、念のため行き先を確かめてください。"
+          }
+        }
+      }
+    },
+    "urlRisk.port.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ふだん使わないポート（%@）です"
+          }
+        }
+      }
+    },
+    "urlRisk.shortener.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本当の行き先は、開くまで分かりません。このアプリは通信しないため、行き先を確認することもしません。心当たりがなければ開かないでください。"
+          }
+        }
+      }
+    },
+    "urlRisk.shortener.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "短縮URLです"
           }
         }
       }

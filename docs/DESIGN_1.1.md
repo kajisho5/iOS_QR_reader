@@ -1,6 +1,6 @@
 # 誠実QRリーダー 1.1 / 1.2 追加機能 設計書（Step 1）
 
-> ステータス: **提案中（2026-11-06）・確認待ち**。デザインは `docs/design/15_show_code.svg`〜`18_entry_points.svg`（生成元 `docs/design/src/v11.js`）。
+> ステータス: **確定（2026-11-06、§9 はすべて推奨案）。1.1（A・C）実装中**。デザインは `docs/design/15_show_code.svg`〜`18_entry_points.svg`（生成元 `docs/design/src/v11.js`）。
 > 1.0 の設計書は `docs/DESIGN.md`。3 原則（広告なし・サブスクなし・端末内完結）はそのまま守る。
 
 ## 0. 追加する機能と出す順番
@@ -22,19 +22,23 @@
 - 全画面（A2）: 白地（ダークモードでも白。読み取る側のため）、QR は画面幅いっぱい、表示中は画面の明るさを最大にし、閉じたら元に戻す。「写真に保存」「画像を共有」。
 - 作り直した QR は中身が同じでも模様が元と違うことがある。その旨を画面に書く（誇張しない）。
 
-### 表示できる種類（事実：CoreImage にある生成フィルタ）
+### 表示できる種類
 | 種類 | 生成 | 1.1 の扱い |
 |---|---|---|
 | QR | `CIQRCodeGenerator` | 表示（誤り訂正 M。作成機能と同じ） |
 | Code 128 | `CICode128BarcodeGenerator` | 表示 |
 | PDF417 | `CIPDF417BarcodeGenerator` | 表示 |
 | Aztec | `CIAztecCodeGenerator` | 表示 |
-| EAN-13/8・UPC-E・Code 39/93・ITF-14・Data Matrix | iOS に生成機能なし | 「表示できません」（A4）。自前で描くかは 1.2 以降に判断 |
+| EAN-13（JAN）/ EAN-8・UPC-E・Code 39・Code 93・ITF-14 | iOS に生成機能がないため自前で描く（`LinearBarcodeEncoder`、規格どおりの符号表とチェック数字） | 表示（2026-11-06 追加で決定） |
+| Data Matrix | iOS に生成機能なし。自前で描くには誤り訂正（リード・ソロモン）まで要る | 「表示できません」（A4）。1.2 以降に判断 |
+
+規格に合わない中身（チェック数字の誤り、桁数違い、Code 39 で使えない文字など）は描かずに「表示できません」とする。符号の並びは、別の読み取りライブラリ（zxing-cpp）で読み直して同じ中身になることを確かめた並びを、テストに期待値として固定する（Vision は CI のシミュレータで読み取りモデルが読み込めず使えないため）。
 
 ### 実装
 | ファイル | 内容 |
 |---|---|
-| `Core/Encoding/CodeImageRenderer.swift`（新規） | `CodeSymbology` と文字列から `CGImage?` を作る。既存 `QRCodeRenderer` を内部で使う。作れない種類は `nil` |
+| `Core/Encoding/CodeImageRenderer.swift`（新規） | `CodeSymbology` と文字列から画像を作る。既存 `QRCodeRenderer` を内部で使う。作れない種類は `nil` |
+| `Core/Encoding/LinearBarcodeEncoder.swift`（新規） | EAN-13/8・UPC-E・Code 39/93・ITF-14 をモジュール列（バー／スペース）に変換 |
 | `Features/Result/CodeDisplayView.swift`（新規） | 全画面表示。`UIScreen.brightness` を表示時に 1.0、`onDisappear` と `scenePhase` の変化で元の値へ戻す |
 | `Features/Result/ResultView.swift` | タイルを 4 つに。作れない種類は無効表示 |
 | `Features/History/HistoryView.swift`（詳細） | 上部に QR サムネイル |
@@ -59,6 +63,25 @@
 
 - 結果は `[URLRisk]`（種類・重さ・説明文の L10n キー）。ユニットテストで各ルールの真偽を確認する。
 - 誤検知を避けるため、上の 6 つ以外（「怪しい単語」など推測的な判定）は入れない。
+
+## 2.5 F：商品コード・ISBN をウェブで検索（`19_product_search.svg`、1.1 に追加・確定 2026-11-06）
+
+### 要件
+- JAN（EAN-13）・EAN-8・UPC-E の結果で、主ボタンを「ウェブで検索」にする。押すと番号だけを検索 URL に入れ、`openURL` で Safari に渡す。**アプリ自身は通信しない**（1.0 の「ブラウザで開く」と同じ扱い）。
+- 押す前に「押すと番号が検索サイトに送られる・押すまでどこにも送らない」と注記する。
+- 978 / 979 で始まる 13 桁は書籍の ISBN（書籍 JAN）として扱い、「本として検索」タイルを追加する（検索語は `ISBN 9784…`）。特定の書店・図書館サイトの URL 形式は確認できていないため使わない。
+- 検索サイトは設定で選ぶ: Google（既定）・Yahoo! JAPAN・DuckDuckGo・Bing。
+
+### 検索 URL（`Core/Parsing/ActionURLs.swift` に追加）
+| サイト | URL |
+|---|---|
+| Google | `https://www.google.com/search?q=…` |
+| Yahoo! JAPAN | `https://search.yahoo.co.jp/search?p=…` |
+| DuckDuckGo | `https://duckduckgo.com/?q=…` |
+| Bing | `https://www.bing.com/search?q=…` |
+
+- 設定: `AppSettings.searchEngine`（UserDefaults、既定 Google）。設定画面の「スキャン」に行を追加し、選ぶ画面を開く。
+- テスト: 各サイトの URL が番号を正しく入れること、ISBN 判定（978/979 かつ 13 桁かつチェック数字が正しい）。
 
 ## 3. D：すぐ読める入口（`18_entry_points.svg` D1・D2）
 
@@ -115,5 +138,5 @@ SeijitsuQRTests/CodeImageRendererTests.swift   (1.1)
 
 1. 出す順番（1.1 = A・C、1.2 = B・D・E）でよいか
 2. 無料 / Pro の分け方（B だけ Pro）でよいか
-3. JAN/EAN など iOS で作れないバーコードは、1.1 では「表示できません」でよいか（自前で描くと作業が増える）
+3. JAN/EAN など iOS で作れないバーコードは → 線のバーコード6種類は自前で描く（2026-11-06 決定）。Data Matrix は「表示できません」
 4. ウィジェットに Wi-Fi のパスワード入りの QR を出せてよいか（出せるが、選ぶ画面で注意を書く案）

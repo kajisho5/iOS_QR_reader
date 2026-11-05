@@ -2,6 +2,12 @@
 import Foundation
 
 enum L10n {
+    static var codeDisplayBrightness: String { String(localized: "codeDisplay.brightness") }
+    static func codeDisplayImage(_ p1: String) -> String {
+        String(format: String(localized: "codeDisplay.image"), p1)
+    }
+    static var codeDisplayNote: String { String(localized: "codeDisplay.note") }
+    static var codeDisplayShareImage: String { String(localized: "codeDisplay.shareImage") }
     static var commonCancel: String { String(localized: "common.cancel") }
     static var commonClose: String { String(localized: "common.close") }
     static var commonCopied: String { String(localized: "common.copied") }
@@ -155,6 +161,9 @@ enum L10n {
     static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
     static var paywallTerms: String { String(localized: "paywall.terms") }
     static var paywallTitle: String { String(localized: "paywall.title") }
+    static var resultBookTitle: String { String(localized: "result.book.title") }
+    static var resultBookSearch: String { String(localized: "result.bookSearch") }
+    static var resultCodePreviewHint: String { String(localized: "result.codePreviewHint") }
     static var resultContactAdd: String { String(localized: "result.contact.add") }
     static var resultContactAddress: String { String(localized: "result.contact.address") }
     static var resultContactEmail: String { String(localized: "result.contact.email") }
@@ -184,13 +193,22 @@ enum L10n {
     static var resultOpenNote: String { String(localized: "result.openNote") }
     static var resultPhoneCall: String { String(localized: "result.phone.call") }
     static var resultPhoneNumber: String { String(localized: "result.phone.number") }
+    static var resultProductTitle: String { String(localized: "result.product.title") }
     static var resultSaved: String { String(localized: "result.saved") }
     static var resultScheme: String { String(localized: "result.scheme") }
     static var resultSchemeHttp: String { String(localized: "result.scheme.http") }
     static var resultSchemeHttps: String { String(localized: "result.scheme.https") }
+    static var resultShowBarcode: String { String(localized: "result.showBarcode") }
+    static var resultShowCode: String { String(localized: "result.showCode") }
+    static var resultShowCodeUnavailable: String { String(localized: "result.showCodeUnavailable") }
+    static var resultShowCodeUnavailableNote: String { String(localized: "result.showCodeUnavailableNote") }
     static var resultSmsBody: String { String(localized: "result.sms.body") }
     static var resultSmsCompose: String { String(localized: "result.sms.compose") }
     static var resultSmsNumber: String { String(localized: "result.sms.number") }
+    static var resultWebSearch: String { String(localized: "result.webSearch") }
+    static func resultWebSearchNote(_ p1: String) -> String {
+        String(format: String(localized: "result.webSearchNote"), p1)
+    }
     static var resultWifiConnect: String { String(localized: "result.wifi.connect") }
     static var resultWifiConnectNote: String { String(localized: "result.wifi.connectNote") }
     static var resultWifiConnected: String { String(localized: "result.wifi.connected") }
@@ -248,6 +266,10 @@ enum L10n {
     static func scanZoomValue(_ p1: String) -> String {
         String(format: String(localized: "scan.zoom.value"), p1)
     }
+    static var searchEngineBing: String { String(localized: "searchEngine.bing") }
+    static var searchEngineDuckDuckGo: String { String(localized: "searchEngine.duckDuckGo") }
+    static var searchEngineGoogle: String { String(localized: "searchEngine.google") }
+    static var searchEngineYahooJapan: String { String(localized: "searchEngine.yahooJapan") }
     static var settingsAboutHeader: String { String(localized: "settings.about.header") }
     static var settingsAboutPrivacy: String { String(localized: "settings.about.privacy") }
     static var settingsAboutPromise: String { String(localized: "settings.about.promise") }
@@ -268,7 +290,10 @@ enum L10n {
     static var settingsProStatusPurchased: String { String(localized: "settings.pro.status.purchased") }
     static var settingsScanHaptics: String { String(localized: "settings.scan.haptics") }
     static var settingsScanHeader: String { String(localized: "settings.scan.header") }
+    static var settingsScanSearchEngine: String { String(localized: "settings.scan.searchEngine") }
     static var settingsScanSound: String { String(localized: "settings.scan.sound") }
+    static var settingsSearchEngineFooter: String { String(localized: "settings.searchEngine.footer") }
+    static var settingsSearchEngineHeader: String { String(localized: "settings.searchEngine.header") }
     static var settingsTitle: String { String(localized: "settings.title") }
     static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
@@ -288,9 +313,35 @@ enum L10n {
     static var tabHistory: String { String(localized: "tab.history") }
     static var tabScan: String { String(localized: "tab.scan") }
     static var tabSettings: String { String(localized: "tab.settings") }
+    static func urlRiskActualDomain(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.actualDomain"), p1)
+    }
+    static var urlRiskConfirmCancel: String { String(localized: "urlRisk.confirm.cancel") }
+    static var urlRiskConfirmOpen: String { String(localized: "urlRisk.confirm.open") }
+    static var urlRiskConfirmTitle: String { String(localized: "urlRisk.confirm.title") }
+    static func urlRiskDisguisedMessage(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.disguised.message"), p1)
+    }
+    static var urlRiskDisguisedTitle: String { String(localized: "urlRisk.disguised.title") }
+    static var urlRiskInsecureMessage: String { String(localized: "urlRisk.insecure.message") }
+    static var urlRiskInsecureTitle: String { String(localized: "urlRisk.insecure.title") }
+    static var urlRiskIpMessage: String { String(localized: "urlRisk.ip.message") }
+    static var urlRiskIpTitle: String { String(localized: "urlRisk.ip.title") }
+    static var urlRiskLookalikeMessage: String { String(localized: "urlRisk.lookalike.message") }
+    static var urlRiskLookalikeTitle: String { String(localized: "urlRisk.lookalike.title") }
+    static var urlRiskPortMessage: String { String(localized: "urlRisk.port.message") }
+    static func urlRiskPortTitle(_ p1: String) -> String {
+        String(format: String(localized: "urlRisk.port.title"), p1)
+    }
+    static var urlRiskShortenerMessage: String { String(localized: "urlRisk.shortener.message") }
+    static var urlRiskShortenerTitle: String { String(localized: "urlRisk.shortener.title") }
 
     /// Every key in the catalog, used by tests to verify each one resolves.
     static let allKeys: [String] = [
+        "codeDisplay.brightness",
+        "codeDisplay.image",
+        "codeDisplay.note",
+        "codeDisplay.shareImage",
         "common.cancel",
         "common.close",
         "common.copied",
@@ -434,6 +485,9 @@ enum L10n {
         "paywall.subtitle",
         "paywall.terms",
         "paywall.title",
+        "result.book.title",
+        "result.bookSearch",
+        "result.codePreviewHint",
         "result.contact.add",
         "result.contact.address",
         "result.contact.email",
@@ -463,13 +517,20 @@ enum L10n {
         "result.openNote",
         "result.phone.call",
         "result.phone.number",
+        "result.product.title",
         "result.saved",
         "result.scheme",
         "result.scheme.http",
         "result.scheme.https",
+        "result.showBarcode",
+        "result.showCode",
+        "result.showCodeUnavailable",
+        "result.showCodeUnavailableNote",
         "result.sms.body",
         "result.sms.compose",
         "result.sms.number",
+        "result.webSearch",
+        "result.webSearchNote",
         "result.wifi.connect",
         "result.wifi.connectNote",
         "result.wifi.connected",
@@ -523,6 +584,10 @@ enum L10n {
         "scan.unavailable.title",
         "scan.zoom.reset",
         "scan.zoom.value",
+        "searchEngine.bing",
+        "searchEngine.duckDuckGo",
+        "searchEngine.google",
+        "searchEngine.yahooJapan",
         "settings.about.header",
         "settings.about.privacy",
         "settings.about.promise",
@@ -541,7 +606,10 @@ enum L10n {
         "settings.pro.status.purchased",
         "settings.scan.haptics",
         "settings.scan.header",
+        "settings.scan.searchEngine",
         "settings.scan.sound",
+        "settings.searchEngine.footer",
+        "settings.searchEngine.header",
         "settings.title",
         "source.camera",
         "source.created",
@@ -561,5 +629,21 @@ enum L10n {
         "tab.history",
         "tab.scan",
         "tab.settings",
+        "urlRisk.actualDomain",
+        "urlRisk.confirm.cancel",
+        "urlRisk.confirm.open",
+        "urlRisk.confirm.title",
+        "urlRisk.disguised.message",
+        "urlRisk.disguised.title",
+        "urlRisk.insecure.message",
+        "urlRisk.insecure.title",
+        "urlRisk.ip.message",
+        "urlRisk.ip.title",
+        "urlRisk.lookalike.message",
+        "urlRisk.lookalike.title",
+        "urlRisk.port.message",
+        "urlRisk.port.title",
+        "urlRisk.shortener.message",
+        "urlRisk.shortener.title",
     ]
 }
