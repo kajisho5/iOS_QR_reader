@@ -259,7 +259,7 @@ struct ResultView: View {
 
     private var noteText: String? {
         if isProductCode { return L10n.resultWebSearchNote(settings.searchEngine.title) }
-        switch result.payload {
+        return switch result.payload {
         case .url: L10n.resultOpenNote
         case .wifi: L10n.resultWifiConnectNote
         default: nil
@@ -454,7 +454,7 @@ struct ResultView: View {
             let code = result.code.content.trimmingCharacters(in: .whitespacesAndNewlines)
             return PrimaryAction(title: L10n.resultWebSearch, systemImage: "magnifyingglass") { webSearch(code) }
         }
-        switch result.payload {
+        return switch result.payload {
         case .url(let url):
             PrimaryAction(title: L10n.resultOpenInBrowser, systemImage: "arrow.up.right.square") {
                 // A URL with something to note asks once more before leaving the app.
