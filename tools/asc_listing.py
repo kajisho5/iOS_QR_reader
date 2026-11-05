@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Apply appstore/listing.json to App Store Connect. Idempotent; prints each change (no secrets).
 
-Sets: version string, copyright, category, content rights, subtitle, description, keywords, promotional text,
+Sets: version string (creating a new version when listing.json names one that does not exist yet), copyright,
+category, content rights, subtitle, description, keywords, promotional text, what's new (updates only),
 availability (the listed territories),
 age rating (all "none"), App Review notes, the newest valid build, a free app price, and the In-App Purchase
 localization, availability and review note. Things only the account holder can do (review contact name and phone,
@@ -61,6 +62,14 @@ def main():
             patch("appInfoLocalizations", loc["id"], loc["attributes"], {"subtitle": texts["subtitle"]},
                   f"appInfoLocalization {loc['attributes']['locale']}")
 
+    # A new version number in listing.json starts the next update: create that version once.
+    if not call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
+                                                                 "filter[versionString]": LISTING["versionString"]})["data"]:
+        call("POST", "/v1/appStoreVersions", {"data": {"type": "appStoreVersions",
+             "attributes": {"platform": "IOS", "versionString": LISTING["versionString"]},
+             "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}})
+        print(f"version {LISTING['versionString']}: created")
+
     # The version being prepared: version string, copyright, texts, build, review details.
     versions = call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
                                                                       "filter[appStoreState]": "PREPARE_FOR_SUBMISSION"})["data"]
@@ -86,7 +95,8 @@ def main():
         texts = LISTING["localizations"].get(loc["attributes"]["locale"])
         if texts:
             patch("appStoreVersionLocalizations", loc["id"], loc["attributes"],
-                  {k: texts[k] for k in ("description", "keywords", "promotionalText")},
+                  # whatsNew only exists for updates (App Store Connect rejects it on the first version).
+                  {k: texts[k] for k in ("description", "keywords", "promotionalText", "whatsNew") if k in texts},
                   f"versionLocalization {loc['attributes']['locale']}")
 
     builds = call("GET", "/v1/builds", **{"filter[app]": app_id, "filter[processingState]": "VALID",
