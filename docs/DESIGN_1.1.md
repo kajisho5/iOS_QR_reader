@@ -64,6 +64,25 @@
 - 結果は `[URLRisk]`（種類・重さ・説明文の L10n キー）。ユニットテストで各ルールの真偽を確認する。
 - 誤検知を避けるため、上の 6 つ以外（「怪しい単語」など推測的な判定）は入れない。
 
+## 2.5 F：商品コード・ISBN をウェブで検索（`19_product_search.svg`、1.1 に追加・確認待ち）
+
+### 要件
+- JAN（EAN-13）・EAN-8・UPC-E の結果で、主ボタンを「ウェブで検索」にする。押すと番号だけを検索 URL に入れ、`openURL` で Safari に渡す。**アプリ自身は通信しない**（1.0 の「ブラウザで開く」と同じ扱い）。
+- 押す前に「押すと番号が検索サイトに送られる・押すまでどこにも送らない」と注記する。
+- 978 / 979 で始まる 13 桁は書籍の ISBN（書籍 JAN）として扱い、「本として検索」タイルを追加する（検索語は `ISBN 9784…`）。特定の書店・図書館サイトの URL 形式は確認できていないため使わない。
+- 検索サイトは設定で選ぶ: Google（既定）・Yahoo! JAPAN・DuckDuckGo・Bing。
+
+### 検索 URL（`Core/Parsing/ActionURLs.swift` に追加）
+| サイト | URL |
+|---|---|
+| Google | `https://www.google.com/search?q=…` |
+| Yahoo! JAPAN | `https://search.yahoo.co.jp/search?p=…` |
+| DuckDuckGo | `https://duckduckgo.com/?q=…` |
+| Bing | `https://www.bing.com/search?q=…` |
+
+- 設定: `AppSettings.searchEngine`（UserDefaults、既定 Google）。設定画面の「スキャン」に行を追加し、選ぶ画面を開く。
+- テスト: 各サイトの URL が番号を正しく入れること、ISBN 判定（978/979 かつ 13 桁かつチェック数字が正しい）。
+
 ## 3. D：すぐ読める入口（`18_entry_points.svg` D1・D2）
 
 - iOS 18 以降: `ControlWidget`（`ControlWidgetButton` + `OpenIntent`）で「QRスキャン」。コントロールセンター・ロック画面・アクションボタンに置ける。押すとアプリが開き、スキャンタブでカメラが始まる（起動直後からカメラを準備する 1.0.1 の仕組みをそのまま使う）。
