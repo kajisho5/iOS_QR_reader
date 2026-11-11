@@ -314,6 +314,35 @@ function f4() {
   return s + tabBar(3, false);
 }
 
+// ---------- 20 履歴のロック（案 G） ----------
+function g1() {
+  let s = S.navLarge('設定') + S.secHead(164, '履歴') + S.group(172, 102) +
+    t(32, 207, '履歴を自動保存', { size: 16 }) + L.toggle(310, 187, true) + S.sep(223) +
+    t(32, 258, '履歴を Face ID でロック', { size: 16 }) + L.toggle(310, 238, true) + newBadge(246, 243) +
+    t(32, 298, 'オンにすると、履歴を開くときに Face ID（または', { size: 12, fill: C.secondary }) +
+    t(32, 316, 'パスコード）を求めます。アプリを閉じると、', { size: 12, fill: C.secondary }) +
+    t(32, 334, 'また鍵がかかります。顔のデータはアプリに渡らず、', { size: 12, fill: C.secondary }) +
+    t(32, 352, 'iPhone の中で確かめます。', { size: 12, fill: C.secondary });
+  return s + tabBar(3, false);
+}
+function g2() {
+  let s = S.navLarge('履歴') +
+    `<circle cx="196.5" cy="330" r="56" fill="${C.accentSoft}"/>` + icon('lock', 166.5, 300, 60, C.accent) +
+    t(196.5, 432, '履歴はロックされています', { size: 22, weight: 800, anchor: 'middle' }) +
+    t(196.5, 466, '見るには Face ID で確認してください。', { size: 15, fill: C.secondary, anchor: 'middle' }) +
+    rect(36, 504, 321, 52, { rx: 14, fill: C.accentFill }) + iconLabel(196.5, 536, 'eye', 22, 'Face ID で開く', { size: 17, weight: 700, fill: '#fff' }) +
+    t(196.5, 590, 'スキャン・作成はロック中もそのまま使えます。', { size: 13, fill: C.secondary, anchor: 'middle' });
+  return s + tabBar(1, false);
+}
+function g3() {
+  // The system Face ID sheet over the locked screen (drawn only to show the flow).
+  let s = g2() + rect(0, 0, 393, 852, { fill: 'rgba(0,0,0,0.25)' }) +
+    `<g filter="url(#shadowLg)">${rect(96.5, 300, 200, 200, { rx: 36, fill: 'rgba(242,242,247,0.96)' })}</g>` +
+    `<g fill="none" stroke="${C.label}" stroke-width="4" stroke-linecap="round"><path d="M156 350v-12a12 12 0 0 1 12-12h12M213 326h12a12 12 0 0 1 12 12v12M237 410v12a12 12 0 0 1-12 12h-12M180 434h-12a12 12 0 0 1-12-12v-12"/><path d="M178 372v8M215 372v8M197 372v20h-6M183 408a20 14 0 0 0 28 0"/></g>` +
+    t(196.5, 478, 'Face ID', { size: 15, weight: 600, anchor: 'middle' });
+  return s;
+}
+
 write('15_show_code.svg', '15 読み取ったQRを再表示（1.1 案 A）', '結果シートと履歴の詳細に「QRを表示」。読み取った内容から作り直したQRを、白地・最大の明るさで全画面表示。保存・共有も。',
   'QR・Code128・PDF417・Aztec は iOS の機能で、JAN/EAN・UPC-E・Code39/93・ITF-14 は自前で描いて表示。Data Matrix など描けない種類は「表示できません」と正直に出す。', [
     [a1(), 'A1. 結果シート（「QRを表示」を追加）'], [a2(), 'A2. 全画面表示（白地・明るさ最大）'], [a3(), 'A3. 履歴の詳細（上にQR）'], [a4(), 'A4. 表示できない種類']]);
@@ -329,4 +358,7 @@ write('18_entry_points.svg', '18 すぐ読める入口・共有シートから�
 write('19_product_search.svg', '19 商品コード・ISBN をウェブで検索（1.1 案 F）', 'JAN（EAN-13）・EAN-8・UPC-E の結果に「ウェブで検索」。押すと番号だけを検索サイトに渡して Safari で開く（アプリ自身は通信しない）。',
   '978/979 で始まる JAN は書籍の ISBN なので「本として検索」（"ISBN 番号" で検索）も出す。検索サイトは設定で Google・Yahoo! JAPAN・DuckDuckGo・Bing から選ぶ。', [
     [f1(), 'F1. 商品コード（JAN）'], [f2(), 'F2. 書籍（ISBN）'], [f4(), 'F3. 設定に「検索サイト」'], [f3(), 'F4. 検索サイトを選ぶ']]);
+write('20_history_lock.svg', '20 履歴のロック（1.2 案 G・無料）', '設定でオンにすると、履歴（iPad の履歴・CSV 書き出しも）を開くときに Face ID / Touch ID / パスコードを求める。判定は iOS が端末内で行う。',
+  'アプリが裏に回ったら再びロック。スキャン・作成・設定と、読み取ってすぐの結果シートはロック中も使える。', [
+    [g1(), 'G1. 設定でオン'], [g2(), 'G2. ロック中の履歴'], [g3(), 'G3. Face ID の確認（iOS の画面）']]);
 console.log('ok');

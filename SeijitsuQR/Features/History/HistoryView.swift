@@ -10,6 +10,8 @@ struct HistoryView: View {
     @Environment(\.selectTab) private var selectTab
     @Environment(\.requestPro) private var requestPro
     @Environment(\.isHistorySearchPresented) private var isSearchPresented
+    /// Optional so screens built without RootView (tests) work; nil means no lock.
+    @Environment(HistoryLock.self) private var lock: HistoryLock?
 
     @Query(sort: \ScanRecord.createdAt, order: .reverse) private var records: [ScanRecord]
 
@@ -23,6 +25,14 @@ struct HistoryView: View {
     }
 
     var body: some View {
+        if settings.isHistoryLockEnabled, let lock, !lock.isUnlocked {
+            HistoryLockedView(lock: lock)
+        } else {
+            unlockedBody
+        }
+    }
+
+    private var unlockedBody: some View {
         NavigationSplitView {
             list
                 .navigationTitle(L10n.historyTitle)
@@ -257,5 +267,57 @@ struct HistorySection: Identifiable {
             }
             return HistorySection(id: day, title: title, records: buckets[day] ?? [])
         }
+    }
+}
+
+/// Shown instead of the history while it is locked (docs/design/20_history_lock.svg G2).
+struct HistoryLockedView: View {
+    let lock: HistoryLock
+    @State private var isUnlocking = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Spacer()
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 44, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 112, height: 112)
+                    .background(Color.accentColor.opacity(0.12), in: Circle())
+                    .accessibilityHidden(true)
+                Text(L10n.historyLockedTitle)
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                Text(L10n.historyLockedMessage(HistoryLock.methodName))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                Button {
+                    Task { await unlock() }
+                } label: {
+                    Label(L10n.historyLockedUnlock(HistoryLock.methodName), systemImage: "lock.open")
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(isUnlocking)
+                .frame(maxWidth: 420)
+                Text(L10n.historyLockedNote)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                Spacer()
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle(L10n.historyTitle)
+        }
+        // Ask right away when the tab opens; the button is there if the person cancels.
+        .task { await unlock() }
+    }
+
+    private func unlock() async {
+        guard !isUnlocking, !lock.isUnlocked else { return }
+        isUnlocking = true
+        await lock.unlock()
+        isUnlocking = false
     }
 }

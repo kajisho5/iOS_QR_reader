@@ -6,6 +6,8 @@ struct SettingsView: View {
     @Environment(ProStore.self) private var store
     @Environment(\.requestPro) private var requestPro
     @State private var notice: ProStore.Notice?
+    @Environment(HistoryLock.self) private var historyLock: HistoryLock?
+    @State private var isLockUnavailable = false
 
     var body: some View {
         @Bindable var settings = settings
@@ -62,10 +64,17 @@ struct SettingsView: View {
                 Section {
                     Toggle(L10n.settingsHistoryAutosave, isOn: $settings.isAutosaveEnabled)
                         .tint(AppColor.accentFill)
+                    Toggle(L10n.settingsHistoryLock(HistoryLock.methodName), isOn: historyLockBinding)
+                        .tint(AppColor.accentFill)
                 } header: {
                     Text(L10n.settingsHistoryHeader)
                 } footer: {
-                    Text(L10n.settingsHistoryFooter)
+                    Text(L10n.settingsHistoryFooter + "\n" + L10n.settingsHistoryLockFooter)
+                }
+                .alert(L10n.historyLockUnavailableTitle, isPresented: $isLockUnavailable) {
+                    Button(L10n.commonClose, role: .cancel) {}
+                } message: {
+                    Text(L10n.historyLockUnavailableMessage)
                 }
 
                 Section {
@@ -99,6 +108,21 @@ struct SettingsView: View {
                 Text(notice.message)
             }
         }
+    }
+
+    /// Turning the lock on or off asks for Face ID / Touch ID / the passcode first, so someone else
+    /// holding the phone cannot simply switch it off.
+    private var historyLockBinding: Binding<Bool> {
+        Binding(get: { settings.isHistoryLockEnabled }, set: { newValue in
+            guard let historyLock else { return }
+            Task {
+                switch await historyLock.unlock() {
+                case .unlocked: settings.isHistoryLockEnabled = newValue
+                case .cancelled: break
+                case .unavailable: isLockUnavailable = true
+                }
+            }
+        })
     }
 
     private var proStatus: String {

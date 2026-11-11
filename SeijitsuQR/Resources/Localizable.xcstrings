@@ -1057,6 +1057,127 @@
         }
       }
     },
+    "history.lock.method.faceId": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Face ID"
+          }
+        }
+      }
+    },
+    "history.lock.method.opticId": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optic ID"
+          }
+        }
+      }
+    },
+    "history.lock.method.passcode": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスコード"
+          }
+        }
+      }
+    },
+    "history.lock.method.touchId": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch ID"
+          }
+        }
+      }
+    },
+    "history.lock.reason": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴を表示するために確認します"
+          }
+        }
+      }
+    },
+    "history.lock.unavailable.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この端末にパスコードが設定されていないため、履歴のロックを使えません。iPhone の「設定」でパスコードを設定してください。"
+          }
+        }
+      }
+    },
+    "history.lock.unavailable.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ロックを使えません"
+          }
+        }
+      }
+    },
+    "history.locked.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見るには %@ で確認してください。"
+          }
+        }
+      }
+    },
+    "history.locked.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "スキャン・作成はロック中もそのまま使えます。"
+          }
+        }
+      }
+    },
+    "history.locked.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴はロックされています"
+          }
+        }
+      }
+    },
+    "history.locked.unlock": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ で開く"
+          }
+        }
+      }
+    },
     "history.noResults.action": {
       "extractionState": "manual",
       "localizations": {
@@ -2835,6 +2956,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "履歴"
+          }
+        }
+      }
+    },
+    "settings.history.lock": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴を %@ でロック"
+          }
+        }
+      }
+    },
+    "settings.history.lockFooter": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ロックをオンにすると、履歴を開くときに確認を求めます。アプリを閉じると、また鍵がかかります。顔や指紋のデータはアプリに渡らず、iPhone の中で確かめます。"
           }
         }
       }

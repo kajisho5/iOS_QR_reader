@@ -89,6 +89,28 @@
 - iOS 17: `AppShortcutsProvider` で「QRをスキャン」をショートカットアプリと Siri に出す（アクションボタンにも割り当てられる）。
 - 置き場所: ウィジェット拡張（B と同じターゲット）。
 
+## 3.5 G：履歴のロック（`20_history_lock.svg`、1.2・無料・確定 2026-11-11・実装済み）
+
+### 要件
+- 設定「履歴」に「履歴を Face ID でロック」（既定オフ）。オンのとき、履歴タブを開くと G2 を表示し、「Face ID で開く」で認証する。
+- 認証は `LocalAuthentication` の `.deviceOwnerAuthentication`（Face ID / Touch ID、だめならパスコード）。生体情報はアプリに渡らない（iOS が判定し、成否だけを返す）。
+- アプリが裏に回ったら（`scenePhase == .background`）ロックし直す。アプリを使っている間はタブを移っても開いたまま。
+- ロック中も使えるもの: スキャン、読み取った直後の結果シート、作成、設定。ロックするもの: 履歴の一覧・詳細・検索・CSV 書き出し（iPad の履歴の欄も）。
+- オンにする時にも一度認証する（端末にパスコードが無い場合はオンにできない旨を出す）。
+- `Info.plist` に `NSFaceIDUsageDescription`（「履歴のロックを解除するために Face ID を使います」）を追加。
+
+### 実装
+| ファイル | 内容 |
+|---|---|
+| `Core/Services/AppSettings.swift` | `isHistoryLockEnabled`（UserDefaults） |
+| `Core/Services/HistoryLock.swift`（新規） | `@Observable`。`isUnlocked`、`unlock() async`（LAContext）、`lock()` |
+| `Features/History/HistoryView.swift` | ロック中は一覧の代わりに G2 を表示 |
+| `App/RootView.swift` | `scenePhase` が background で `lock()` |
+| `Features/Settings/SettingsView.swift` | トグル（オンにする時に認証） |
+| テスト | ロック状態の切り替え（LAContext は差し替え可能にしてテスト） |
+
+1.2 のウィジェット（B）は、ユーザーが選んだお気に入りだけを表示するので、ロック中も表示する（B2 の注意書きどおり）。
+
 ## 4. B：ウィジェット（`17_widget.svg`、Pro）
 
 - 小（QR + 名前）・中（QR + 名前 + 内容の一部）。表示する QR は**お気に入り**から選ぶ（`AppIntentConfiguration`、B2）。

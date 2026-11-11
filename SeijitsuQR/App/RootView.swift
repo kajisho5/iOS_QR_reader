@@ -5,6 +5,8 @@ struct RootView: View {
     @State private var store = ProStore()
     @State private var isPaywallPresented = false
     @State private var isHistorySearchPresented = false
+    @State private var historyLock = HistoryLock()
+    @Environment(\.scenePhase) private var scenePhase
 
     init(initialTab: AppTab = .scan) {
         _selection = State(initialValue: initialTab)
@@ -26,6 +28,11 @@ struct RootView: View {
                 .tag(AppTab.settings)
         }
         .environment(store)
+        .environment(historyLock)
+        .onChange(of: scenePhase) { _, phase in
+            // The history locks again whenever the app leaves the screen.
+            if phase == .background { historyLock.lock() }
+        }
         .environment(\.isProUnlocked, store.isPro)
         .environment(\.selectTab, SelectTabAction { [binding = $selection] in binding.wrappedValue = $0 })
         .environment(\.requestPro, RequestProAction { [binding = $isPaywallPresented] _ in binding.wrappedValue = true })
