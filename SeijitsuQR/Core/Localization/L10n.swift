@@ -106,6 +106,21 @@ enum L10n {
         String(format: String(localized: "history.free.count"), p1, p2)
     }
     static var historyFreeTitle: String { String(localized: "history.free.title") }
+    static var historyLockMethodFaceId: String { String(localized: "history.lock.method.faceId") }
+    static var historyLockMethodOpticId: String { String(localized: "history.lock.method.opticId") }
+    static var historyLockMethodPasscode: String { String(localized: "history.lock.method.passcode") }
+    static var historyLockMethodTouchId: String { String(localized: "history.lock.method.touchId") }
+    static var historyLockReason: String { String(localized: "history.lock.reason") }
+    static var historyLockUnavailableMessage: String { String(localized: "history.lock.unavailable.message") }
+    static var historyLockUnavailableTitle: String { String(localized: "history.lock.unavailable.title") }
+    static func historyLockedMessage(_ p1: String) -> String {
+        String(format: String(localized: "history.locked.message"), p1)
+    }
+    static var historyLockedNote: String { String(localized: "history.locked.note") }
+    static var historyLockedTitle: String { String(localized: "history.locked.title") }
+    static func historyLockedUnlock(_ p1: String) -> String {
+        String(format: String(localized: "history.locked.unlock"), p1)
+    }
     static var historyNoResultsAction: String { String(localized: "history.noResults.action") }
     static var historyNoResultsFilterTitle: String { String(localized: "history.noResults.filterTitle") }
     static var historyNoResultsMessage: String { String(localized: "history.noResults.message") }
@@ -278,6 +293,10 @@ enum L10n {
     static var settingsHistoryAutosave: String { String(localized: "settings.history.autosave") }
     static var settingsHistoryFooter: String { String(localized: "settings.history.footer") }
     static var settingsHistoryHeader: String { String(localized: "settings.history.header") }
+    static func settingsHistoryLock(_ p1: String) -> String {
+        String(format: String(localized: "settings.history.lock"), p1)
+    }
+    static var settingsHistoryLockFooter: String { String(localized: "settings.history.lockFooter") }
     static var settingsProBuy: String { String(localized: "settings.pro.buy") }
     static var settingsProFooter: String { String(localized: "settings.pro.footer") }
     static var settingsProHeader: String { String(localized: "settings.pro.header") }
@@ -434,6 +453,17 @@ enum L10n {
         "history.filter.label",
         "history.free.count",
         "history.free.title",
+        "history.lock.method.faceId",
+        "history.lock.method.opticId",
+        "history.lock.method.passcode",
+        "history.lock.method.touchId",
+        "history.lock.reason",
+        "history.lock.unavailable.message",
+        "history.lock.unavailable.title",
+        "history.locked.message",
+        "history.locked.note",
+        "history.locked.title",
+        "history.locked.unlock",
         "history.noResults.action",
         "history.noResults.filterTitle",
         "history.noResults.message",
@@ -596,6 +626,8 @@ enum L10n {
         "settings.history.autosave",
         "settings.history.footer",
         "settings.history.header",
+        "settings.history.lock",
+        "settings.history.lockFooter",
         "settings.pro.buy",
         "settings.pro.footer",
         "settings.pro.header",
