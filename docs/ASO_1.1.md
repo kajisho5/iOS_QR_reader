@@ -1,6 +1,6 @@
 # App Store 掲載の改善（1.1 で反映する）
 
-> ステータス: **確定（2026-11-09）**。1.0.1 の承認後、1.1.0 を作るときに `appstore/listing.json` へ反映して `asc-listing` で設定する。
+> ステータス: **反映済み（2026-11-12、1.1.0）**。`appstore/listing.json` に入れ、`asc-listing` で App Store Connect に設定した。
 > 手順は利用者から受け取った「ASO 手順書」に従った（App Store Connect の変更は承認後のみ、推測の数値は使わない）。
 
 ## 根拠（Apple 公式、2026-11-09 確認）
