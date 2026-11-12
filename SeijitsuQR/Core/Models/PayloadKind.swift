@@ -33,4 +33,6 @@ enum RecordSource: String, Codable, Sendable {
     case camera
     case photo
     case created
+    /// Read from what the user copied (an image or text), with the paste button (1.2).
+    case paste
 }

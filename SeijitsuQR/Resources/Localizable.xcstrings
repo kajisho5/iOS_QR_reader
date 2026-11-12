@@ -980,6 +980,17 @@
         }
       }
     },
+    "create.paste.a11y": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした文字を入力欄に貼り付ける"
+          }
+        }
+      }
+    },
     "create.photoDenied.message": {
       "extractionState": "manual",
       "localizations": {
@@ -2773,6 +2784,17 @@
         }
       }
     },
+    "scan.control.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼り付け"
+          }
+        }
+      }
+    },
     "scan.control.photo": {
       "extractionState": "manual",
       "localizations": {
@@ -2967,6 +2989,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み取り結果"
+          }
+        }
+      }
+    },
+    "scan.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした画像や文字を読み取る"
+          }
+        }
+      }
+    },
+    "scan.paste.noCode.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした画像からコードが見つかりませんでした。コードが大きくはっきり写った画像をコピーしてお試しください。"
           }
         }
       }
@@ -3484,6 +3528,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "作成"
+          }
+        }
+      }
+    },
+    "source.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼り付け"
           }
         }
       }

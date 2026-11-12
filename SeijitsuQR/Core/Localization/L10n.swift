@@ -95,6 +95,7 @@ enum L10n {
     }
     static var createLockedMessage: String { String(localized: "create.locked.message") }
     static var createLockedTitle: String { String(localized: "create.locked.title") }
+    static var createPasteA11y: String { String(localized: "create.paste.a11y") }
     static var createPhotoDeniedMessage: String { String(localized: "create.photoDenied.message") }
     static var createPhotoDeniedTitle: String { String(localized: "create.photoDenied.title") }
     static var createPhotoFailedMessage: String { String(localized: "create.photoFailed.message") }
@@ -272,6 +273,7 @@ enum L10n {
     static var scanContinuous: String { String(localized: "scan.continuous") }
     static var scanContinuousOn: String { String(localized: "scan.continuous.on") }
     static var scanControlContinuousOn: String { String(localized: "scan.control.continuousOn") }
+    static var scanControlPaste: String { String(localized: "scan.control.paste") }
     static var scanControlPhoto: String { String(localized: "scan.control.photo") }
     static var scanDeniedMessage: String { String(localized: "scan.denied.message") }
     static var scanDeniedTitle: String { String(localized: "scan.denied.title") }
@@ -292,6 +294,8 @@ enum L10n {
     static var scanPaneEmptyMessage: String { String(localized: "scan.pane.empty.message") }
     static var scanPaneEmptyTitle: String { String(localized: "scan.pane.empty.title") }
     static var scanPaneTitle: String { String(localized: "scan.pane.title") }
+    static var scanPaste: String { String(localized: "scan.paste") }
+    static var scanPasteNoCodeMessage: String { String(localized: "scan.paste.noCode.message") }
     static var scanPhoto: String { String(localized: "scan.photo") }
     static var scanPreview: String { String(localized: "scan.preview") }
     static var scanPreviewHint: String { String(localized: "scan.preview.hint") }
@@ -345,6 +349,7 @@ enum L10n {
     static var settingsTitle: String { String(localized: "settings.title") }
     static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
+    static var sourcePaste: String { String(localized: "source.paste") }
     static var sourcePhoto: String { String(localized: "source.photo") }
     static var symbologyAztec: String { String(localized: "symbology.aztec") }
     static var symbologyCode128: String { String(localized: "symbology.code128") }
@@ -475,6 +480,7 @@ enum L10n {
         "create.locked.a11y",
         "create.locked.message",
         "create.locked.title",
+        "create.paste.a11y",
         "create.photoDenied.message",
         "create.photoDenied.title",
         "create.photoFailed.message",
@@ -638,6 +644,7 @@ enum L10n {
         "scan.continuous",
         "scan.continuous.on",
         "scan.control.continuousOn",
+        "scan.control.paste",
         "scan.control.photo",
         "scan.denied.message",
         "scan.denied.title",
@@ -656,6 +663,8 @@ enum L10n {
         "scan.pane.empty.message",
         "scan.pane.empty.title",
         "scan.pane.title",
+        "scan.paste",
+        "scan.paste.noCode.message",
         "scan.photo",
         "scan.preview",
         "scan.preview.hint",
@@ -703,6 +712,7 @@ enum L10n {
         "settings.title",
         "source.camera",
         "source.created",
+        "source.paste",
         "source.photo",
         "symbology.aztec",
         "symbology.code128",

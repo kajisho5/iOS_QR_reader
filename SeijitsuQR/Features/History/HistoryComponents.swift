@@ -29,7 +29,11 @@ struct HistoryRow: View {
     }
 
     private var meta: String {
-        let origin = record.source == .created ? L10n.sourceCreated : (record.symbology?.title ?? "")
+        let origin = switch record.source {
+        case .created: L10n.sourceCreated
+        case .paste: record.symbology?.title ?? L10n.sourcePaste
+        case .camera, .photo: record.symbology?.title ?? ""
+        }
         return [record.kind.title, origin, record.createdAt.formatted(date: .omitted, time: .shortened)]
             .filter { !$0.isEmpty }
             .joined(separator: L10n.metaSeparator)
@@ -174,6 +178,7 @@ struct HistoryCSVFile: Transferable {
                 case .camera: L10n.sourceCamera
                 case .photo: L10n.sourcePhoto
                 case .created: L10n.sourceCreated
+                case .paste: L10n.sourcePaste
                 }
             },
             favoriteYes: L10n.commonYes,

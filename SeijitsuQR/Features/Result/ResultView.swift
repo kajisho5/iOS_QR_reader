@@ -136,7 +136,9 @@ struct ResultView: View {
     }
 
     private var metaText: String {
-        [result.code.symbology.title, result.date.formatted(date: .numeric, time: .shortened)].joined(separator: L10n.metaSeparator)
+        // Pasted text has no symbology of its own: say where it came from instead.
+        let origin = result.source == .paste ? L10n.sourcePaste : result.code.symbology.title
+        return [origin, result.date.formatted(date: .numeric, time: .shortened)].joined(separator: L10n.metaSeparator)
     }
 
     // MARK: Details

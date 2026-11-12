@@ -151,13 +151,13 @@ struct CreateFormView: View {
     private var fields: some View {
         switch kind {
         case .text:
-            LabeledField(L10n.createFieldText) {
+            LabeledField(L10n.createFieldText, onPaste: { form.text = $0 }) {
                 TextField(L10n.createFieldText, text: $form.text, prompt: Text(L10n.createFieldTextPrompt), axis: .vertical)
                     .lineLimit(3...10)
                     .focused($focus, equals: .text)
             }
         case .url:
-            LabeledField(L10n.createFieldUrl) {
+            LabeledField(L10n.createFieldUrl, onPaste: { form.url = $0.trimmingCharacters(in: .whitespacesAndNewlines) }) {
                 TextField(L10n.createFieldUrl, text: $form.url, prompt: Text(L10n.createFieldUrlPrompt))
                     .submits(.url, focus: $focus, order: fieldOrder, onLast: generate)
                     .keyboardType(.URL)
@@ -514,21 +514,38 @@ private enum PhotoAlert: Equatable {
 }
 
 /// A visible label above its field (HIG: every field has a label, not just a placeholder).
+/// With `onPaste`, a paste button sits at the trailing end of the label and replaces the field's text with what
+/// was copied (read only when tapped).
 private struct LabeledField<Content: View>: View {
     let title: String
+    var onPaste: (@MainActor @Sendable (String) -> Void)?
     @ViewBuilder let content: Content
 
-    init(_ title: String, @ViewBuilder content: () -> Content) {
+    init(_ title: String, onPaste: (@MainActor @Sendable (String) -> Void)? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.onPaste = onPaste
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .accessibilityHidden(true)
+            HStack {
+                Text(title)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                if let onPaste {
+                    Spacer()
+                    PasteButton(payloadType: String.self) { strings in
+                        guard let text = strings.first else { return }
+                        Task { @MainActor in onPaste(text) }
+                    }
+                    .labelStyle(.titleAndIcon)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.small)
+                    .accessibilityLabel(L10n.createPasteA11y)
+                }
+            }
             content
         }
     }

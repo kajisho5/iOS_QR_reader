@@ -23,6 +23,8 @@ struct ScannerView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var imageAlert: ImageAlert?
     @State private var multipleCodes: [DetectedCode] = []
+    /// Where the codes in `multipleCodes` came from (a photo or a pasted image).
+    @State private var multipleSource: RecordSource = .photo
     /// A contact to add after the result sheet has closed (one sheet at a time: HIG Sheets).
     @State private var pendingContact: ContactCard?
     @State private var contactToAdd: ContactRequest?
@@ -119,7 +121,7 @@ struct ScannerView: View {
         }
         .confirmationDialog(L10n.scanMultipleCodesTitle, isPresented: isChoosingCode, titleVisibility: .visible) {
             ForEach(multipleCodes, id: \.self) { code in
-                Button(choiceTitle(for: code)) { handle(code, source: .photo) }
+                Button(choiceTitle(for: code)) { handle(code, source: multipleSource) }
             }
             Button(L10n.commonCancel, role: .cancel) {}
         } message: {
@@ -309,6 +311,7 @@ struct ScannerView: View {
                 action: pickPhoto
             )
             .keyboardShortcut("o", modifiers: .command)
+            ScanPasteButton { items in readPasted(items) }
             ScanControlButton(
                 title: coordinator.isContinuous ? L10n.scanControlContinuousOn : L10n.scanContinuous,
                 systemImage: "repeat",
@@ -353,6 +356,11 @@ struct ScannerView: View {
                 Label(L10n.scanPhoto, systemImage: "photo")
             }
             .keyboardShortcut("o", modifiers: .command)
+            PasteButton(payloadType: PastedContent.self) { items in
+                Task { @MainActor in readPasted(items) }
+            }
+                .labelStyle(.iconOnly)
+                .accessibilityLabel(L10n.scanPaste)
             if capture.hasTorch && capture.state == .running {
                 Button {
                     Task { await capture.toggleTorch() }
@@ -421,7 +429,34 @@ struct ScannerView: View {
         switch codes.count {
         case 0: imageAlert = .noCode
         case 1: handle(codes[0], source: .photo)
-        default: multipleCodes = codes
+        default:
+            multipleSource = .photo
+            multipleCodes = codes
+        }
+    }
+
+    /// A pasted image is read like a photo; pasted text is shown as it is (with the same URL checks as a scan).
+    private func readPasted(_ items: [PastedContent]) {
+        guard let item = items.first else { return }
+        Task {
+            switch item.value {
+            case .text(let text):
+                guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                coordinator.handle(DetectedCode(content: text, symbology: .qr), source: .paste, hasSymbology: false)
+            case .image(let data):
+                guard let image = UIImage(data: data) else {
+                    imageAlert = .loadFailed
+                    return
+                }
+                let codes = (try? await ImageCodeReader.detect(in: image)) ?? []
+                switch codes.count {
+                case 0: imageAlert = .pasteNoCode
+                case 1: handle(codes[0], source: .paste)
+                default:
+                    multipleSource = .paste
+                    multipleCodes = codes
+                }
+            }
         }
     }
 
@@ -442,11 +477,12 @@ struct ScannerView: View {
 
 private enum ImageAlert: Equatable {
     case noCode
+    case pasteNoCode
     case loadFailed
 
     var title: String {
         switch self {
-        case .noCode: L10n.scanNoCodeTitle
+        case .noCode, .pasteNoCode: L10n.scanNoCodeTitle
         case .loadFailed: L10n.scanImageLoadFailedTitle
         }
     }
@@ -454,8 +490,36 @@ private enum ImageAlert: Equatable {
     var message: String {
         switch self {
         case .noCode: L10n.scanNoCodeMessage
+        case .pasteNoCode: L10n.scanPasteNoCodeMessage
         case .loadFailed: L10n.scanImageLoadFailedMessage
         }
+    }
+}
+
+/// The paste button among the round scan controls. PasteButton draws itself (iOS decides its look), so it is
+/// shown icon-only in a circle, with the same label below as the other controls.
+private struct ScanPasteButton: View {
+    let onPaste: @MainActor @Sendable ([PastedContent]) -> Void
+
+    var body: some View {
+        VStack(spacing: 6) {
+            PasteButton(payloadType: PastedContent.self) { items in
+                Task { @MainActor in onPaste(items) }
+            }
+                .labelStyle(.iconOnly)
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .tint(Color(white: 0.22))
+                .frame(width: 56, height: 56)
+                .accessibilityLabel(L10n.scanPaste)
+            Text(L10n.scanControlPaste)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .shadow(color: .black.opacity(0.6), radius: 2)
+                .accessibilityHidden(true)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
