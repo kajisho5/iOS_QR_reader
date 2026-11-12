@@ -2091,6 +2091,149 @@
         }
       }
     },
+    "print.button": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷"
+          }
+        }
+      }
+    },
+    "print.caption": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下に文字を入れる"
+          }
+        }
+      }
+    },
+    "print.caption.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "入る文字：%@。パスワードは文字では印刷しません（QR の中には入っています）。"
+          }
+        }
+      }
+    },
+    "print.choosePrinter": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プリンタを選ぶ"
+          }
+        }
+      }
+    },
+    "print.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷できませんでした。プリンタの状態を確かめて、もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "print.labels.summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A4 に 3 列 × 6 段（18 枚）。同じコードを並べます。"
+          }
+        }
+      }
+    },
+    "print.layout": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ方"
+          }
+        }
+      }
+    },
+    "print.layout.labels": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ラベルのように並べる"
+          }
+        }
+      }
+    },
+    "print.layout.single": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 枚に大きく"
+          }
+        }
+      }
+    },
+    "print.paperNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大きさは、A4 の用紙に拡大・縮小せずに印刷したときのものです。"
+          }
+        }
+      }
+    },
+    "print.size": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 枚の大きさ"
+          }
+        }
+      }
+    },
+    "print.size.value": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld cm"
+          }
+        }
+      }
+    },
+    "print.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷"
+          }
+        }
+      }
+    },
     "result.book.title": {
       "extractionState": "manual",
       "localizations": {

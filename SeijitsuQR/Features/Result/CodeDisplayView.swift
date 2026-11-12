@@ -14,6 +14,7 @@ struct CodeDisplayView: View {
     @State private var isSaving = false
     @State private var saved = false
     @State private var alert: ResultAlert?
+    @State private var isPrinting = false
 
     var body: some View {
         NavigationStack {
@@ -54,10 +55,20 @@ struct CodeDisplayView: View {
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(isSaving || saved)
 
-                    ShareLink(item: Image(uiImage: image), preview: SharePreview(title, image: Image(uiImage: image))) {
-                        Label(L10n.codeDisplayShareImage, systemImage: "square.and.arrow.up")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, minHeight: 50)
+                    HStack(spacing: 12) {
+                        ShareLink(item: Image(uiImage: image), preview: SharePreview(title, image: Image(uiImage: image))) {
+                            Label(L10n.codeDisplayShareImage, systemImage: "square.and.arrow.up")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity, minHeight: 50)
+                        }
+                        Button {
+                            isPrinting = true
+                        } label: {
+                            Label(L10n.printButton, systemImage: "printer")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity, minHeight: 50)
+                        }
+                        .keyboardShortcut("p", modifiers: .command)
                     }
                     .buttonStyle(.bordered)
                 }
@@ -85,6 +96,11 @@ struct CodeDisplayView: View {
                     .keyboardShortcut(.cancelAction)
                 }
             }
+        }
+        .sheet(isPresented: $isPrinting) {
+            // The title is the network name or the domain (never a password): ResultView.codeTitle.
+            // Other kinds only have their kind name as the title, which is not worth printing.
+            PrintSettingsView(image: image, caption: title == subtitle ? "" : title)
         }
         .onAppear(perform: raiseBrightness)
         .onDisappear(perform: restoreBrightness)

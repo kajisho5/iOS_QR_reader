@@ -210,6 +210,23 @@ enum L10n {
     static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
     static var paywallTerms: String { String(localized: "paywall.terms") }
     static var paywallTitle: String { String(localized: "paywall.title") }
+    static var printButton: String { String(localized: "print.button") }
+    static var printCaption: String { String(localized: "print.caption") }
+    static func printCaptionNote(_ p1: String) -> String {
+        String(format: String(localized: "print.caption.note"), p1)
+    }
+    static var printChoosePrinter: String { String(localized: "print.choosePrinter") }
+    static var printFailed: String { String(localized: "print.failed") }
+    static var printLabelsSummary: String { String(localized: "print.labels.summary") }
+    static var printLayout: String { String(localized: "print.layout") }
+    static var printLayoutLabels: String { String(localized: "print.layout.labels") }
+    static var printLayoutSingle: String { String(localized: "print.layout.single") }
+    static var printPaperNote: String { String(localized: "print.paperNote") }
+    static var printSize: String { String(localized: "print.size") }
+    static func printSizeValue(_ p1: Int) -> String {
+        String(format: String(localized: "print.size.value"), p1)
+    }
+    static var printTitle: String { String(localized: "print.title") }
     static var resultBookTitle: String { String(localized: "result.book.title") }
     static var resultBookSearch: String { String(localized: "result.bookSearch") }
     static var resultCodePreviewHint: String { String(localized: "result.codePreviewHint") }
@@ -591,6 +608,19 @@ enum L10n {
         "paywall.subtitle",
         "paywall.terms",
         "paywall.title",
+        "print.button",
+        "print.caption",
+        "print.caption.note",
+        "print.choosePrinter",
+        "print.failed",
+        "print.labels.summary",
+        "print.layout",
+        "print.layout.labels",
+        "print.layout.single",
+        "print.paperNote",
+        "print.size",
+        "print.size.value",
+        "print.title",
         "result.book.title",
         "result.bookSearch",
         "result.codePreviewHint",
