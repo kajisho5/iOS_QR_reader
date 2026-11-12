@@ -53,6 +53,7 @@ targets:
         NSCameraUsageDescription: QRコードとバーコードを読み取るためにカメラを使用します。読み取った内容が外部に送信されることはありません
         NSPhotoLibraryAddUsageDescription: 作成したQRコードの画像を写真ライブラリに保存するために使用します
         NSContactsUsageDescription: 読み取った連絡先を連絡先アプリに追加するために使用します
+        NSLocationWhenInUseUsageDescription: 「地図の位置」のQRコードに現在地を入れるために使います。位置情報が外部に送信されることはありません
         NSFaceIDUsageDescription: 履歴のロックを解除するために Face ID を使います。顔のデータがアプリに渡ることはありません
     entitlements:
       path: SeijitsuQR/SeijitsuQR.entitlements

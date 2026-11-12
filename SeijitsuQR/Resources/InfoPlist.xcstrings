@@ -56,6 +56,17 @@
         }
       }
     },
+    "NSLocationWhenInUseUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「地図の位置」のQRコードに現在地を入れるために使います。位置情報が外部に送信されることはありません"
+          }
+        }
+      }
+    },
     "NSPhotoLibraryAddUsageDescription": {
       "extractionState": "manual",
       "localizations": {

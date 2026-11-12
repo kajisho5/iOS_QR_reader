@@ -22,6 +22,7 @@ enum L10n {
     static var createBadgePro: String { String(localized: "create.badge.pro") }
     static var createFieldAddress: String { String(localized: "create.field.address") }
     static var createFieldAllDay: String { String(localized: "create.field.allDay") }
+    static var createFieldBody: String { String(localized: "create.field.body") }
     static var createFieldEmail: String { String(localized: "create.field.email") }
     static var createFieldEnd: String { String(localized: "create.field.end") }
     static var createFieldEventTitle: String { String(localized: "create.field.eventTitle") }
@@ -29,32 +30,60 @@ enum L10n {
     static var createFieldGivenName: String { String(localized: "create.field.givenName") }
     static var createFieldHidden: String { String(localized: "create.field.hidden") }
     static var createFieldJobTitle: String { String(localized: "create.field.jobTitle") }
+    static var createFieldLatitude: String { String(localized: "create.field.latitude") }
     static var createFieldLocation: String { String(localized: "create.field.location") }
+    static var createFieldLongitude: String { String(localized: "create.field.longitude") }
+    static var createFieldMailTo: String { String(localized: "create.field.mailTo") }
+    static var createFieldMailToPrompt: String { String(localized: "create.field.mailTo.prompt") }
     static var createFieldNote: String { String(localized: "create.field.note") }
     static var createFieldNotes: String { String(localized: "create.field.notes") }
     static var createFieldOrganization: String { String(localized: "create.field.organization") }
     static var createFieldPassword: String { String(localized: "create.field.password") }
     static var createFieldPhone: String { String(localized: "create.field.phone") }
+    static var createFieldPhoneNumber: String { String(localized: "create.field.phoneNumber") }
+    static var createFieldPhoneNumberPrompt: String { String(localized: "create.field.phoneNumber.prompt") }
+    static var createFieldPlaceName: String { String(localized: "create.field.placeName") }
     static var createFieldSecurity: String { String(localized: "create.field.security") }
+    static var createFieldSmsBody: String { String(localized: "create.field.smsBody") }
+    static var createFieldSmsTo: String { String(localized: "create.field.smsTo") }
     static var createFieldSsid: String { String(localized: "create.field.ssid") }
     static var createFieldSsidPrompt: String { String(localized: "create.field.ssid.prompt") }
     static var createFieldStart: String { String(localized: "create.field.start") }
+    static var createFieldSubject: String { String(localized: "create.field.subject") }
     static var createFieldText: String { String(localized: "create.field.text") }
     static var createFieldTextPrompt: String { String(localized: "create.field.text.prompt") }
     static var createFieldUrl: String { String(localized: "create.field.url") }
     static var createFieldUrlContact: String { String(localized: "create.field.url.contact") }
     static var createFieldUrlPrompt: String { String(localized: "create.field.url.prompt") }
     static var createGenerate: String { String(localized: "create.generate") }
+    static var createGeoDeniedMessage: String { String(localized: "create.geo.denied.message") }
+    static var createGeoDeniedTitle: String { String(localized: "create.geo.denied.title") }
+    static var createGeoFailed: String { String(localized: "create.geo.failed") }
+    static var createGeoLocating: String { String(localized: "create.geo.locating") }
+    static var createGeoNote: String { String(localized: "create.geo.note") }
+    static var createGeoUseCurrent: String { String(localized: "create.geo.useCurrent") }
     static var createImageA11y: String { String(localized: "create.image.a11y") }
     static var createInvalidContact: String { String(localized: "create.invalid.contact") }
+    static var createInvalidEmail: String { String(localized: "create.invalid.email") }
     static var createInvalidEvent: String { String(localized: "create.invalid.event") }
+    static var createInvalidGeo: String { String(localized: "create.invalid.geo") }
+    static var createInvalidPhone: String { String(localized: "create.invalid.phone") }
+    static var createInvalidSms: String { String(localized: "create.invalid.sms") }
     static var createInvalidText: String { String(localized: "create.invalid.text") }
     static var createInvalidUrl: String { String(localized: "create.invalid.url") }
     static var createInvalidWifi: String { String(localized: "create.invalid.wifi") }
     static var createKindContact: String { String(localized: "create.kind.contact") }
     static var createKindContactDetail: String { String(localized: "create.kind.contact.detail") }
+    static var createKindEmail: String { String(localized: "create.kind.email") }
+    static var createKindEmailDetail: String { String(localized: "create.kind.email.detail") }
     static var createKindEvent: String { String(localized: "create.kind.event") }
     static var createKindEventDetail: String { String(localized: "create.kind.event.detail") }
+    static var createKindGeo: String { String(localized: "create.kind.geo") }
+    static var createKindGeoDetail: String { String(localized: "create.kind.geo.detail") }
+    static var createKindPhone: String { String(localized: "create.kind.phone") }
+    static var createKindPhoneDetail: String { String(localized: "create.kind.phone.detail") }
+    static var createKindSms: String { String(localized: "create.kind.sms") }
+    static var createKindSmsDetail: String { String(localized: "create.kind.sms.detail") }
     static var createKindText: String { String(localized: "create.kind.text") }
     static var createKindTextDetail: String { String(localized: "create.kind.text.detail") }
     static var createKindUrl: String { String(localized: "create.kind.url") }
@@ -375,6 +404,7 @@ enum L10n {
         "create.badge.pro",
         "create.field.address",
         "create.field.allDay",
+        "create.field.body",
         "create.field.email",
         "create.field.end",
         "create.field.eventTitle",
@@ -382,32 +412,60 @@ enum L10n {
         "create.field.givenName",
         "create.field.hidden",
         "create.field.jobTitle",
+        "create.field.latitude",
         "create.field.location",
+        "create.field.longitude",
+        "create.field.mailTo",
+        "create.field.mailTo.prompt",
         "create.field.note",
         "create.field.notes",
         "create.field.organization",
         "create.field.password",
         "create.field.phone",
+        "create.field.phoneNumber",
+        "create.field.phoneNumber.prompt",
+        "create.field.placeName",
         "create.field.security",
+        "create.field.smsBody",
+        "create.field.smsTo",
         "create.field.ssid",
         "create.field.ssid.prompt",
         "create.field.start",
+        "create.field.subject",
         "create.field.text",
         "create.field.text.prompt",
         "create.field.url",
         "create.field.url.contact",
         "create.field.url.prompt",
         "create.generate",
+        "create.geo.denied.message",
+        "create.geo.denied.title",
+        "create.geo.failed",
+        "create.geo.locating",
+        "create.geo.note",
+        "create.geo.useCurrent",
         "create.image.a11y",
         "create.invalid.contact",
+        "create.invalid.email",
         "create.invalid.event",
+        "create.invalid.geo",
+        "create.invalid.phone",
+        "create.invalid.sms",
         "create.invalid.text",
         "create.invalid.url",
         "create.invalid.wifi",
         "create.kind.contact",
         "create.kind.contact.detail",
+        "create.kind.email",
+        "create.kind.email.detail",
         "create.kind.event",
         "create.kind.event.detail",
+        "create.kind.geo",
+        "create.kind.geo.detail",
+        "create.kind.phone",
+        "create.kind.phone.detail",
+        "create.kind.sms",
+        "create.kind.sms.detail",
         "create.kind.text",
         "create.kind.text.detail",
         "create.kind.url",

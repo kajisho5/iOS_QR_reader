@@ -7,9 +7,13 @@ enum CreateKind: String, CaseIterable, Identifiable, Sendable {
     case wifi
     case contact
     case event
+    case email
+    case phone
+    case sms
+    case geo
 
     var id: String { rawValue }
-    var requiresPro: Bool { self == .wifi || self == .contact || self == .event }
+    var requiresPro: Bool { self != .text && self != .url }
 
     var payloadKind: PayloadKind {
         switch self {
@@ -18,6 +22,10 @@ enum CreateKind: String, CaseIterable, Identifiable, Sendable {
         case .wifi: .wifi
         case .contact: .contact
         case .event: .event
+        case .email: .email
+        case .phone: .phone
+        case .sms: .sms
+        case .geo: .geo
         }
     }
 }
@@ -39,6 +47,24 @@ struct ContactDraft: Equatable, Sendable {
     var url = ""
     var address = ""
     var note = ""
+}
+
+struct EmailDraft: Equatable, Sendable {
+    var address = ""
+    var subject = ""
+    var body = ""
+}
+
+struct SMSDraft: Equatable, Sendable {
+    var number = ""
+    var body = ""
+}
+
+/// Latitude and longitude as typed (decimal degrees), plus an optional label.
+struct GeoDraft: Equatable, Sendable {
+    var latitude = ""
+    var longitude = ""
+    var name = ""
 }
 
 struct EventDraft: Equatable, Sendable {
@@ -119,6 +145,72 @@ enum PayloadEncoder {
         if !notes.isEmpty { lines.append("DESCRIPTION:\(escapeText(notes))") }
         lines += ["END:VEVENT", "END:VCALENDAR"]
         return lines.joined(separator: "\r\n")
+    }
+
+    /// `mailto:` (RFC 6068): the address is required; subject and body are percent-encoded.
+    static func email(_ draft: EmailDraft) -> String? {
+        let address = draft.address.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard isEmailAddress(address) else { return nil }
+        var query: [String] = []
+        let subject = draft.subject.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !subject.isEmpty { query.append("subject=" + percentEncode(subject)) }
+        let body = draft.body.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !body.isEmpty { query.append("body=" + percentEncode(body)) }
+        return "mailto:" + address + (query.isEmpty ? "" : "?" + query.joined(separator: "&"))
+    }
+
+    /// `tel:` with the dialable characters only (digits, +, *, #); spaces, hyphens and brackets are dropped.
+    static func phone(_ number: String) -> String? {
+        guard let dialable = dialableNumber(number) else { return nil }
+        return "tel:" + dialable
+    }
+
+    /// `SMSTO:number:body` (the form most scanners, including the iOS camera, read).
+    static func sms(_ draft: SMSDraft) -> String? {
+        guard let number = dialableNumber(draft.number) else { return nil }
+        let body = draft.body.trimmingCharacters(in: .whitespacesAndNewlines)
+        return "SMSTO:" + number + ":" + body
+    }
+
+    /// `geo:lat,lon` (RFC 5870); with a name, `?q=lat,lon(name)` so map apps show the label.
+    static func geo(_ draft: GeoDraft) -> String? {
+        guard let latitude = coordinate(draft.latitude, limit: 90),
+              let longitude = coordinate(draft.longitude, limit: 180) else { return nil }
+        let point = "\(latitude),\(longitude)"
+        let name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "(", with: "（").replacingOccurrences(of: ")", with: "）")
+        return "geo:" + point + (name.isEmpty ? "" : "?q=" + percentEncode(point + "(" + name + ")"))
+    }
+
+    /// A typed coordinate in decimal degrees within ±limit, normalized (no exponent, at most 6 decimals).
+    static func coordinate(_ input: String, limit: Double) -> String? {
+        let typed = input.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "，", with: ".")
+        guard !typed.isEmpty, typed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "-" || $0 == "+" }),
+              let value = Double(typed), value.isFinite, abs(value) <= limit else { return nil }
+        return format(value)
+    }
+
+    static func format(_ degrees: Double) -> String {
+        var text = String(format: "%.6f", degrees)
+        while text.hasSuffix("0") { text.removeLast() }
+        if text.hasSuffix(".") { text.removeLast() }
+        return text == "-0" ? "0" : text
+    }
+
+    private static func dialableNumber(_ input: String) -> String? {
+        let kept = input.filter { $0.isASCII && ($0.isNumber || "+*#".contains($0)) }
+        return kept.contains(where: \.isNumber) ? kept : nil
+    }
+
+    private static func isEmailAddress(_ value: String) -> Bool {
+        let parts = value.split(separator: "@", omittingEmptySubsequences: false)
+        return parts.count == 2 && !parts[0].isEmpty && parts[1].contains(".") && !value.contains(where: \.isWhitespace)
+    }
+
+    /// Percent-encodes everything except RFC 3986 unreserved characters (so `&`, `=`, `?` and `+` in text survive).
+    static func percentEncode(_ value: String) -> String {
+        let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
     }
 
     // MARK: Escaping
