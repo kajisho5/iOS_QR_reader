@@ -7,6 +7,7 @@ struct RootView: View {
     @State private var isHistorySearchPresented = false
     @State private var historyLock = HistoryLock()
     @Environment(\.scenePhase) private var scenePhase
+    private let router = AppRouter.shared
 
     init(initialTab: AppTab = .scan) {
         _selection = State(initialValue: initialTab)
@@ -32,6 +33,12 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             // The history locks again whenever the app leaves the screen.
             if phase == .background { historyLock.lock() }
+        }
+        // The "QRスキャン" control or Shortcuts action opened the app (OpenScannerIntent).
+        .onChange(of: router.pendingTab, initial: true) { _, tab in
+            guard let tab else { return }
+            selection = tab
+            router.pendingTab = nil
         }
         .environment(\.isProUnlocked, store.isPro)
         .environment(\.selectTab, SelectTabAction { [binding = $selection] in binding.wrappedValue = $0 })
