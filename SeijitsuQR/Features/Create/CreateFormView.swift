@@ -20,6 +20,9 @@ struct CreateFormView: View {
     @State private var isSavingPhoto = false
     @State private var savedToPhotos = false
     @State private var photoAlert: PhotoAlert?
+    @State private var location: CurrentLocation?
+    @State private var isLocating = false
+    @State private var isLocationDeniedAlertPresented = false
     @FocusState private var focus: Field?
 
     /// Text fields in the order the return key moves through them.
@@ -28,6 +31,10 @@ struct CreateFormView: View {
         case ssid, password
         case familyName, givenName, organization, jobTitle, phone, email, contactURL, address, note
         case eventTitle, location, notes
+        case mailTo, subject, body
+        case phoneNumber
+        case smsTo, smsBody
+        case latitude, longitude, placeName
     }
 
     private static let previewID = "preview"
@@ -75,6 +82,14 @@ struct CreateFormView: View {
             }
         } message: { alert in
             Text(alert.message)
+        }
+        .alert(L10n.createGeoDeniedTitle, isPresented: $isLocationDeniedAlertPresented) {
+            Button(L10n.commonCancel, role: .cancel) {}
+            Button(L10n.commonOpenSettings) {
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+        } message: {
+            Text(L10n.createGeoDeniedMessage)
         }
     }
 
@@ -136,13 +151,13 @@ struct CreateFormView: View {
     private var fields: some View {
         switch kind {
         case .text:
-            LabeledField(L10n.createFieldText) {
+            LabeledField(L10n.createFieldText, onPaste: { form.text = $0 }) {
                 TextField(L10n.createFieldText, text: $form.text, prompt: Text(L10n.createFieldTextPrompt), axis: .vertical)
                     .lineLimit(3...10)
                     .focused($focus, equals: .text)
             }
         case .url:
-            LabeledField(L10n.createFieldUrl) {
+            LabeledField(L10n.createFieldUrl, onPaste: { form.url = $0.trimmingCharacters(in: .whitespacesAndNewlines) }) {
                 TextField(L10n.createFieldUrl, text: $form.url, prompt: Text(L10n.createFieldUrlPrompt))
                     .submits(.url, focus: $focus, order: fieldOrder, onLast: generate)
                     .keyboardType(.URL)
@@ -232,6 +247,75 @@ struct CreateFormView: View {
                 TextField(L10n.createFieldNotes, text: $form.event.notes, axis: .vertical)
                     .focused($focus, equals: .notes)
             }
+        case .email:
+            LabeledField(L10n.createFieldMailTo) {
+                TextField(L10n.createFieldMailTo, text: $form.email.address, prompt: Text(L10n.createFieldMailToPrompt))
+                    .submits(.mailTo, focus: $focus, order: fieldOrder, onLast: generate)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+            }
+            LabeledField(L10n.createFieldSubject) {
+                TextField(L10n.createFieldSubject, text: $form.email.subject)
+                    .submits(.subject, focus: $focus, order: fieldOrder, onLast: generate)
+            }
+            LabeledField(L10n.createFieldBody) {
+                TextField(L10n.createFieldBody, text: $form.email.body, axis: .vertical)
+                    .lineLimit(3...10)
+                    .focused($focus, equals: .body)
+            }
+        case .phone:
+            LabeledField(L10n.createFieldPhoneNumber) {
+                TextField(L10n.createFieldPhoneNumber, text: $form.phone, prompt: Text(L10n.createFieldPhoneNumberPrompt))
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
+                    .focused($focus, equals: .phoneNumber)
+            }
+        case .sms:
+            LabeledField(L10n.createFieldSmsTo) {
+                TextField(L10n.createFieldSmsTo, text: $form.sms.number, prompt: Text(L10n.createFieldPhoneNumberPrompt))
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
+                    .focused($focus, equals: .smsTo)
+            }
+            LabeledField(L10n.createFieldSmsBody) {
+                TextField(L10n.createFieldSmsBody, text: $form.sms.body, axis: .vertical)
+                    .lineLimit(2...6)
+                    .focused($focus, equals: .smsBody)
+            }
+        case .geo:
+            LabeledField(L10n.createFieldLatitude) {
+                TextField(L10n.createFieldLatitude, text: $form.geo.latitude, prompt: Text(verbatim: "35.68124"))
+                    .keyboardType(.numbersAndPunctuation)
+                    .monospacedDigit()
+                    .submits(.latitude, focus: $focus, order: fieldOrder, onLast: generate)
+            }
+            LabeledField(L10n.createFieldLongitude) {
+                TextField(L10n.createFieldLongitude, text: $form.geo.longitude, prompt: Text(verbatim: "139.76712"))
+                    .keyboardType(.numbersAndPunctuation)
+                    .monospacedDigit()
+                    .submits(.longitude, focus: $focus, order: fieldOrder, onLast: generate)
+            }
+            LabeledField(L10n.createFieldPlaceName) {
+                TextField(L10n.createFieldPlaceName, text: $form.geo.name)
+                    .submits(.placeName, focus: $focus, order: fieldOrder, onLast: generate)
+            }
+            Button(action: fillCurrentLocation) {
+                if isLocating {
+                    Label {
+                        Text(L10n.createGeoLocating)
+                    } icon: {
+                        ProgressView()
+                    }
+                } else {
+                    Label(L10n.createGeoUseCurrent, systemImage: "location")
+                }
+            }
+            .disabled(isLocating)
+            Label(L10n.createGeoNote, systemImage: "checkmark.shield")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -291,6 +375,10 @@ struct CreateFormView: View {
         case .wifi: form.wifi.security == .open ? [.ssid] : [.ssid, .password]
         case .contact: [.familyName, .givenName, .organization, .jobTitle, .phone, .email, .contactURL, .address, .note]
         case .event: [.eventTitle, .location, .notes]
+        case .email: [.mailTo, .subject, .body]
+        case .phone: [.phoneNumber]
+        case .sms: [.smsTo, .smsBody]
+        case .geo: [.latitude, .longitude, .placeName]
         }
     }
 
@@ -321,6 +409,10 @@ struct CreateFormView: View {
         case .wifi: PayloadEncoder.wifi(form.wifi)
         case .contact: PayloadEncoder.contact(form.contact)
         case .event: PayloadEncoder.event(form.event)
+        case .email: PayloadEncoder.email(form.email)
+        case .phone: PayloadEncoder.phone(form.phone)
+        case .sms: PayloadEncoder.sms(form.sms)
+        case .geo: PayloadEncoder.geo(form.geo)
         }
     }
 
@@ -331,6 +423,30 @@ struct CreateFormView: View {
         case .wifi: L10n.createInvalidWifi
         case .contact: L10n.createInvalidContact
         case .event: L10n.createInvalidEvent
+        case .email: L10n.createInvalidEmail
+        case .phone: L10n.createInvalidPhone
+        case .sms: L10n.createInvalidSms
+        case .geo: L10n.createInvalidGeo
+        }
+    }
+
+    /// Fills latitude and longitude from a one-shot location fix (only after the user tapped the button).
+    private func fillCurrentLocation() {
+        focus = nil
+        let provider = location ?? CurrentLocation()
+        location = provider
+        isLocating = true
+        Task {
+            defer { isLocating = false }
+            do {
+                let coordinate = try await provider.request()
+                form.geo.latitude = PayloadEncoder.format(coordinate.latitude)
+                form.geo.longitude = PayloadEncoder.format(coordinate.longitude)
+            } catch CurrentLocation.Failure.denied {
+                isLocationDeniedAlertPresented = true
+            } catch {
+                errorMessage = L10n.createGeoFailed
+            }
         }
     }
 
@@ -361,6 +477,10 @@ private struct FormState: Equatable {
     var url = ""
     var wifi = WiFiDraft()
     var contact = ContactDraft()
+    var email = EmailDraft()
+    var phone = ""
+    var sms = SMSDraft()
+    var geo = GeoDraft()
     var event: EventDraft = {
         let calendar = Calendar.current
         let nextHour = calendar.nextDate(after: .now, matching: DateComponents(minute: 0), matchingPolicy: .nextTime) ?? .now
@@ -394,21 +514,38 @@ private enum PhotoAlert: Equatable {
 }
 
 /// A visible label above its field (HIG: every field has a label, not just a placeholder).
+/// With `onPaste`, a paste button sits at the trailing end of the label and replaces the field's text with what
+/// was copied (read only when tapped).
 private struct LabeledField<Content: View>: View {
     let title: String
+    var onPaste: (@MainActor @Sendable (String) -> Void)?
     @ViewBuilder let content: Content
 
-    init(_ title: String, @ViewBuilder content: () -> Content) {
+    init(_ title: String, onPaste: (@MainActor @Sendable (String) -> Void)? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.onPaste = onPaste
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .accessibilityHidden(true)
+            HStack {
+                Text(title)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                if let onPaste {
+                    Spacer()
+                    PasteButton(payloadType: String.self) { strings in
+                        guard let text = strings.first else { return }
+                        Task { @MainActor in onPaste(text) }
+                    }
+                    .labelStyle(.titleAndIcon)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.small)
+                    .accessibilityLabel(L10n.createPasteA11y)
+                }
+            }
             content
         }
     }

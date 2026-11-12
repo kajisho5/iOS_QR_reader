@@ -2,11 +2,12 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
-/// The widget extension (docs/DESIGN_1.1.md §3–4). Today it holds the "QRスキャン" control (iOS 18 and later);
-/// the home screen widgets (B) are added here later.
+/// The widget extension (docs/DESIGN_1.1.md §3–4): the favorite-code home screen widget (B, Pro) and the
+/// "QRスキャン" control (D, iOS 18 and later).
 @main
 struct SeijitsuQRWidgets: WidgetBundle {
     var body: some Widget {
+        FavoriteCodeWidget()
         if #available(iOS 18.0, *) {
             ScanControl()
         }

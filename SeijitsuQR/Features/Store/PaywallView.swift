@@ -112,6 +112,7 @@ struct PaywallView: View {
             FeatureRow(systemImage: "infinity", title: L10n.paywallFeatureHistoryTitle, detail: L10n.paywallFeatureHistoryDetail)
             FeatureRow(systemImage: "qrcode", title: L10n.paywallFeatureCreateTitle, detail: L10n.paywallFeatureCreateDetail)
             FeatureRow(systemImage: "tablecells", title: L10n.paywallFeatureCsvTitle, detail: L10n.paywallFeatureCsvDetail)
+            FeatureRow(systemImage: "square.grid.2x2", title: L10n.paywallFeatureWidgetTitle, detail: L10n.paywallFeatureWidgetDetail)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

@@ -199,6 +199,17 @@
         }
       }
     },
+    "create.field.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文"
+          }
+        }
+      }
+    },
     "create.field.email": {
       "extractionState": "manual",
       "localizations": {
@@ -276,6 +287,17 @@
         }
       }
     },
+    "create.field.latitude": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "緯度（-90〜90）"
+          }
+        }
+      }
+    },
     "create.field.location": {
       "extractionState": "manual",
       "localizations": {
@@ -283,6 +305,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "場所"
+          }
+        }
+      }
+    },
+    "create.field.longitude": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "経度（-180〜180）"
+          }
+        }
+      }
+    },
+    "create.field.mailTo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宛先"
+          }
+        }
+      }
+    },
+    "create.field.mailTo.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：info@example.co.jp"
           }
         }
       }
@@ -342,6 +397,39 @@
         }
       }
     },
+    "create.field.phoneNumber": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話番号"
+          }
+        }
+      }
+    },
+    "create.field.phoneNumber.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：03-1234-5678"
+          }
+        }
+      }
+    },
+    "create.field.placeName": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "名前（任意）"
+          }
+        }
+      }
+    },
     "create.field.security": {
       "extractionState": "manual",
       "localizations": {
@@ -349,6 +437,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "セキュリティ"
+          }
+        }
+      }
+    },
+    "create.field.smsBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本文（任意）"
+          }
+        }
+      }
+    },
+    "create.field.smsTo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送り先の電話番号"
           }
         }
       }
@@ -382,6 +492,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "開始"
+          }
+        }
+      }
+    },
+    "create.field.subject": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "件名"
           }
         }
       }
@@ -452,6 +573,72 @@
         }
       }
     },
+    "create.geo.denied.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定で、このアプリの位置情報を「このAppの使用中のみ」にすると使えます。緯度と経度は手で入力することもできます。"
+          }
+        }
+      }
+    },
+    "create.geo.denied.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "位置情報が許可されていません"
+          }
+        }
+      }
+    },
+    "create.geo.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在地を取得できませんでした。もう一度試すか、緯度と経度を入力してください。"
+          }
+        }
+      }
+    },
+    "create.geo.locating": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在地を調べています…"
+          }
+        }
+      }
+    },
+    "create.geo.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地図は表示しません（地図の画像を取りに行く通信が要るため）。現在地は、ボタンを押したときだけ使い、どこにも送りません。"
+          }
+        }
+      }
+    },
+    "create.geo.useCurrent": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "現在地を入れる"
+          }
+        }
+      }
+    },
     "create.image.a11y": {
       "extractionState": "manual",
       "localizations": {
@@ -474,6 +661,17 @@
         }
       }
     },
+    "create.invalid.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宛先のメールアドレスを入力してください。"
+          }
+        }
+      }
+    },
     "create.invalid.event": {
       "extractionState": "manual",
       "localizations": {
@@ -481,6 +679,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "タイトルを入力し、終了を開始以降にしてください。"
+          }
+        }
+      }
+    },
+    "create.invalid.geo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "緯度は -90〜90、経度は -180〜180 の数字で入力してください。"
+          }
+        }
+      }
+    },
+    "create.invalid.phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話番号を入力してください。"
+          }
+        }
+      }
+    },
+    "create.invalid.sms": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "送り先の電話番号を入力してください。"
           }
         }
       }
@@ -540,6 +771,28 @@
         }
       }
     },
+    "create.kind.email": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メール"
+          }
+        }
+      }
+    },
+    "create.kind.email.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宛先・件名・本文"
+          }
+        }
+      }
+    },
     "create.kind.event": {
       "extractionState": "manual",
       "localizations": {
@@ -558,6 +811,72 @@
           "stringUnit": {
             "state": "translated",
             "value": "予定の日時・場所"
+          }
+        }
+      }
+    },
+    "create.kind.geo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "地図の位置"
+          }
+        }
+      }
+    },
+    "create.kind.geo.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "緯度・経度"
+          }
+        }
+      }
+    },
+    "create.kind.phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話"
+          }
+        }
+      }
+    },
+    "create.kind.phone.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "電話番号"
+          }
+        }
+      }
+    },
+    "create.kind.sms": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMS"
+          }
+        }
+      }
+    },
+    "create.kind.sms.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "番号・本文"
           }
         }
       }
@@ -656,7 +975,18 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wi-Fi・連絡先・イベントは Pro で作成できます"
+            "value": "Wi-Fi・連絡先・イベント・メールなどは Pro で作成できます"
+          }
+        }
+      }
+    },
+    "create.paste.a11y": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした文字を入力欄に貼り付ける"
           }
         }
       }
@@ -833,6 +1163,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "種類"
+          }
+        }
+      }
+    },
+    "csv.header.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ"
           }
         }
       }
@@ -1222,6 +1563,17 @@
         }
       }
     },
+    "history.note.line": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ：%@"
+          }
+        }
+      }
+    },
     "history.search.prompt": {
       "extractionState": "manual",
       "localizations": {
@@ -1437,7 +1789,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wi-Fi・連絡先・イベントにも対応"
+            "value": "Wi-Fi・連絡先・イベント・メール・電話・SMS・位置にも対応"
           }
         }
       }
@@ -1493,6 +1845,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "履歴を無制限に保存"
+          }
+        }
+      }
+    },
+    "paywall.feature.widget.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りの QR をホーム画面に表示"
+          }
+        }
+      }
+    },
+    "paywall.feature.widget.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ホーム画面のウィジェット"
           }
         }
       }
@@ -1735,6 +2109,149 @@
           "stringUnit": {
             "state": "translated",
             "value": "誠実QRリーダー Pro"
+          }
+        }
+      }
+    },
+    "print.button": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷"
+          }
+        }
+      }
+    },
+    "print.caption": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下に文字を入れる"
+          }
+        }
+      }
+    },
+    "print.caption.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "入る文字：%@。パスワードは文字では印刷しません（QR の中には入っています）。"
+          }
+        }
+      }
+    },
+    "print.choosePrinter": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プリンタを選ぶ"
+          }
+        }
+      }
+    },
+    "print.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷できませんでした。プリンタの状態を確かめて、もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "print.labels.summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A4 に 3 列 × 6 段（18 枚）。同じコードを並べます。"
+          }
+        }
+      }
+    },
+    "print.layout": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ方"
+          }
+        }
+      }
+    },
+    "print.layout.labels": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ラベルのように並べる"
+          }
+        }
+      }
+    },
+    "print.layout.single": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 枚に大きく"
+          }
+        }
+      }
+    },
+    "print.paperNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "大きさは、A4 の用紙に拡大・縮小せずに印刷したときのものです。"
+          }
+        }
+      }
+    },
+    "print.size": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 枚の大きさ"
+          }
+        }
+      }
+    },
+    "print.size.value": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld cm"
+          }
+        }
+      }
+    },
+    "print.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "印刷"
           }
         }
       }
@@ -2021,6 +2538,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "履歴の自動保存はオフです"
+          }
+        }
+      }
+    },
+    "result.note.count": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld / %lld"
+          }
+        }
+      }
+    },
+    "result.note.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモはこの端末の履歴にだけ保存されます。"
+          }
+        }
+      }
+    },
+    "result.note.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：3階 会議室の来客用"
+          }
+        }
+      }
+    },
+    "result.note.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ"
           }
         }
       }
@@ -2454,6 +3015,17 @@
         }
       }
     },
+    "scan.control.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼り付け"
+          }
+        }
+      }
+    },
     "scan.control.photo": {
       "extractionState": "manual",
       "localizations": {
@@ -2648,6 +3220,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "読み取り結果"
+          }
+        }
+      }
+    },
+    "scan.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした画像や文字を読み取る"
+          }
+        }
+      }
+    },
+    "scan.paste.noCode.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーした画像からコードが見つかりませんでした。コードが大きくはっきり写った画像をコピーしてお試しください。"
           }
         }
       }
@@ -3147,6 +3741,94 @@
         }
       }
     },
+    "share.copied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーしました"
+          }
+        }
+      }
+    },
+    "share.domain": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドメイン"
+          }
+        }
+      }
+    },
+    "share.historyNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次に誠実QRリーダーを開いたとき、履歴に入ります（履歴の自動保存がオンのとき）。"
+          }
+        }
+      }
+    },
+    "share.noCode.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像からコードが見つかりませんでした。コードが大きくはっきり写った画像でお試しください。"
+          }
+        }
+      }
+    },
+    "share.openNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここからはブラウザを開けません（iOS の決まりで、共有から開いた画面はほかのアプリを開けません）。開くには「コピー」して Safari に貼り付けるか、誠実QRリーダーの履歴から開いてください。"
+          }
+        }
+      }
+    },
+    "share.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像は iPhone の中だけで読み取ります。どこにも送りません。"
+          }
+        }
+      }
+    },
+    "share.reading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取っています…"
+          }
+        }
+      }
+    },
+    "share.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを読み取る"
+          }
+        }
+      }
+    },
     "source.camera": {
       "extractionState": "manual",
       "localizations": {
@@ -3169,6 +3851,17 @@
         }
       }
     },
+    "source.paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "貼り付け"
+          }
+        }
+      }
+    },
     "source.photo": {
       "extractionState": "manual",
       "localizations": {
@@ -3176,6 +3869,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真"
+          }
+        }
+      }
+    },
+    "source.share": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共有"
           }
         }
       }

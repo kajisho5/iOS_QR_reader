@@ -13,6 +13,11 @@ struct HistoryRow: View {
                     .font(.body.weight(.semibold))
                     .lineLimit(2)
                     .truncationMode(.middle)
+                if let note = record.trimmedNote {
+                    Text(L10n.historyNoteLine(note))
+                        .font(.subheadline)
+                        .lineLimit(1)
+                }
                 Text(meta)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -29,7 +34,11 @@ struct HistoryRow: View {
     }
 
     private var meta: String {
-        let origin = record.source == .created ? L10n.sourceCreated : (record.symbology?.title ?? "")
+        let origin = switch record.source {
+        case .created: L10n.sourceCreated
+        case .paste: record.symbology?.title ?? L10n.sourcePaste
+        case .camera, .photo, .share: record.symbology?.title ?? ""
+        }
         return [record.kind.title, origin, record.createdAt.formatted(date: .omitted, time: .shortened)]
             .filter { !$0.isEmpty }
             .joined(separator: L10n.metaSeparator)
@@ -125,7 +134,7 @@ struct HistoryDetailView: View {
     let onDelete: () -> Void
 
     var body: some View {
-        ResultView(result: ScanResult(record: record), style: .pane)
+        ResultView(result: ScanResult(record: record), style: .pane, showsNote: true)
             .id(record.persistentModelID)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -166,7 +175,7 @@ struct HistoryCSVFile: Transferable {
 
     private static var exporter: CSVExporter {
         CSVExporter(labels: .init(
-            headers: [L10n.csvHeaderDate, L10n.csvHeaderKind, L10n.csvHeaderContent, L10n.csvHeaderSymbology, L10n.csvHeaderSource, L10n.csvHeaderFavorite],
+            headers: [L10n.csvHeaderDate, L10n.csvHeaderKind, L10n.csvHeaderContent, L10n.csvHeaderSymbology, L10n.csvHeaderSource, L10n.csvHeaderFavorite, L10n.csvHeaderNote],
             kindTitle: { $0.title },
             symbologyTitle: { $0.title },
             sourceTitle: { source in
@@ -174,6 +183,8 @@ struct HistoryCSVFile: Transferable {
                 case .camera: L10n.sourceCamera
                 case .photo: L10n.sourcePhoto
                 case .created: L10n.sourceCreated
+                case .paste: L10n.sourcePaste
+                case .share: L10n.sourceShare
                 }
             },
             favoriteYes: L10n.commonYes,

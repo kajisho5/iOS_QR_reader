@@ -8,6 +8,10 @@ extension CreateKind {
         case .wifi: L10n.createKindWifi
         case .contact: L10n.createKindContact
         case .event: L10n.createKindEvent
+        case .email: L10n.createKindEmail
+        case .phone: L10n.createKindPhone
+        case .sms: L10n.createKindSms
+        case .geo: L10n.createKindGeo
         }
     }
 
@@ -18,6 +22,10 @@ extension CreateKind {
         case .wifi: L10n.createKindWifiDetail
         case .contact: L10n.createKindContactDetail
         case .event: L10n.createKindEventDetail
+        case .email: L10n.createKindEmailDetail
+        case .phone: L10n.createKindPhoneDetail
+        case .sms: L10n.createKindSmsDetail
+        case .geo: L10n.createKindGeoDetail
         }
     }
 }

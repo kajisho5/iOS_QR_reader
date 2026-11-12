@@ -167,7 +167,14 @@ def main():
     existing = {l["attributes"]["locale"]: l for l in call("GET", f"/v2/inAppPurchases/{iap['id']}/inAppPurchaseLocalizations")["data"]}
     for locale, texts in iap_cfg["localizations"].items():
         if locale in existing:
-            patch("inAppPurchaseLocalizations", existing[locale]["id"], existing[locale]["attributes"], texts, f"IAP localization {locale}")
+            try:
+                patch("inAppPurchaseLocalizations", existing[locale]["id"], existing[locale]["attributes"], texts, f"IAP localization {locale}")
+            except SystemExit as error:
+                # App Store Connect refuses API edits to an approved (ACTIVE) localization (HTTP 409 UNMODIFIABLE).
+                if "UNMODIFIABLE" not in str(error):
+                    raise
+                print(f"IAP localization {locale}: left as is (approved; App Store Connect does not allow editing it "
+                      f"through the API). Wanted: {texts}")
         else:
             call("POST", "/v1/inAppPurchaseLocalizations", {"data": {"type": "inAppPurchaseLocalizations",
                  "attributes": {"locale": locale, **texts},

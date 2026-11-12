@@ -2,6 +2,9 @@
 *.xcodeproj/
 SeijitsuQR/Info.plist
 SeijitsuQRWidgets/Info.plist
+SeijitsuQRWidgets/SeijitsuQRWidgets.entitlements
+SeijitsuQRShare/Info.plist
+SeijitsuQRShare/SeijitsuQRShare.entitlements
 SeijitsuQR/SeijitsuQR.entitlements
 
 # Xcode

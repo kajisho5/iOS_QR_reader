@@ -22,6 +22,7 @@ enum L10n {
     static var createBadgePro: String { String(localized: "create.badge.pro") }
     static var createFieldAddress: String { String(localized: "create.field.address") }
     static var createFieldAllDay: String { String(localized: "create.field.allDay") }
+    static var createFieldBody: String { String(localized: "create.field.body") }
     static var createFieldEmail: String { String(localized: "create.field.email") }
     static var createFieldEnd: String { String(localized: "create.field.end") }
     static var createFieldEventTitle: String { String(localized: "create.field.eventTitle") }
@@ -29,32 +30,60 @@ enum L10n {
     static var createFieldGivenName: String { String(localized: "create.field.givenName") }
     static var createFieldHidden: String { String(localized: "create.field.hidden") }
     static var createFieldJobTitle: String { String(localized: "create.field.jobTitle") }
+    static var createFieldLatitude: String { String(localized: "create.field.latitude") }
     static var createFieldLocation: String { String(localized: "create.field.location") }
+    static var createFieldLongitude: String { String(localized: "create.field.longitude") }
+    static var createFieldMailTo: String { String(localized: "create.field.mailTo") }
+    static var createFieldMailToPrompt: String { String(localized: "create.field.mailTo.prompt") }
     static var createFieldNote: String { String(localized: "create.field.note") }
     static var createFieldNotes: String { String(localized: "create.field.notes") }
     static var createFieldOrganization: String { String(localized: "create.field.organization") }
     static var createFieldPassword: String { String(localized: "create.field.password") }
     static var createFieldPhone: String { String(localized: "create.field.phone") }
+    static var createFieldPhoneNumber: String { String(localized: "create.field.phoneNumber") }
+    static var createFieldPhoneNumberPrompt: String { String(localized: "create.field.phoneNumber.prompt") }
+    static var createFieldPlaceName: String { String(localized: "create.field.placeName") }
     static var createFieldSecurity: String { String(localized: "create.field.security") }
+    static var createFieldSmsBody: String { String(localized: "create.field.smsBody") }
+    static var createFieldSmsTo: String { String(localized: "create.field.smsTo") }
     static var createFieldSsid: String { String(localized: "create.field.ssid") }
     static var createFieldSsidPrompt: String { String(localized: "create.field.ssid.prompt") }
     static var createFieldStart: String { String(localized: "create.field.start") }
+    static var createFieldSubject: String { String(localized: "create.field.subject") }
     static var createFieldText: String { String(localized: "create.field.text") }
     static var createFieldTextPrompt: String { String(localized: "create.field.text.prompt") }
     static var createFieldUrl: String { String(localized: "create.field.url") }
     static var createFieldUrlContact: String { String(localized: "create.field.url.contact") }
     static var createFieldUrlPrompt: String { String(localized: "create.field.url.prompt") }
     static var createGenerate: String { String(localized: "create.generate") }
+    static var createGeoDeniedMessage: String { String(localized: "create.geo.denied.message") }
+    static var createGeoDeniedTitle: String { String(localized: "create.geo.denied.title") }
+    static var createGeoFailed: String { String(localized: "create.geo.failed") }
+    static var createGeoLocating: String { String(localized: "create.geo.locating") }
+    static var createGeoNote: String { String(localized: "create.geo.note") }
+    static var createGeoUseCurrent: String { String(localized: "create.geo.useCurrent") }
     static var createImageA11y: String { String(localized: "create.image.a11y") }
     static var createInvalidContact: String { String(localized: "create.invalid.contact") }
+    static var createInvalidEmail: String { String(localized: "create.invalid.email") }
     static var createInvalidEvent: String { String(localized: "create.invalid.event") }
+    static var createInvalidGeo: String { String(localized: "create.invalid.geo") }
+    static var createInvalidPhone: String { String(localized: "create.invalid.phone") }
+    static var createInvalidSms: String { String(localized: "create.invalid.sms") }
     static var createInvalidText: String { String(localized: "create.invalid.text") }
     static var createInvalidUrl: String { String(localized: "create.invalid.url") }
     static var createInvalidWifi: String { String(localized: "create.invalid.wifi") }
     static var createKindContact: String { String(localized: "create.kind.contact") }
     static var createKindContactDetail: String { String(localized: "create.kind.contact.detail") }
+    static var createKindEmail: String { String(localized: "create.kind.email") }
+    static var createKindEmailDetail: String { String(localized: "create.kind.email.detail") }
     static var createKindEvent: String { String(localized: "create.kind.event") }
     static var createKindEventDetail: String { String(localized: "create.kind.event.detail") }
+    static var createKindGeo: String { String(localized: "create.kind.geo") }
+    static var createKindGeoDetail: String { String(localized: "create.kind.geo.detail") }
+    static var createKindPhone: String { String(localized: "create.kind.phone") }
+    static var createKindPhoneDetail: String { String(localized: "create.kind.phone.detail") }
+    static var createKindSms: String { String(localized: "create.kind.sms") }
+    static var createKindSmsDetail: String { String(localized: "create.kind.sms.detail") }
     static var createKindText: String { String(localized: "create.kind.text") }
     static var createKindTextDetail: String { String(localized: "create.kind.text.detail") }
     static var createKindUrl: String { String(localized: "create.kind.url") }
@@ -66,6 +95,7 @@ enum L10n {
     }
     static var createLockedMessage: String { String(localized: "create.locked.message") }
     static var createLockedTitle: String { String(localized: "create.locked.title") }
+    static var createPasteA11y: String { String(localized: "create.paste.a11y") }
     static var createPhotoDeniedMessage: String { String(localized: "create.photoDenied.message") }
     static var createPhotoDeniedTitle: String { String(localized: "create.photoDenied.title") }
     static var createPhotoFailedMessage: String { String(localized: "create.photoFailed.message") }
@@ -82,6 +112,7 @@ enum L10n {
     static var csvHeaderDate: String { String(localized: "csv.header.date") }
     static var csvHeaderFavorite: String { String(localized: "csv.header.favorite") }
     static var csvHeaderKind: String { String(localized: "csv.header.kind") }
+    static var csvHeaderNote: String { String(localized: "csv.header.note") }
     static var csvHeaderSource: String { String(localized: "csv.header.source") }
     static var csvHeaderSymbology: String { String(localized: "csv.header.symbology") }
     static var historyAutosaveOffAction: String { String(localized: "history.autosaveOff.action") }
@@ -127,6 +158,9 @@ enum L10n {
     static func historyNoResultsTitle(_ p1: String) -> String {
         String(format: String(localized: "history.noResults.title"), p1)
     }
+    static func historyNoteLine(_ p1: String) -> String {
+        String(format: String(localized: "history.note.line"), p1)
+    }
     static var historySearchPrompt: String { String(localized: "history.search.prompt") }
     static var historySectionToday: String { String(localized: "history.section.today") }
     static var historySectionYesterday: String { String(localized: "history.section.yesterday") }
@@ -154,6 +188,8 @@ enum L10n {
     static var paywallFeatureCsvTitle: String { String(localized: "paywall.feature.csv.title") }
     static var paywallFeatureHistoryDetail: String { String(localized: "paywall.feature.history.detail") }
     static var paywallFeatureHistoryTitle: String { String(localized: "paywall.feature.history.title") }
+    static var paywallFeatureWidgetDetail: String { String(localized: "paywall.feature.widget.detail") }
+    static var paywallFeatureWidgetTitle: String { String(localized: "paywall.feature.widget.title") }
     static var paywallFeaturesHeader: String { String(localized: "paywall.features.header") }
     static var paywallFooterCharge: String { String(localized: "paywall.footer.charge") }
     static var paywallFooterRestore: String { String(localized: "paywall.footer.restore") }
@@ -176,6 +212,23 @@ enum L10n {
     static var paywallSubtitle: String { String(localized: "paywall.subtitle") }
     static var paywallTerms: String { String(localized: "paywall.terms") }
     static var paywallTitle: String { String(localized: "paywall.title") }
+    static var printButton: String { String(localized: "print.button") }
+    static var printCaption: String { String(localized: "print.caption") }
+    static func printCaptionNote(_ p1: String) -> String {
+        String(format: String(localized: "print.caption.note"), p1)
+    }
+    static var printChoosePrinter: String { String(localized: "print.choosePrinter") }
+    static var printFailed: String { String(localized: "print.failed") }
+    static var printLabelsSummary: String { String(localized: "print.labels.summary") }
+    static var printLayout: String { String(localized: "print.layout") }
+    static var printLayoutLabels: String { String(localized: "print.layout.labels") }
+    static var printLayoutSingle: String { String(localized: "print.layout.single") }
+    static var printPaperNote: String { String(localized: "print.paperNote") }
+    static var printSize: String { String(localized: "print.size") }
+    static func printSizeValue(_ p1: Int) -> String {
+        String(format: String(localized: "print.size.value"), p1)
+    }
+    static var printTitle: String { String(localized: "print.title") }
     static var resultBookTitle: String { String(localized: "result.book.title") }
     static var resultBookSearch: String { String(localized: "result.bookSearch") }
     static var resultCodePreviewHint: String { String(localized: "result.codePreviewHint") }
@@ -202,6 +255,12 @@ enum L10n {
     static var resultGeoOpenMaps: String { String(localized: "result.geo.openMaps") }
     static var resultLinkFull: String { String(localized: "result.linkFull") }
     static var resultNotSaved: String { String(localized: "result.notSaved") }
+    static func resultNoteCount(_ p1: Int, _ p2: Int) -> String {
+        String(format: String(localized: "result.note.count"), p1, p2)
+    }
+    static var resultNoteFooter: String { String(localized: "result.note.footer") }
+    static var resultNotePrompt: String { String(localized: "result.note.prompt") }
+    static var resultNoteTitle: String { String(localized: "result.note.title") }
     static var resultOpenFailedMessage: String { String(localized: "result.openFailed.message") }
     static var resultOpenFailedTitle: String { String(localized: "result.openFailed.title") }
     static var resultOpenInBrowser: String { String(localized: "result.openInBrowser") }
@@ -243,6 +302,7 @@ enum L10n {
     static var scanContinuous: String { String(localized: "scan.continuous") }
     static var scanContinuousOn: String { String(localized: "scan.continuous.on") }
     static var scanControlContinuousOn: String { String(localized: "scan.control.continuousOn") }
+    static var scanControlPaste: String { String(localized: "scan.control.paste") }
     static var scanControlPhoto: String { String(localized: "scan.control.photo") }
     static var scanDeniedMessage: String { String(localized: "scan.denied.message") }
     static var scanDeniedTitle: String { String(localized: "scan.denied.title") }
@@ -263,6 +323,8 @@ enum L10n {
     static var scanPaneEmptyMessage: String { String(localized: "scan.pane.empty.message") }
     static var scanPaneEmptyTitle: String { String(localized: "scan.pane.empty.title") }
     static var scanPaneTitle: String { String(localized: "scan.pane.title") }
+    static var scanPaste: String { String(localized: "scan.paste") }
+    static var scanPasteNoCodeMessage: String { String(localized: "scan.paste.noCode.message") }
     static var scanPhoto: String { String(localized: "scan.photo") }
     static var scanPreview: String { String(localized: "scan.preview") }
     static var scanPreviewHint: String { String(localized: "scan.preview.hint") }
@@ -314,9 +376,19 @@ enum L10n {
     static var settingsSearchEngineFooter: String { String(localized: "settings.searchEngine.footer") }
     static var settingsSearchEngineHeader: String { String(localized: "settings.searchEngine.header") }
     static var settingsTitle: String { String(localized: "settings.title") }
+    static var shareCopied: String { String(localized: "share.copied") }
+    static var shareDomain: String { String(localized: "share.domain") }
+    static var shareHistoryNote: String { String(localized: "share.historyNote") }
+    static var shareNoCodeMessage: String { String(localized: "share.noCode.message") }
+    static var shareOpenNote: String { String(localized: "share.openNote") }
+    static var sharePrivacy: String { String(localized: "share.privacy") }
+    static var shareReading: String { String(localized: "share.reading") }
+    static var shareTitle: String { String(localized: "share.title") }
     static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
+    static var sourcePaste: String { String(localized: "source.paste") }
     static var sourcePhoto: String { String(localized: "source.photo") }
+    static var sourceShare: String { String(localized: "source.share") }
     static var symbologyAztec: String { String(localized: "symbology.aztec") }
     static var symbologyCode128: String { String(localized: "symbology.code128") }
     static var symbologyCode39: String { String(localized: "symbology.code39") }
@@ -375,6 +447,7 @@ enum L10n {
         "create.badge.pro",
         "create.field.address",
         "create.field.allDay",
+        "create.field.body",
         "create.field.email",
         "create.field.end",
         "create.field.eventTitle",
@@ -382,32 +455,60 @@ enum L10n {
         "create.field.givenName",
         "create.field.hidden",
         "create.field.jobTitle",
+        "create.field.latitude",
         "create.field.location",
+        "create.field.longitude",
+        "create.field.mailTo",
+        "create.field.mailTo.prompt",
         "create.field.note",
         "create.field.notes",
         "create.field.organization",
         "create.field.password",
         "create.field.phone",
+        "create.field.phoneNumber",
+        "create.field.phoneNumber.prompt",
+        "create.field.placeName",
         "create.field.security",
+        "create.field.smsBody",
+        "create.field.smsTo",
         "create.field.ssid",
         "create.field.ssid.prompt",
         "create.field.start",
+        "create.field.subject",
         "create.field.text",
         "create.field.text.prompt",
         "create.field.url",
         "create.field.url.contact",
         "create.field.url.prompt",
         "create.generate",
+        "create.geo.denied.message",
+        "create.geo.denied.title",
+        "create.geo.failed",
+        "create.geo.locating",
+        "create.geo.note",
+        "create.geo.useCurrent",
         "create.image.a11y",
         "create.invalid.contact",
+        "create.invalid.email",
         "create.invalid.event",
+        "create.invalid.geo",
+        "create.invalid.phone",
+        "create.invalid.sms",
         "create.invalid.text",
         "create.invalid.url",
         "create.invalid.wifi",
         "create.kind.contact",
         "create.kind.contact.detail",
+        "create.kind.email",
+        "create.kind.email.detail",
         "create.kind.event",
         "create.kind.event.detail",
+        "create.kind.geo",
+        "create.kind.geo.detail",
+        "create.kind.phone",
+        "create.kind.phone.detail",
+        "create.kind.sms",
+        "create.kind.sms.detail",
         "create.kind.text",
         "create.kind.text.detail",
         "create.kind.url",
@@ -417,6 +518,7 @@ enum L10n {
         "create.locked.a11y",
         "create.locked.message",
         "create.locked.title",
+        "create.paste.a11y",
         "create.photoDenied.message",
         "create.photoDenied.title",
         "create.photoFailed.message",
@@ -433,6 +535,7 @@ enum L10n {
         "csv.header.date",
         "csv.header.favorite",
         "csv.header.kind",
+        "csv.header.note",
         "csv.header.source",
         "csv.header.symbology",
         "history.autosaveOff.action",
@@ -468,6 +571,7 @@ enum L10n {
         "history.noResults.filterTitle",
         "history.noResults.message",
         "history.noResults.title",
+        "history.note.line",
         "history.search.prompt",
         "history.section.today",
         "history.section.yesterday",
@@ -493,6 +597,8 @@ enum L10n {
         "paywall.feature.csv.title",
         "paywall.feature.history.detail",
         "paywall.feature.history.title",
+        "paywall.feature.widget.detail",
+        "paywall.feature.widget.title",
         "paywall.features.header",
         "paywall.footer.charge",
         "paywall.footer.restore",
@@ -515,6 +621,19 @@ enum L10n {
         "paywall.subtitle",
         "paywall.terms",
         "paywall.title",
+        "print.button",
+        "print.caption",
+        "print.caption.note",
+        "print.choosePrinter",
+        "print.failed",
+        "print.labels.summary",
+        "print.layout",
+        "print.layout.labels",
+        "print.layout.single",
+        "print.paperNote",
+        "print.size",
+        "print.size.value",
+        "print.title",
         "result.book.title",
         "result.bookSearch",
         "result.codePreviewHint",
@@ -541,6 +660,10 @@ enum L10n {
         "result.geo.openMaps",
         "result.linkFull",
         "result.notSaved",
+        "result.note.count",
+        "result.note.footer",
+        "result.note.prompt",
+        "result.note.title",
         "result.openFailed.message",
         "result.openFailed.title",
         "result.openInBrowser",
@@ -580,6 +703,7 @@ enum L10n {
         "scan.continuous",
         "scan.continuous.on",
         "scan.control.continuousOn",
+        "scan.control.paste",
         "scan.control.photo",
         "scan.denied.message",
         "scan.denied.title",
@@ -598,6 +722,8 @@ enum L10n {
         "scan.pane.empty.message",
         "scan.pane.empty.title",
         "scan.pane.title",
+        "scan.paste",
+        "scan.paste.noCode.message",
         "scan.photo",
         "scan.preview",
         "scan.preview.hint",
@@ -643,9 +769,19 @@ enum L10n {
         "settings.searchEngine.footer",
         "settings.searchEngine.header",
         "settings.title",
+        "share.copied",
+        "share.domain",
+        "share.historyNote",
+        "share.noCode.message",
+        "share.openNote",
+        "share.privacy",
+        "share.reading",
+        "share.title",
         "source.camera",
         "source.created",
+        "source.paste",
         "source.photo",
+        "source.share",
         "symbology.aztec",
         "symbology.code128",
         "symbology.code39",

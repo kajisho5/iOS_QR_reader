@@ -6,7 +6,12 @@ struct RootView: View {
     @State private var isPaywallPresented = false
     @State private var isHistorySearchPresented = false
     @State private var historyLock = HistoryLock()
+    /// Pro is known only after the entitlements are read; until then nothing is saved on the app's own initiative
+    /// (a free-plan save trims the history to 30 records).
+    @State private var hasCheckedEntitlements = false
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AppSettings.self) private var settings
     private let router = AppRouter.shared
 
     init(initialTab: AppTab = .scan) {
@@ -32,7 +37,18 @@ struct RootView: View {
         .environment(historyLock)
         .onChange(of: scenePhase) { _, phase in
             // The history locks again whenever the app leaves the screen.
-            if phase == .background { historyLock.lock() }
+            if phase == .background {
+                historyLock.lock()
+                // The favorites may have changed while the app was open.
+                updateWidget()
+            } else if phase == .active, hasCheckedEntitlements {
+                importSharedScans()
+            }
+        }
+        .onChange(of: store.isPro) { updateWidget() }
+        .onOpenURL { url in
+            // From the home screen widget: seijitsuqr://pro opens the purchase screen.
+            if url.scheme == "seijitsuqr", url.host == "pro", !store.isPro { isPaywallPresented = true }
         }
         // The "QRスキャン" control or Shortcuts action opened the app (OpenScannerIntent).
         .onChange(of: router.pendingTab, initial: true) { _, tab in
@@ -50,7 +66,22 @@ struct RootView: View {
                 .environment(store)
                 .presentationDragIndicator(.visible)
         }
-        .task { await store.start() }
+        .task {
+            await store.refreshEntitlements()
+            hasCheckedEntitlements = true
+            importSharedScans()
+            updateWidget()
+            await store.loadProduct()
+        }
+    }
+
+    /// Codes read in the share sheet since the app was last open (docs/DESIGN_1.1.md §5, E).
+    private func importSharedScans() {
+        PendingScanImporter.importAll(context: modelContext, isPro: store.isPro, autosave: settings.isAutosaveEnabled)
+    }
+
+    private func updateWidget() {
+        WidgetSnapshotWriter.update(context: modelContext, isPro: store.isPro)
     }
 
     private var commandActions: AppCommandActions {

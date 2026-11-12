@@ -51,7 +51,7 @@ struct HistorySearchTests {
 struct CSVExporterTests {
     private let exporter = CSVExporter(
         labels: .init(
-            headers: ["日時", "種類", "内容", "コード形式", "取得元", "お気に入り"],
+            headers: ["日時", "種類", "内容", "コード形式", "取得元", "お気に入り", "メモ"],
             kindTitle: { $0.rawValue },
             symbologyTitle: { $0.rawValue },
             sourceTitle: { $0.rawValue },
@@ -63,13 +63,15 @@ struct CSVExporterTests {
 
     @Test func startsWithBOMAndHeader() {
         let csv = exporter.makeCSV([])
-        #expect(csv.hasPrefix("\u{FEFF}日時,種類,内容,コード形式,取得元,お気に入り\r\n"))
+        #expect(csv.hasPrefix("\u{FEFF}日時,種類,内容,コード形式,取得元,お気に入り,メモ\r\n"))
     }
 
     @Test func rowUsesLocalTimeAndLabels() {
         let entry = HistoryEntry(content: "4901234567894", kind: .text, symbology: .ean13, source: .camera, createdAt: Date(timeIntervalSince1970: 0), isFavorite: true)
         let lines = exporter.makeCSV([entry]).split(separator: "\r\n")
-        #expect(lines[1] == "1970-01-01 09:00:00,text,4901234567894,ean13,camera,はい")
+        #expect(lines[1] == "1970-01-01 09:00:00,text,4901234567894,ean13,camera,はい,")
+        let noted = HistoryEntry(content: "x", kind: .text, symbology: nil, source: .paste, createdAt: Date(timeIntervalSince1970: 0), isFavorite: false, note: "倉庫B, 棚3")
+        #expect(exporter.makeCSV([noted]).split(separator: "\r\n")[1] == "1970-01-01 09:00:00,text,x,,paste,いいえ,\"倉庫B, 棚3\"")
     }
 
     @Test func quotesCommasQuotesAndNewlines() {
@@ -82,5 +84,14 @@ struct CSVExporterTests {
     @Test func neutralizesSpreadsheetFormulas() {
         #expect(CSVExporter.escape("=HYPERLINK(\"x\")") == "\"'=HYPERLINK(\"\"x\"\")\"")
         #expect(CSVExporter.escape("+81-3") == "'+81-3")
+    }
+}
+
+/// Notes are searchable (docs/DESIGN_1.2.md §3, H).
+struct HistoryNoteSearchTests {
+    @Test func textMatchesTheNote() {
+        let entry = HistoryEntry(content: "WIFI:S:Guest;;", kind: .wifi, symbology: .qr, source: .camera, createdAt: .now, isFavorite: false, note: "3階 大会議室の来客用")
+        #expect(HistoryQuery(text: "会議室").matches(entry, kindTitle: "Wi-Fi", dateTexts: []))
+        #expect(!HistoryQuery(text: "倉庫").matches(entry, kindTitle: "Wi-Fi", dateTexts: []))
     }
 }

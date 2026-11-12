@@ -74,7 +74,8 @@ final class ScanCoordinator {
         suppressedUntil = Date.now.addingTimeInterval(2)
     }
 
-    func handle(_ code: DetectedCode, source: RecordSource) {
+    /// `hasSymbology` is false for pasted text, which was never a barcode: the record then keeps no symbology.
+    func handle(_ code: DetectedCode, source: RecordSource, hasSymbology: Bool = true) {
         guard let environment else { return }
         let presentsSheet = environment.presentsSheet
         let settings = environment.settings
@@ -95,7 +96,7 @@ final class ScanCoordinator {
         let payload = PayloadParser.parse(code.content)
         var result = ScanResult(code: code, source: source, payload: payload, date: .now)
         if settings.isAutosaveEnabled {
-            let draft = RecordDraft(content: code.content, kind: payload.kind, symbology: code.symbology, source: source, createdAt: result.date)
+            let draft = RecordDraft(content: code.content, kind: payload.kind, symbology: hasSymbology ? code.symbology : nil, source: source, createdAt: result.date)
             do {
                 result.recordID = try HistoryRecorder(context: environment.context).record(draft, isPro: environment.isPro).persistentModelID
             } catch {

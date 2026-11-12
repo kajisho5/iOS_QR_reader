@@ -237,7 +237,7 @@ struct HistoryView: View {
 
 extension ScanRecord {
     var entry: HistoryEntry {
-        HistoryEntry(content: content, kind: kind, symbology: symbology, source: source, createdAt: createdAt, isFavorite: isFavorite)
+        HistoryEntry(content: content, kind: kind, symbology: symbology, source: source, createdAt: createdAt, isFavorite: isFavorite, note: trimmedNote)
     }
 }
 
