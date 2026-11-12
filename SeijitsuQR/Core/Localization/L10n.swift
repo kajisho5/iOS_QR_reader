@@ -376,10 +376,19 @@ enum L10n {
     static var settingsSearchEngineFooter: String { String(localized: "settings.searchEngine.footer") }
     static var settingsSearchEngineHeader: String { String(localized: "settings.searchEngine.header") }
     static var settingsTitle: String { String(localized: "settings.title") }
+    static var shareCopied: String { String(localized: "share.copied") }
+    static var shareDomain: String { String(localized: "share.domain") }
+    static var shareHistoryNote: String { String(localized: "share.historyNote") }
+    static var shareNoCodeMessage: String { String(localized: "share.noCode.message") }
+    static var shareOpenNote: String { String(localized: "share.openNote") }
+    static var sharePrivacy: String { String(localized: "share.privacy") }
+    static var shareReading: String { String(localized: "share.reading") }
+    static var shareTitle: String { String(localized: "share.title") }
     static var sourceCamera: String { String(localized: "source.camera") }
     static var sourceCreated: String { String(localized: "source.created") }
     static var sourcePaste: String { String(localized: "source.paste") }
     static var sourcePhoto: String { String(localized: "source.photo") }
+    static var sourceShare: String { String(localized: "source.share") }
     static var symbologyAztec: String { String(localized: "symbology.aztec") }
     static var symbologyCode128: String { String(localized: "symbology.code128") }
     static var symbologyCode39: String { String(localized: "symbology.code39") }
@@ -760,10 +769,19 @@ enum L10n {
         "settings.searchEngine.footer",
         "settings.searchEngine.header",
         "settings.title",
+        "share.copied",
+        "share.domain",
+        "share.historyNote",
+        "share.noCode.message",
+        "share.openNote",
+        "share.privacy",
+        "share.reading",
+        "share.title",
         "source.camera",
         "source.created",
         "source.paste",
         "source.photo",
+        "source.share",
         "symbology.aztec",
         "symbology.code128",
         "symbology.code39",

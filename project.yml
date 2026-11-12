@@ -28,6 +28,7 @@ targets:
       - path: Shared
     dependencies:
       - target: SeijitsuQRWidgets
+      - target: SeijitsuQRShare
     info:
       path: SeijitsuQR/Info.plist
       properties:
@@ -113,6 +114,50 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.seventhwell.seijitsuqr.widgets
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WIDGET_EXTENSION
+        SUPPORTS_MACCATALYST: NO
+
+  # Share extension: reads the codes in a shared image and shows them (docs/DESIGN_1.1.md §5, E).
+  SeijitsuQRShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: SeijitsuQRShare
+      - path: Shared/WidgetSnapshot.swift
+      - path: Shared/PendingScans.swift
+      - path: SeijitsuQR/Core/Models/PayloadKind.swift
+      - path: SeijitsuQR/Core/Models/DetectedCode.swift
+      - path: SeijitsuQR/Core/Parsing/ParsedPayload.swift
+      - path: SeijitsuQR/Core/Parsing/PayloadParser.swift
+      - path: SeijitsuQR/Core/Parsing/URLRiskAnalyzer.swift
+      - path: SeijitsuQR/Features/Scan/ImageCodeReader.swift
+      - path: SeijitsuQR/Core/Localization/L10n.swift
+      - path: SeijitsuQR/Resources/Localizable.xcstrings
+        buildPhase: resources
+      - path: SeijitsuQR/Resources/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    info:
+      path: SeijitsuQRShare/Info.plist
+      properties:
+        CFBundleDisplayName: 誠実QRリーダー
+        CFBundleDevelopmentRegion: ja
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        SeijitsuSharedKeychainGroup: $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsImageWithMaxCount: 1
+    entitlements:
+      path: SeijitsuQRShare/SeijitsuQRShare.entitlements
+      properties:
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.seventhwell.seijitsuqr.share
+        TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MACCATALYST: NO
 
   SeijitsuQRTests:

@@ -3741,6 +3741,94 @@
         }
       }
     },
+    "share.copied": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーしました"
+          }
+        }
+      }
+    },
+    "share.domain": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ドメイン"
+          }
+        }
+      }
+    },
+    "share.historyNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次に誠実QRリーダーを開いたとき、履歴に入ります（履歴の自動保存がオンのとき）。"
+          }
+        }
+      }
+    },
+    "share.noCode.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像からコードが見つかりませんでした。コードが大きくはっきり写った画像でお試しください。"
+          }
+        }
+      }
+    },
+    "share.openNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここからはブラウザを開けません（iOS の決まりで、共有から開いた画面はほかのアプリを開けません）。開くには「コピー」して Safari に貼り付けるか、誠実QRリーダーの履歴から開いてください。"
+          }
+        }
+      }
+    },
+    "share.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "画像は iPhone の中だけで読み取ります。どこにも送りません。"
+          }
+        }
+      }
+    },
+    "share.reading": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取っています…"
+          }
+        }
+      }
+    },
+    "share.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを読み取る"
+          }
+        }
+      }
+    },
     "source.camera": {
       "extractionState": "manual",
       "localizations": {
@@ -3781,6 +3869,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真"
+          }
+        }
+      }
+    },
+    "source.share": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共有"
           }
         }
       }

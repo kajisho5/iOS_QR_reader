@@ -32,7 +32,7 @@ struct WidgetSnapshot: Codable, Equatable, Sendable {
     static func load(from store: Store = .keychain) -> WidgetSnapshot? {
         let data: Data?
         switch store {
-        case .keychain: data = SharedKeychain.read()
+        case .keychain: data = SharedKeychain.read(account: Self.account)
         case .file(let url): data = try? Data(contentsOf: url)
         }
         guard let data else { return nil }
@@ -42,20 +42,21 @@ struct WidgetSnapshot: Codable, Equatable, Sendable {
     func save(to store: Store = .keychain) throws {
         let data = try JSONEncoder().encode(self)
         switch store {
-        case .keychain: try SharedKeychain.write(data)
+        case .keychain: try SharedKeychain.write(data, account: Self.account)
         case .file(let url): try data.write(to: url, options: .atomic)
         }
     }
+
+    private static let account = "widget-snapshot"
 }
 
-/// One generic-password item in the keychain group shared by the app and its extensions.
+/// Generic-password items in the keychain group shared by the app and its extensions (one per account).
 enum SharedKeychain {
     struct Failure: Error {
         let status: OSStatus
     }
 
-    private static let service = "com.seventhwell.seijitsuqr.widget"
-    private static let account = "snapshot"
+    private static let service = "com.seventhwell.seijitsuqr.shared"
 
     /// `$(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared`, written into each target's Info.plist at build time.
     static var accessGroup: String? {
@@ -64,7 +65,7 @@ enum SharedKeychain {
         return group
     }
 
-    private static func baseQuery() -> [String: Any] {
+    private static func baseQuery(_ account: String) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -74,8 +75,8 @@ enum SharedKeychain {
         return query
     }
 
-    static func read() -> Data? {
-        var query = baseQuery()
+    static func read(account: String) -> Data? {
+        var query = baseQuery(account)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         var result: CFTypeRef?
@@ -83,17 +84,21 @@ enum SharedKeychain {
         return result as? Data
     }
 
-    static func write(_ data: Data) throws {
+    static func write(_ data: Data, account: String) throws {
         let attributes: [String: Any] = [
             kSecValueData as String: data,
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
         ]
-        let status = SecItemUpdate(baseQuery() as CFDictionary, attributes as CFDictionary)
+        let status = SecItemUpdate(baseQuery(account) as CFDictionary, attributes as CFDictionary)
         if status == errSecItemNotFound {
-            let added = SecItemAdd(baseQuery().merging(attributes) { $1 } as CFDictionary, nil)
+            let added = SecItemAdd(baseQuery(account).merging(attributes) { $1 } as CFDictionary, nil)
             guard added == errSecSuccess else { throw Failure(status: added) }
         } else if status != errSecSuccess {
             throw Failure(status: status)
         }
+    }
+
+    static func delete(account: String) {
+        SecItemDelete(baseQuery(account) as CFDictionary)
     }
 }
