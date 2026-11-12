@@ -3,6 +3,7 @@ import UIKit
 @testable import SeijitsuQR
 
 /// Print layout (docs/DESIGN_1.2.md §4, J): sizes in centimetres and every label inside the page.
+@MainActor
 struct PrintSheetTests {
     private let page = CGRect(origin: .zero, size: PrintSheet.page)
 

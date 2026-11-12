@@ -32,7 +32,7 @@ struct ResultView: View {
     @State private var alert: ResultAlert?
     @State private var displayedCode: DisplayedCode?
     @State private var riskyURL: URL?
-    @State private var noteText = ""
+    @State private var memoText = ""
     @FocusState private var isNoteFocused: Bool
 
     var body: some View {
@@ -541,11 +541,11 @@ struct ResultView: View {
     private func loadFavorite() {
         guard let id = result.recordID, let record = modelContext.model(for: id) as? ScanRecord else {
             isFavorite = false
-            noteText = ""
+            memoText = ""
             return
         }
         isFavorite = record.isFavorite
-        noteText = record.note ?? ""
+        memoText = record.note ?? ""
     }
 
     // MARK: Note
@@ -556,13 +556,13 @@ struct ResultView: View {
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
-            TextField(L10n.resultNoteTitle, text: $noteText, prompt: Text(L10n.resultNotePrompt), axis: .vertical)
+            TextField(L10n.resultNoteTitle, text: $memoText, prompt: Text(L10n.resultNotePrompt), axis: .vertical)
                 .lineLimit(2...6)
                 .focused($isNoteFocused)
                 .padding(12)
                 .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .onChange(of: noteText) { _, text in
-                    if text.count > ScanRecord.noteLimit { noteText = String(text.prefix(ScanRecord.noteLimit)) }
+                .onChange(of: memoText) { _, text in
+                    if text.count > ScanRecord.noteLimit { memoText = String(text.prefix(ScanRecord.noteLimit)) }
                 }
                 .onChange(of: isNoteFocused) { _, focused in
                     if !focused { saveNote() }
@@ -570,7 +570,7 @@ struct ResultView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(L10n.resultNoteFooter)
                 Spacer(minLength: 8)
-                Text(L10n.resultNoteCount(noteText.count, ScanRecord.noteLimit))
+                Text(L10n.resultNoteCount(memoText.count, ScanRecord.noteLimit))
                     .monospacedDigit()
                     .accessibilityHidden(true)
             }
@@ -582,7 +582,7 @@ struct ResultView: View {
     /// Writes the note to the history record (an empty note is stored as none).
     private func saveNote() {
         guard let id = result.recordID, let record = modelContext.model(for: id) as? ScanRecord else { return }
-        let trimmed = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = memoText.trimmingCharacters(in: .whitespacesAndNewlines)
         let value: String? = trimmed.isEmpty ? nil : String(trimmed.prefix(ScanRecord.noteLimit))
         guard record.note != value else { return }
         record.note = value
