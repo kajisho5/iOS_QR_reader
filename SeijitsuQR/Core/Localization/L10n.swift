@@ -112,6 +112,7 @@ enum L10n {
     static var csvHeaderDate: String { String(localized: "csv.header.date") }
     static var csvHeaderFavorite: String { String(localized: "csv.header.favorite") }
     static var csvHeaderKind: String { String(localized: "csv.header.kind") }
+    static var csvHeaderNote: String { String(localized: "csv.header.note") }
     static var csvHeaderSource: String { String(localized: "csv.header.source") }
     static var csvHeaderSymbology: String { String(localized: "csv.header.symbology") }
     static var historyAutosaveOffAction: String { String(localized: "history.autosaveOff.action") }
@@ -156,6 +157,9 @@ enum L10n {
     static var historyNoResultsMessage: String { String(localized: "history.noResults.message") }
     static func historyNoResultsTitle(_ p1: String) -> String {
         String(format: String(localized: "history.noResults.title"), p1)
+    }
+    static func historyNoteLine(_ p1: String) -> String {
+        String(format: String(localized: "history.note.line"), p1)
     }
     static var historySearchPrompt: String { String(localized: "history.search.prompt") }
     static var historySectionToday: String { String(localized: "history.section.today") }
@@ -232,6 +236,12 @@ enum L10n {
     static var resultGeoOpenMaps: String { String(localized: "result.geo.openMaps") }
     static var resultLinkFull: String { String(localized: "result.linkFull") }
     static var resultNotSaved: String { String(localized: "result.notSaved") }
+    static func resultNoteCount(_ p1: Int, _ p2: Int) -> String {
+        String(format: String(localized: "result.note.count"), p1, p2)
+    }
+    static var resultNoteFooter: String { String(localized: "result.note.footer") }
+    static var resultNotePrompt: String { String(localized: "result.note.prompt") }
+    static var resultNoteTitle: String { String(localized: "result.note.title") }
     static var resultOpenFailedMessage: String { String(localized: "result.openFailed.message") }
     static var resultOpenFailedTitle: String { String(localized: "result.openFailed.title") }
     static var resultOpenInBrowser: String { String(localized: "result.openInBrowser") }
@@ -497,6 +507,7 @@ enum L10n {
         "csv.header.date",
         "csv.header.favorite",
         "csv.header.kind",
+        "csv.header.note",
         "csv.header.source",
         "csv.header.symbology",
         "history.autosaveOff.action",
@@ -532,6 +543,7 @@ enum L10n {
         "history.noResults.filterTitle",
         "history.noResults.message",
         "history.noResults.title",
+        "history.note.line",
         "history.search.prompt",
         "history.section.today",
         "history.section.yesterday",
@@ -605,6 +617,10 @@ enum L10n {
         "result.geo.openMaps",
         "result.linkFull",
         "result.notSaved",
+        "result.note.count",
+        "result.note.footer",
+        "result.note.prompt",
+        "result.note.title",
         "result.openFailed.message",
         "result.openFailed.title",
         "result.openInBrowser",

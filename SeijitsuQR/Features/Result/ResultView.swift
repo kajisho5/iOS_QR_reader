@@ -15,6 +15,8 @@ struct ResultView: View {
     /// Set when this view is itself in a sheet: the caller closes it before showing the contact
     /// form, so sheets are never stacked. When nil the contact form opens from here.
     var addContact: ((ContactCard) -> Void)?
+    /// Shows the note field (history detail only; docs/DESIGN_1.2.md §3, H).
+    var showsNote = false
 
     @Environment(\.modelContext) private var modelContext
     @Environment(AppSettings.self) private var settings
@@ -30,6 +32,8 @@ struct ResultView: View {
     @State private var alert: ResultAlert?
     @State private var displayedCode: DisplayedCode?
     @State private var riskyURL: URL?
+    @State private var noteText = ""
+    @FocusState private var isNoteFocused: Bool
 
     var body: some View {
         ScrollView {
@@ -39,6 +43,9 @@ struct ResultView: View {
                 }
                 header
                 details
+                if showsNote, result.recordID != nil {
+                    noteEditor
+                }
                 if !canShowCode {
                     Label(L10n.resultShowCodeUnavailableNote, systemImage: "info.circle")
                         .font(.footnote)
@@ -73,6 +80,7 @@ struct ResultView: View {
         }
         .onAppear(perform: loadFavorite)
         .onChange(of: result.id) { loadFavorite() }
+        .onDisappear { if showsNote { saveNote() } }
         .sheet(isPresented: $isAddingContact) {
             if case .contact(let card) = result.payload {
                 ContactAddView(card: card) { isAddingContact = false }
@@ -533,9 +541,52 @@ struct ResultView: View {
     private func loadFavorite() {
         guard let id = result.recordID, let record = modelContext.model(for: id) as? ScanRecord else {
             isFavorite = false
+            noteText = ""
             return
         }
         isFavorite = record.isFavorite
+        noteText = record.note ?? ""
+    }
+
+    // MARK: Note
+
+    private var noteEditor: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(L10n.resultNoteTitle)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            TextField(L10n.resultNoteTitle, text: $noteText, prompt: Text(L10n.resultNotePrompt), axis: .vertical)
+                .lineLimit(2...6)
+                .focused($isNoteFocused)
+                .padding(12)
+                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .onChange(of: noteText) { _, text in
+                    if text.count > ScanRecord.noteLimit { noteText = String(text.prefix(ScanRecord.noteLimit)) }
+                }
+                .onChange(of: isNoteFocused) { _, focused in
+                    if !focused { saveNote() }
+                }
+            HStack(alignment: .firstTextBaseline) {
+                Text(L10n.resultNoteFooter)
+                Spacer(minLength: 8)
+                Text(L10n.resultNoteCount(noteText.count, ScanRecord.noteLimit))
+                    .monospacedDigit()
+                    .accessibilityHidden(true)
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Writes the note to the history record (an empty note is stored as none).
+    private func saveNote() {
+        guard let id = result.recordID, let record = modelContext.model(for: id) as? ScanRecord else { return }
+        let trimmed = noteText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let value: String? = trimmed.isEmpty ? nil : String(trimmed.prefix(ScanRecord.noteLimit))
+        guard record.note != value else { return }
+        record.note = value
+        try? modelContext.save()
     }
 
     private func toggleFavorite() {

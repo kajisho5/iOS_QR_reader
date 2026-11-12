@@ -8,9 +8,10 @@ struct HistoryEntry: Equatable, Sendable {
     var source: RecordSource
     var createdAt: Date
     var isFavorite: Bool
+    var note: String? = nil
 }
 
-/// Filters history by free text (content, kind name, date) plus kind and favorites.
+/// Filters history by free text (content, kind name, date, note) plus kind and favorites.
 struct HistoryQuery: Equatable, Sendable {
     var text = ""
     var kind: PayloadKind?
@@ -28,7 +29,7 @@ struct HistoryQuery: Equatable, Sendable {
         if let kind, entry.kind != kind { return false }
         let needle = normalizedText
         guard !needle.isEmpty else { return true }
-        let haystacks = [entry.content, kindTitle] + dateTexts
+        let haystacks = [entry.content, kindTitle] + dateTexts + [entry.note].compactMap { $0 }
         return haystacks.contains { $0.localizedStandardContains(needle) }
     }
 }

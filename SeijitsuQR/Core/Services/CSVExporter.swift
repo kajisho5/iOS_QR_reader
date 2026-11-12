@@ -25,6 +25,7 @@ struct CSVExporter: Sendable {
                 entry.symbology.map(labels.symbologyTitle) ?? "",
                 labels.sourceTitle(entry.source),
                 entry.isFavorite ? labels.favoriteYes : labels.favoriteNo,
+                entry.note ?? "",
             ]
             lines.append(fields.map(Self.escape).joined(separator: ","))
         }

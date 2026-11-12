@@ -1167,6 +1167,17 @@
         }
       }
     },
+    "csv.header.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ"
+          }
+        }
+      }
+    },
     "csv.header.source": {
       "extractionState": "manual",
       "localizations": {
@@ -1548,6 +1559,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "「%@」に一致する履歴はありません"
+          }
+        }
+      }
+    },
+    "history.note.line": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ：%@"
           }
         }
       }
@@ -2351,6 +2373,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "履歴の自動保存はオフです"
+          }
+        }
+      }
+    },
+    "result.note.count": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld / %lld"
+          }
+        }
+      }
+    },
+    "result.note.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモはこの端末の履歴にだけ保存されます。"
+          }
+        }
+      }
+    },
+    "result.note.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：3階 会議室の来客用"
+          }
+        }
+      }
+    },
+    "result.note.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メモ"
           }
         }
       }

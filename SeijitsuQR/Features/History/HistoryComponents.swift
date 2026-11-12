@@ -13,6 +13,11 @@ struct HistoryRow: View {
                     .font(.body.weight(.semibold))
                     .lineLimit(2)
                     .truncationMode(.middle)
+                if let note = record.trimmedNote {
+                    Text(L10n.historyNoteLine(note))
+                        .font(.subheadline)
+                        .lineLimit(1)
+                }
                 Text(meta)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -129,7 +134,7 @@ struct HistoryDetailView: View {
     let onDelete: () -> Void
 
     var body: some View {
-        ResultView(result: ScanResult(record: record), style: .pane)
+        ResultView(result: ScanResult(record: record), style: .pane, showsNote: true)
             .id(record.persistentModelID)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -170,7 +175,7 @@ struct HistoryCSVFile: Transferable {
 
     private static var exporter: CSVExporter {
         CSVExporter(labels: .init(
-            headers: [L10n.csvHeaderDate, L10n.csvHeaderKind, L10n.csvHeaderContent, L10n.csvHeaderSymbology, L10n.csvHeaderSource, L10n.csvHeaderFavorite],
+            headers: [L10n.csvHeaderDate, L10n.csvHeaderKind, L10n.csvHeaderContent, L10n.csvHeaderSymbology, L10n.csvHeaderSource, L10n.csvHeaderFavorite, L10n.csvHeaderNote],
             kindTitle: { $0.title },
             symbologyTitle: { $0.title },
             sourceTitle: { source in
