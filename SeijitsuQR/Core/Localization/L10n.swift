@@ -188,6 +188,8 @@ enum L10n {
     static var paywallFeatureCsvTitle: String { String(localized: "paywall.feature.csv.title") }
     static var paywallFeatureHistoryDetail: String { String(localized: "paywall.feature.history.detail") }
     static var paywallFeatureHistoryTitle: String { String(localized: "paywall.feature.history.title") }
+    static var paywallFeatureWidgetDetail: String { String(localized: "paywall.feature.widget.detail") }
+    static var paywallFeatureWidgetTitle: String { String(localized: "paywall.feature.widget.title") }
     static var paywallFeaturesHeader: String { String(localized: "paywall.features.header") }
     static var paywallFooterCharge: String { String(localized: "paywall.footer.charge") }
     static var paywallFooterRestore: String { String(localized: "paywall.footer.restore") }
@@ -586,6 +588,8 @@ enum L10n {
         "paywall.feature.csv.title",
         "paywall.feature.history.detail",
         "paywall.feature.history.title",
+        "paywall.feature.widget.detail",
+        "paywall.feature.widget.title",
         "paywall.features.header",
         "paywall.footer.charge",
         "paywall.footer.restore",

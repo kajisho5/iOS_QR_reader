@@ -7,6 +7,7 @@ struct RootView: View {
     @State private var isHistorySearchPresented = false
     @State private var historyLock = HistoryLock()
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     private let router = AppRouter.shared
 
     init(initialTab: AppTab = .scan) {
@@ -32,7 +33,16 @@ struct RootView: View {
         .environment(historyLock)
         .onChange(of: scenePhase) { _, phase in
             // The history locks again whenever the app leaves the screen.
-            if phase == .background { historyLock.lock() }
+            if phase == .background {
+                historyLock.lock()
+                // The favorites may have changed while the app was open.
+                updateWidget()
+            }
+        }
+        .onChange(of: store.isPro) { updateWidget() }
+        .onOpenURL { url in
+            // From the home screen widget: seijitsuqr://pro opens the purchase screen.
+            if url.scheme == "seijitsuqr", url.host == "pro", !store.isPro { isPaywallPresented = true }
         }
         // The "QRスキャン" control or Shortcuts action opened the app (OpenScannerIntent).
         .onChange(of: router.pendingTab, initial: true) { _, tab in
@@ -50,7 +60,14 @@ struct RootView: View {
                 .environment(store)
                 .presentationDragIndicator(.visible)
         }
-        .task { await store.start() }
+        .task {
+            updateWidget()
+            await store.start()
+        }
+    }
+
+    private func updateWidget() {
+        WidgetSnapshotWriter.update(context: modelContext, isPro: store.isPro)
     }
 
     private var commandActions: AppCommandActions {

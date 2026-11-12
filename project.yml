@@ -50,6 +50,10 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
+        # Opened by the widget: seijitsuqr://pro (purchase screen), seijitsuqr://open.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.seventhwell.seijitsuqr
+            CFBundleURLSchemes: [seijitsuqr]
         NSCameraUsageDescription: QRコードとバーコードを読み取るためにカメラを使用します。読み取った内容が外部に送信されることはありません
         NSPhotoLibraryAddUsageDescription: 作成したQRコードの画像を写真ライブラリに保存するために使用します
         NSContactsUsageDescription: 読み取った連絡先を連絡先アプリに追加するために使用します
@@ -59,6 +63,9 @@ targets:
       path: SeijitsuQR/SeijitsuQR.entitlements
       properties:
         com.apple.developer.networking.HotspotConfiguration: true
+        # Shared with the widget extension (the favorites it shows): docs/DESIGN_1.1.md §4.
+        com.apple.security.application-groups:
+          - group.com.seventhwell.seijitsuqr
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.seventhwell.seijitsuqr
@@ -75,8 +82,18 @@ targets:
     sources:
       - path: SeijitsuQRWidgets
       - path: Shared
+      # The widget draws the favorite code again from its content, with the app's own renderers.
+      - path: SeijitsuQR/Core/Models/PayloadKind.swift
+      - path: SeijitsuQR/Core/Encoding/CodeImageRenderer.swift
+      - path: SeijitsuQR/Core/Encoding/LinearBarcodeEncoder.swift
+      - path: SeijitsuQR/Core/Encoding/QRCodeRenderer.swift
       - path: SeijitsuQR/Resources/PrivacyInfo.xcprivacy
         buildPhase: resources
+    entitlements:
+      path: SeijitsuQRWidgets/SeijitsuQRWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.seventhwell.seijitsuqr
     info:
       path: SeijitsuQRWidgets/Info.plist
       properties:

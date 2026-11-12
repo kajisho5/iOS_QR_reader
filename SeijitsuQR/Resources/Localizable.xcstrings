@@ -1849,6 +1849,28 @@
         }
       }
     },
+    "paywall.feature.widget.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りの QR をホーム画面に表示"
+          }
+        }
+      }
+    },
+    "paywall.feature.widget.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ホーム画面のウィジェット"
+          }
+        }
+      }
+    },
     "paywall.features.header": {
       "extractionState": "manual",
       "localizations": {
