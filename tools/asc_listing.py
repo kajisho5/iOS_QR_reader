@@ -44,8 +44,19 @@ def main():
     app_id = app["id"]
     patch("apps", app_id, app["attributes"], {"contentRightsDeclaration": LISTING["contentRightsDeclaration"]}, "app")
 
-    # App info: category, age rating, subtitle.
-    info = call("GET", f"/v1/apps/{app_id}/appInfos")["data"][0]
+    # A new version number in listing.json starts the next update: create that version once.
+    if not call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
+                                                                 "filter[versionString]": LISTING["versionString"]})["data"]:
+        call("POST", "/v1/appStoreVersions", {"data": {"type": "appStoreVersions",
+             "attributes": {"platform": "IOS", "versionString": LISTING["versionString"]},
+             "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}})
+        print(f"version {LISTING['versionString']}: created")
+
+    # App info: category, age rating, subtitle. Once an update exists there are two app infos: the live one
+    # (read-only) and the one being prepared; edit the latter.
+    infos = call("GET", f"/v1/apps/{app_id}/appInfos")["data"]
+    live = {"READY_FOR_DISTRIBUTION", "READY_FOR_SALE", "REPLACED_WITH_NEW_INFO"}
+    info = next((i for i in infos if (i["attributes"].get("state") or i["attributes"].get("appStoreState")) not in live), infos[0])
     category = call("GET", f"/v1/appInfos/{info['id']}/primaryCategory").get("data")
     if (category or {}).get("id") != LISTING["primaryCategory"]:
         call("PATCH", f"/v1/appInfos/{info['id']}", {"data": {"type": "appInfos", "id": info["id"], "relationships": {
@@ -61,14 +72,6 @@ def main():
         if texts:
             patch("appInfoLocalizations", loc["id"], loc["attributes"], {"subtitle": texts["subtitle"]},
                   f"appInfoLocalization {loc['attributes']['locale']}")
-
-    # A new version number in listing.json starts the next update: create that version once.
-    if not call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
-                                                                 "filter[versionString]": LISTING["versionString"]})["data"]:
-        call("POST", "/v1/appStoreVersions", {"data": {"type": "appStoreVersions",
-             "attributes": {"platform": "IOS", "versionString": LISTING["versionString"]},
-             "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}})
-        print(f"version {LISTING['versionString']}: created")
 
     # The version being prepared: version string, copyright, texts, build, review details.
     versions = call("GET", f"/v1/apps/{app_id}/appStoreVersions", **{"filter[platform]": "IOS",
