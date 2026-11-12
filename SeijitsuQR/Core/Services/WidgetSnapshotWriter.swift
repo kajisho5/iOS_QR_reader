@@ -9,13 +9,17 @@ import WidgetKit
 enum WidgetSnapshotWriter {
     private static let logger = Logger(subsystem: "SeijitsuQR", category: "Widget")
 
-    static func update(context: ModelContext, isPro: Bool, to url: URL? = WidgetSnapshot.fileURL) {
-        let descriptor = FetchDescriptor<ScanRecord>(predicate: #Predicate<ScanRecord> { $0.isFavorite }, sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+    /// At most this many favorites are handed to the widget (newest first), to keep the shared item small.
+    static let favoriteLimit = 50
+
+    static func update(context: ModelContext, isPro: Bool, to store: WidgetSnapshot.Store = .keychain) {
+        var descriptor = FetchDescriptor<ScanRecord>(predicate: #Predicate<ScanRecord> { $0.isFavorite }, sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        descriptor.fetchLimit = favoriteLimit
         let records = (try? context.fetch(descriptor)) ?? []
         let snapshot = WidgetSnapshot(isPro: isPro, favorites: records.map(favorite))
-        guard WidgetSnapshot.load(from: url) != snapshot else { return }
+        guard WidgetSnapshot.load(from: store) != snapshot else { return }
         do {
-            try snapshot.save(to: url)
+            try snapshot.save(to: store)
             WidgetCenter.shared.reloadAllTimelines()
         } catch {
             logger.error("Failed to write the widget snapshot: \(error.localizedDescription, privacy: .public)")

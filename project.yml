@@ -50,6 +50,7 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
+        SeijitsuSharedKeychainGroup: $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
         # Opened by the widget: seijitsuqr://pro (purchase screen), seijitsuqr://open.
         CFBundleURLTypes:
           - CFBundleURLName: com.seventhwell.seijitsuqr
@@ -63,9 +64,11 @@ targets:
       path: SeijitsuQR/SeijitsuQR.entitlements
       properties:
         com.apple.developer.networking.HotspotConfiguration: true
-        # Shared with the widget extension (the favorites it shows): docs/DESIGN_1.1.md §4.
-        com.apple.security.application-groups:
-          - group.com.seventhwell.seijitsuqr
+        # Shared with the widget extension (the favorites it shows; see Shared/WidgetSnapshot.swift).
+        # The app's own group comes first, so its existing keychain items keep their default group.
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.seventhwell.seijitsuqr
+          - $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.seventhwell.seijitsuqr
@@ -92,8 +95,9 @@ targets:
     entitlements:
       path: SeijitsuQRWidgets/SeijitsuQRWidgets.entitlements
       properties:
-        com.apple.security.application-groups:
-          - group.com.seventhwell.seijitsuqr
+        # Shared with the app (the favorites the widget shows; see Shared/WidgetSnapshot.swift).
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
     info:
       path: SeijitsuQRWidgets/Info.plist
       properties:
@@ -103,6 +107,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        SeijitsuSharedKeychainGroup: $(AppIdentifierPrefix)com.seventhwell.seijitsuqr.shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.seventhwell.seijitsuqr.widgets

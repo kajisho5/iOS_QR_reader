@@ -21,9 +21,9 @@ struct WidgetSnapshotTests {
         let file = temporaryURL()
         defer { try? FileManager.default.removeItem(at: file) }
 
-        WidgetSnapshotWriter.update(context: container.mainContext, isPro: true, to: file)
+        WidgetSnapshotWriter.update(context: container.mainContext, isPro: true, to: .file(file))
 
-        let snapshot = try #require(WidgetSnapshot.load(from: file))
+        let snapshot = try #require(WidgetSnapshot.load(from: .file(file)))
         #expect(snapshot.isPro)
         #expect(snapshot.favorites.map(\.title) == ["www.example.co.jp", "Guest"])
         #expect(snapshot.favorites.last?.content == "WIFI:T:WPA;S:Guest;P:secret;;")
@@ -40,7 +40,7 @@ struct WidgetSnapshotTests {
         let file = temporaryURL()
         defer { try? FileManager.default.removeItem(at: file) }
         let snapshot = WidgetSnapshot(isPro: false, favorites: [.init(id: UUID(), title: "会員証", kindTitle: "テキスト", symbologyRaw: nil, content: "No.0012")])
-        try snapshot.save(to: file)
-        #expect(WidgetSnapshot.load(from: file) == snapshot)
+        try snapshot.save(to: .file(file))
+        #expect(WidgetSnapshot.load(from: .file(file)) == snapshot)
     }
 }
