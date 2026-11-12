@@ -10,8 +10,9 @@ import UIKit
 /// With SNAPSHOT_PROFILE=duo (iPhone Duo simulator) it captures whichever display is active, at the scene's
 /// real size, scale and traits with no size class overrides, and names the files after that display:
 /// `screen-duo-<outer|inner>-<tab>.png`. With SNAPSHOT_PROFILE=appstore it captures the App Store screenshots
-/// at the simulator's native resolution: `appstore-<iphone|ipad>-<NN>-<name>.png`, plus `iap-review.png` (the
-/// purchase screen) on iPhone. Without SNAPSHOT_DIR the test does nothing.
+/// at the simulator's native resolution, each screen framed with its headline (StoreFrame):
+/// `appstore-<iphone|ipad>-<NN>-<name>.png`, plus `iap-review.png` (the purchase screen without a frame) on iPhone.
+/// Without SNAPSHOT_DIR the test does nothing.
 @MainActor
 @Suite(.serialized) struct ScreenSnapshotTests {
     @Test func captureAppStoreScreens() async throws {
@@ -36,37 +37,52 @@ import UIKit
         let records = try container.mainContext.fetch(FetchDescriptor<ScanRecord>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)]))
         let url = try #require(records.first(where: { $0.kind == .url }))
         let wifi = try #require(records.first(where: { $0.kind == .wifi }))
+        let product = try #require(records.first(where: { $0.content == "4901234567894" }))
 
-        func result(_ record: ScanRecord) -> some View {
+        func result(_ record: ScanRecord, title: String? = nil) -> some View {
             NavigationStack {
                 ResultView(result: ScanResult(record: record))
-                    .navigationTitle(record.kind.title)
+                    .navigationTitle(title ?? record.kind.title)
                     .navigationBarTitleDisplayMode(.inline)
             }
         }
         let store = ProStore()
         await store.loadProduct()
         store.screenshotDisplayPrice = "¥800"  // the Japanese App Store price (the simulator's sandbox is the US store)
-        // iPad: the history opens with a record selected, so the list and its detail fill the screen.
-        let shots: [(String, AnyView)] = device == "ipad" ? [
-            ("history", AnyView(HistoryView(initialSelection: url.persistentModelID).environment(store))),
-            ("create", AnyView(RootView(initialTab: .create))),
-            ("purchase", AnyView(PaywallView().environment(store))),
+        // Order and headlines: docs/design/appstore/SCREENSHOTS.md §3. The store listing is Japanese only.
+        // iPad: the history opens with a record selected, so the list and its detail fill the screen; headlines are one line.
+        let shots: [StoreShot] = device == "ipad" ? [
+            StoreShot("history", HistoryView(initialSelection: url.persistentModelID).environment(store),
+                      "開く前に、URL を全部見せる", "省略せずに全文を表示。まぎらわしい URL には開く前に注意を出します"),
+            StoreShot("purchase", PaywallView().environment(store),
+                      "広告なし。買い切りで、ずっと使える", "毎月の支払いはありません。読み取りは無料で、回数も無制限"),
+            StoreShot("create", RootView(initialTab: .create),
+                      "QR コードも、自分で作れる", "テキストと URL は無料。Wi-Fi・連絡先・イベントは Pro"),
         ] : [
-            ("history", AnyView(RootView(initialTab: .history))),
-            ("result-url", AnyView(result(url))),
-            ("result-wifi", AnyView(result(wifi))),
-            ("create", AnyView(RootView(initialTab: .create))),
-            ("purchase", AnyView(PaywallView().environment(store))),
+            StoreShot("result-url", result(url),
+                      "開く前に、\nURL を全部見せる", "省略せずに全文を表示。まぎらわしい URL には\n開く前に注意を出します"),
+            StoreShot("history", RootView(initialTab: .history),
+                      "読んだ中身を、\nどこにも送らない", "アプリは通信しません。登録も不要。\n履歴は Face ID などでロックできます"),
+            StoreShot("purchase", PaywallView().environment(store),
+                      "広告なし。\n買い切りで、ずっと使える", "毎月の支払いはありません。\n読み取りは無料で、回数も無制限"),
+            StoreShot("result-product", result(product, title: L10n.resultProductTitle),
+                      "バーコードの商品を、\nそのまま検索", "JAN・ISBN は、ボタンひとつで Web 検索。\n押すまで、どこにも送りません"),
+            StoreShot("result-wifi", result(wifi),
+                      "Wi-Fi の QR から、\nそのまま接続", "パスワードは伏せたまま確認できます"),
+            StoreShot("create", RootView(initialTab: .create),
+                      "QR コードも、\n自分で作れる", "テキストと URL は無料。\nWi-Fi・連絡先・イベントは Pro"),
         ]
-        for (index, (name, view)) in shots.enumerated() {
-            let image = try await render(view.environment(settings).modelContainer(container), size: size, scale: scale, in: scene)
-            let data = try #require(image.pngData())
-            let file = String(format: "appstore-%@-%02d-%@.png", device, index + 1, name)
-            try data.write(to: URL(fileURLWithPath: directory).appendingPathComponent(file))
-            if device == "iphone", name == "purchase" {
-                try data.write(to: URL(fileURLWithPath: directory).appendingPathComponent("iap-review.png"))
+        for (index, shot) in shots.enumerated() {
+            let screen = try await render(shot.view.environment(settings).modelContainer(container), size: size, scale: scale, in: scene)
+            // The In-App Purchase review screenshot is the purchase screen itself, without a headline.
+            if device == "iphone", shot.name == "purchase" {
+                try #require(screen.pngData()).write(to: URL(fileURLWithPath: directory).appendingPathComponent("iap-review.png"))
             }
+            let frame = StoreFrame(headline: shot.headline, subline: shot.subline, screen: screen,
+                                   device: device == "ipad" ? .ipad : .iphone, size: size)
+            let image = try await render(frame, size: size, scale: scale, in: scene)
+            let file = String(format: "appstore-%@-%02d-%@.png", device, index + 1, shot.name)
+            try #require(image.pngData()).write(to: URL(fileURLWithPath: directory).appendingPathComponent(file))
         }
         try "device: \(device) size: \(size) scale: \(scale) sandbox price: \(store.product?.displayPrice ?? "none")"
             .write(toFile: directory + "/diagnostics-appstore-\(device).txt", atomically: true, encoding: .utf8)
@@ -121,6 +137,22 @@ import UIKit
         window.isHidden = true
         window.rootViewController = nil
         return image
+    }
+}
+
+/// One App Store screenshot: the screen to capture and the headline drawn above it.
+@MainActor
+private struct StoreShot {
+    let name: String
+    let view: AnyView
+    let headline: String
+    let subline: String
+
+    init(_ name: String, _ view: some View, _ headline: String, _ subline: String) {
+        self.name = name
+        self.view = AnyView(view)
+        self.headline = headline
+        self.subline = subline
     }
 }
 
