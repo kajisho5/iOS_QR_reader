@@ -32,6 +32,12 @@ final class ScanCoordinator {
     private(set) var tray: [ScanResult] = []
     private(set) var isContinuous = false
     private(set) var isToastVisible = false
+    /// Counting mode (docs/DESIGN_1.2.md §5, I, Pro): detections only count; nothing is saved until the end.
+    private(set) var isCounting = false
+    var stocktake = StocktakeSession()
+    /// "＋1　<code>（n 個目）", shown briefly after a count.
+    private(set) var countToast: String?
+    @ObservationIgnored private var countToastTask: Task<Void, Never>?
 
     @ObservationIgnored private var seenInSession = Set<String>()
     @ObservationIgnored private var suppressedKey: String?
@@ -55,6 +61,23 @@ final class ScanCoordinator {
     }
     private static let logger = Logger(subsystem: "SeijitsuQR", category: "Scan")
 
+    func startCounting() {
+        isContinuous = false
+        tray.removeAll()
+        presented = nil
+        stocktake = StocktakeSession()
+        isCounting = true
+    }
+
+    /// Ends counting and returns what was counted (the caller shows the summary).
+    func endCounting() -> StocktakeSession {
+        isCounting = false
+        countToast = nil
+        let session = stocktake
+        stocktake = StocktakeSession()
+        return session
+    }
+
     func setContinuous(_ enabled: Bool) {
         isContinuous = enabled
         seenInSession.removeAll()
@@ -77,6 +100,10 @@ final class ScanCoordinator {
     /// `hasSymbology` is false for pasted text, which was never a barcode: the record then keeps no symbology.
     func handle(_ code: DetectedCode, source: RecordSource, hasSymbology: Bool = true) {
         guard let environment else { return }
+        if isCounting && source == .camera {
+            count(code, settings: environment.settings)
+            return
+        }
         let presentsSheet = environment.presentsSheet
         let settings = environment.settings
         let key = code.dedupeKey
@@ -111,6 +138,20 @@ final class ScanCoordinator {
             showToast()
         } else if presentsSheet {
             presented = result
+        }
+    }
+
+    private func count(_ code: DetectedCode, settings: AppSettings) {
+        guard let count = stocktake.observe(code) else { return }
+        feedback.playSuccess(sound: settings.isSoundEnabled, haptic: settings.isHapticsEnabled)
+        let text = L10n.scanCountToast(code.content, count)
+        countToast = text
+        AccessibilityNotification.Announcement(text).post()
+        countToastTask?.cancel()
+        countToastTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1.6))
+            guard !Task.isCancelled else { return }
+            self?.countToast = nil
         }
     }
 

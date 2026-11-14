@@ -192,6 +192,10 @@ enum L10n {
     }
     static var paywallFailedMessage: String { String(localized: "paywall.failed.message") }
     static var paywallFailedTitle: String { String(localized: "paywall.failed.title") }
+    static var paywallFeatureColorDetail: String { String(localized: "paywall.feature.color.detail") }
+    static var paywallFeatureColorTitle: String { String(localized: "paywall.feature.color.title") }
+    static var paywallFeatureCountDetail: String { String(localized: "paywall.feature.count.detail") }
+    static var paywallFeatureCountTitle: String { String(localized: "paywall.feature.count.title") }
     static var paywallFeatureCreateDetail: String { String(localized: "paywall.feature.create.detail") }
     static var paywallFeatureCreateTitle: String { String(localized: "paywall.feature.create.title") }
     static var paywallFeatureCsvDetail: String { String(localized: "paywall.feature.csv.detail") }
@@ -312,8 +316,37 @@ enum L10n {
     static var scanContinuous: String { String(localized: "scan.continuous") }
     static var scanContinuousOn: String { String(localized: "scan.continuous.on") }
     static var scanControlContinuousOn: String { String(localized: "scan.control.continuousOn") }
+    static var scanControlCountingOn: String { String(localized: "scan.control.countingOn") }
     static var scanControlPaste: String { String(localized: "scan.control.paste") }
     static var scanControlPhoto: String { String(localized: "scan.control.photo") }
+    static var scanCountCsv: String { String(localized: "scan.count.csv") }
+    static var scanCountCsvCode: String { String(localized: "scan.count.csvCode") }
+    static var scanCountCsvCount: String { String(localized: "scan.count.csvCount") }
+    static var scanCountCsvLast: String { String(localized: "scan.count.csvLast") }
+    static var scanCountCsvTitle: String { String(localized: "scan.count.csvTitle") }
+    static var scanCountDone: String { String(localized: "scan.count.done") }
+    static var scanCountEmpty: String { String(localized: "scan.count.empty") }
+    static var scanCountFooter: String { String(localized: "scan.count.footer") }
+    static var scanCountHint: String { String(localized: "scan.count.hint") }
+    static func scanCountMinus(_ p1: String) -> String {
+        String(format: String(localized: "scan.count.minus"), p1)
+    }
+    static func scanCountPieces(_ p1: Int) -> String {
+        String(format: String(localized: "scan.count.pieces"), p1)
+    }
+    static func scanCountPlus(_ p1: String) -> String {
+        String(format: String(localized: "scan.count.plus"), p1)
+    }
+    static var scanCountResultTitle: String { String(localized: "scan.count.resultTitle") }
+    static var scanCountSave: String { String(localized: "scan.count.save") }
+    static var scanCountSaved: String { String(localized: "scan.count.saved") }
+    static func scanCountSummary(_ p1: Int, _ p2: Int) -> String {
+        String(format: String(localized: "scan.count.summary"), p1, p2)
+    }
+    static var scanCountTitle: String { String(localized: "scan.count.title") }
+    static func scanCountToast(_ p1: String, _ p2: Int) -> String {
+        String(format: String(localized: "scan.count.toast"), p1, p2)
+    }
     static var scanDeniedMessage: String { String(localized: "scan.denied.message") }
     static var scanDeniedTitle: String { String(localized: "scan.denied.title") }
     static func scanDetectedAnnouncement(_ p1: String) -> String {
@@ -323,6 +356,9 @@ enum L10n {
     static var scanHint: String { String(localized: "scan.hint") }
     static var scanImageLoadFailedMessage: String { String(localized: "scan.imageLoadFailed.message") }
     static var scanImageLoadFailedTitle: String { String(localized: "scan.imageLoadFailed.title") }
+    static var scanModeContinuous: String { String(localized: "scan.mode.continuous") }
+    static var scanModeCounting: String { String(localized: "scan.mode.counting") }
+    static var scanModeTitle: String { String(localized: "scan.mode.title") }
     static var scanMultipleCodesMessage: String { String(localized: "scan.multipleCodes.message") }
     static var scanMultipleCodesTitle: String { String(localized: "scan.multipleCodes.title") }
     static var scanMultitaskingMessage: String { String(localized: "scan.multitasking.message") }
@@ -609,6 +645,10 @@ enum L10n {
         "paywall.buy",
         "paywall.failed.message",
         "paywall.failed.title",
+        "paywall.feature.color.detail",
+        "paywall.feature.color.title",
+        "paywall.feature.count.detail",
+        "paywall.feature.count.title",
         "paywall.feature.create.detail",
         "paywall.feature.create.title",
         "paywall.feature.csv.detail",
@@ -721,8 +761,27 @@ enum L10n {
         "scan.continuous",
         "scan.continuous.on",
         "scan.control.continuousOn",
+        "scan.control.countingOn",
         "scan.control.paste",
         "scan.control.photo",
+        "scan.count.csv",
+        "scan.count.csvCode",
+        "scan.count.csvCount",
+        "scan.count.csvLast",
+        "scan.count.csvTitle",
+        "scan.count.done",
+        "scan.count.empty",
+        "scan.count.footer",
+        "scan.count.hint",
+        "scan.count.minus",
+        "scan.count.pieces",
+        "scan.count.plus",
+        "scan.count.resultTitle",
+        "scan.count.save",
+        "scan.count.saved",
+        "scan.count.summary",
+        "scan.count.title",
+        "scan.count.toast",
         "scan.denied.message",
         "scan.denied.title",
         "scan.detected.announcement",
@@ -730,6 +789,9 @@ enum L10n {
         "scan.hint",
         "scan.imageLoadFailed.message",
         "scan.imageLoadFailed.title",
+        "scan.mode.continuous",
+        "scan.mode.counting",
+        "scan.mode.title",
         "scan.multipleCodes.message",
         "scan.multipleCodes.title",
         "scan.multitasking.message",
