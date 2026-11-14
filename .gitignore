@@ -5,6 +5,7 @@ SeijitsuQRWidgets/Info.plist
 SeijitsuQRWidgets/SeijitsuQRWidgets.entitlements
 SeijitsuQRShare/Info.plist
 SeijitsuQRShare/SeijitsuQRShare.entitlements
+SeijitsuQRWatch/Info.plist
 SeijitsuQR/SeijitsuQR.entitlements
 
 # Xcode

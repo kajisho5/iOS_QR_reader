@@ -1981,6 +1981,28 @@
         }
       }
     },
+    "paywall.feature.watch.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りの QR を Watch で見せられます"
+          }
+        }
+      }
+    },
+    "paywall.feature.watch.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch に表示"
+          }
+        }
+      }
+    },
     "paywall.feature.widget.detail": {
       "extractionState": "manual",
       "localizations": {
@@ -4111,6 +4133,83 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定"
+          }
+        }
+      }
+    },
+    "settings.watch.codes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示するお気に入り"
+          }
+        }
+      }
+    },
+    "settings.watch.count": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 件"
+          }
+        }
+      }
+    },
+    "settings.watch.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りから選んだ QR を、ペアリングした Apple Watch に送ります。iPhone と Watch の間で直接送り、インターネットのサーバーには送りません。"
+          }
+        }
+      }
+    },
+    "settings.watch.header": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch"
+          }
+        }
+      }
+    },
+    "settings.watch.noFavorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りがありません。履歴で ☆ を付けてください。"
+          }
+        }
+      }
+    },
+    "settings.watch.pickerFooter": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 件まで選べます。"
+          }
+        }
+      }
+    },
+    "settings.watch.show": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch に表示（Pro）"
           }
         }
       }

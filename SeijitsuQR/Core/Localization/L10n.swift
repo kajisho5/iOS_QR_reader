@@ -202,6 +202,8 @@ enum L10n {
     static var paywallFeatureCsvTitle: String { String(localized: "paywall.feature.csv.title") }
     static var paywallFeatureHistoryDetail: String { String(localized: "paywall.feature.history.detail") }
     static var paywallFeatureHistoryTitle: String { String(localized: "paywall.feature.history.title") }
+    static var paywallFeatureWatchDetail: String { String(localized: "paywall.feature.watch.detail") }
+    static var paywallFeatureWatchTitle: String { String(localized: "paywall.feature.watch.title") }
     static var paywallFeatureWidgetDetail: String { String(localized: "paywall.feature.widget.detail") }
     static var paywallFeatureWidgetTitle: String { String(localized: "paywall.feature.widget.title") }
     static var paywallFeaturesHeader: String { String(localized: "paywall.features.header") }
@@ -422,6 +424,17 @@ enum L10n {
     static var settingsSearchEngineFooter: String { String(localized: "settings.searchEngine.footer") }
     static var settingsSearchEngineHeader: String { String(localized: "settings.searchEngine.header") }
     static var settingsTitle: String { String(localized: "settings.title") }
+    static var settingsWatchCodes: String { String(localized: "settings.watch.codes") }
+    static func settingsWatchCount(_ p1: Int) -> String {
+        String(format: String(localized: "settings.watch.count"), p1)
+    }
+    static var settingsWatchFooter: String { String(localized: "settings.watch.footer") }
+    static var settingsWatchHeader: String { String(localized: "settings.watch.header") }
+    static var settingsWatchNoFavorites: String { String(localized: "settings.watch.noFavorites") }
+    static func settingsWatchPickerFooter(_ p1: Int) -> String {
+        String(format: String(localized: "settings.watch.pickerFooter"), p1)
+    }
+    static var settingsWatchShow: String { String(localized: "settings.watch.show") }
     static var shareCopied: String { String(localized: "share.copied") }
     static var shareDomain: String { String(localized: "share.domain") }
     static var shareHistoryNote: String { String(localized: "share.historyNote") }
@@ -655,6 +668,8 @@ enum L10n {
         "paywall.feature.csv.title",
         "paywall.feature.history.detail",
         "paywall.feature.history.title",
+        "paywall.feature.watch.detail",
+        "paywall.feature.watch.title",
         "paywall.feature.widget.detail",
         "paywall.feature.widget.title",
         "paywall.features.header",
@@ -849,6 +864,13 @@ enum L10n {
         "settings.searchEngine.footer",
         "settings.searchEngine.header",
         "settings.title",
+        "settings.watch.codes",
+        "settings.watch.count",
+        "settings.watch.footer",
+        "settings.watch.header",
+        "settings.watch.noFavorites",
+        "settings.watch.pickerFooter",
+        "settings.watch.show",
         "share.copied",
         "share.domain",
         "share.historyNote",

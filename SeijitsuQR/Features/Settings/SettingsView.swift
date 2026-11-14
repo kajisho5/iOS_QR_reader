@@ -77,6 +77,10 @@ struct SettingsView: View {
                     Text(L10n.historyLockUnavailableMessage)
                 }
 
+                if WatchLink.shared.isAvailable {
+                    WatchSettingsSection()
+                }
+
                 Section {
                     Link(destination: AppConstants.privacyPolicyURL) {
                         LabeledContent(L10n.settingsAboutPrivacy) {
