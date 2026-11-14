@@ -23,10 +23,22 @@ final class WatchCodeStore: NSObject, WCSessionDelegate {
 
     override init() {
         super.init()
+        // App Store screenshots (appstore-screenshots workflow): fictional sample codes, no connection to a phone.
+        if ProcessInfo.processInfo.arguments.contains("-StoreScreenshots") {
+            codes = Self.samples
+            return
+        }
         if let data = UserDefaults.standard.data(forKey: Self.savedKey) { codes = WatchCodes.decode(data) }
         if WCSession.isSupported() {
             WCSession.default.delegate = self
             WCSession.default.activate()
+        }
+    }
+
+    private static var samples: [WatchCode] {
+        [("SampleWiFi", "Seijitsu-Guest", "Wi-Fi"), ("SampleCard", "会員証（誠実書店）", "URL")].compactMap { name, title, kind in
+            guard let png = UIImage(named: name)?.pngData() else { return nil }
+            return WatchCode(id: UUID(), title: title, kindTitle: kind, image: png)
         }
     }
 
@@ -50,6 +62,8 @@ final class WatchCodeStore: NSObject, WCSessionDelegate {
 
 struct WatchCodeList: View {
     let store: WatchCodeStore
+    /// The screenshot of one code opens it directly.
+    @State private var opened: WatchCode?
 
     var body: some View {
         NavigationStack {
@@ -77,6 +91,10 @@ struct WatchCodeList: View {
                 }
             }
             .navigationTitle("QR")
+            .navigationDestination(item: $opened) { WatchCodeView(code: $0) }
+            .onAppear {
+                if ProcessInfo.processInfo.arguments.contains("-StoreScreenshotCode") { opened = store.codes.first }
+            }
         }
     }
 }

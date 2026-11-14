@@ -2,7 +2,8 @@
 """Upload App Store screenshots and the In-App Purchase review screenshot (replaces what is there).
 
 Usage: python3 asc_screenshots.py DIR
-DIR holds appstore-iphone-NN-*.png (1320x2868), appstore-ipad-NN-*.png (2064x2752) and iap-review.png.
+DIR holds appstore-iphone-NN-*.png (1320x2868), appstore-ipad-NN-*.png (2064x2752),
+appstore-watch-NN-*.png (Apple Watch Ultra, 410x502 or 422x514) and iap-review.png.
 Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_BASE64, BUNDLE_ID, LOCALE (default ja), IAP_PRODUCT_ID.
 """
 import hashlib
@@ -17,6 +18,8 @@ from asc_app_urls import call
 DISPLAY_TYPES = {
     "iphone": ("APP_IPHONE_67", {(1320, 2868), (1290, 2796)}),
     "ipad": ("APP_IPAD_PRO_3GEN_129", {(2064, 2752), (2048, 2732)}),
+    # Apple Watch Ultra (49 mm): 410x502 (Ultra / Ultra 2) or 422x514 (Ultra 3).
+    "watch": ("APP_WATCH_ULTRA", {(410, 502), (422, 514)}),
 }
 
 

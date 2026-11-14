@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches: [claude/new-session-6aeoeq]
-    paths: [SeijitsuQR/**, SeijitsuQRTests/ScreenSnapshotTests.swift, SeijitsuQRTests/StoreFrame.swift, StoreKit/**, project.yml, tools/asc_screenshots.py, .github/workflows/appstore-screenshots.yml]
+    paths: [SeijitsuQR/**, SeijitsuQRWatch/**, SeijitsuQRTests/ScreenSnapshotTests.swift, SeijitsuQRTests/StoreFrame.swift, StoreKit/**, project.yml, tools/asc_screenshots.py, .github/workflows/appstore-screenshots.yml]
 
 permissions:
   contents: read
@@ -67,6 +67,32 @@ jobs:
           status=$?
           grep -E "error:|✔|✘|\*\* " xcodebuild-appstore-ipad.log | tail -40
           exit $status
+
+      - name: Capture on Apple Watch
+        run: |
+          set -e
+          udid=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          devices = json.load(sys.stdin)["devices"]
+          for runtime in sorted((r for r in devices if "watchOS" in r), key=lambda r: [int(x) for x in re.findall(r"\d+", r)], reverse=True):
+              names = sorted(d["name"] for d in devices[runtime] if d["name"].startswith("Apple Watch Ultra"))
+              if names:
+                  print(next(d["udid"] for d in devices[runtime] if d["name"] == names[-1])); break
+          ')
+          [ -n "$udid" ] || { echo "::warning::no Apple Watch Ultra simulator"; exit 0; }
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          xcodebuild build -project SeijitsuQR.xcodeproj -target SeijitsuQRWatch -sdk watchsimulator -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO SYMROOT="$PWD/build/watch" > xcodebuild-appstore-watch.log 2>&1 || { tail -40 xcodebuild-appstore-watch.log; exit 1; }
+          xcrun simctl install "$udid" build/watch/Debug-watchsimulator/SeijitsuQRWatch.app
+          xcrun simctl status_bar "$udid" override --time 9:41 || true
+          for shot in "01-list:-StoreScreenshots" "02-code:-StoreScreenshots -StoreScreenshotCode"; do
+            name=${shot%%:*}; args=${shot#*:}
+            xcrun simctl terminate "$udid" com.seventhwell.seijitsuqr.watchkitapp || true
+            xcrun simctl launch "$udid" com.seventhwell.seijitsuqr.watchkitapp $args
+            sleep 8
+            xcrun simctl io "$udid" screenshot "appstore-screenshots/appstore-watch-$name.png"
+          done
 
       - name: Show what was captured
         run: |

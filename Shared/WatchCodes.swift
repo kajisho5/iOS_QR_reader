@@ -2,7 +2,7 @@ import Foundation
 
 /// The codes shown on Apple Watch (docs/DESIGN_1.2.md §8, K). The iPhone draws each code (the watch has no
 /// Core Image) and sends the list with WatchConnectivity to the paired watch; nothing goes through a server.
-struct WatchCode: Codable, Equatable, Identifiable, Sendable {
+struct WatchCode: Codable, Hashable, Identifiable, Sendable {
     var id: UUID
     var title: String
     var kindTitle: String
