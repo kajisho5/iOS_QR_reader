@@ -1,6 +1,5 @@
 import AppIntents
 import UIKit
-import UniformTypeIdentifiers
 
 // Shortcuts actions (docs/DESIGN_1.2.md §6, N). They run in the app on the device, without opening it,
 // and never save to the history (so an automation that runs often does not fill it).
@@ -41,7 +40,7 @@ struct ReadCodesInImageIntent: AppIntent {
     static let title: LocalizedStringResource = "画像のQRコードを読む"
     static let description = IntentDescription("画像に写った QR コードやバーコードの中身を取り出します。複数あれば全部を返します。読み取りは iPhone の中だけで行い、履歴には保存しません。")
 
-    @Parameter(title: "画像", supportedContentTypes: [.image])
+    @Parameter(title: "画像")
     var image: IntentFile
 
     init() {}
