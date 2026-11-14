@@ -20,6 +20,16 @@ enum L10n {
     static var commonYes: String { String(localized: "common.yes") }
     static var createBadgeFree: String { String(localized: "create.badge.free") }
     static var createBadgePro: String { String(localized: "create.badge.pro") }
+    static var createColorBackground: String { String(localized: "create.color.background") }
+    static var createColorForeground: String { String(localized: "create.color.foreground") }
+    static var createColorLockedMessage: String { String(localized: "create.color.lockedMessage") }
+    static var createColorRefused: String { String(localized: "create.color.refused") }
+    static var createColorReset: String { String(localized: "create.color.reset") }
+    static var createColorSeePro: String { String(localized: "create.color.seePro") }
+    static func createColorSwatch(_ p1: Int) -> String {
+        String(format: String(localized: "create.color.swatch"), p1)
+    }
+    static var createColorTitle: String { String(localized: "create.color.title") }
     static var createFieldAddress: String { String(localized: "create.field.address") }
     static var createFieldAllDay: String { String(localized: "create.field.allDay") }
     static var createFieldBody: String { String(localized: "create.field.body") }
@@ -445,6 +455,14 @@ enum L10n {
         "common.yes",
         "create.badge.free",
         "create.badge.pro",
+        "create.color.background",
+        "create.color.foreground",
+        "create.color.lockedMessage",
+        "create.color.refused",
+        "create.color.reset",
+        "create.color.seePro",
+        "create.color.swatch",
+        "create.color.title",
         "create.field.address",
         "create.field.allDay",
         "create.field.body",

@@ -11,6 +11,7 @@ struct CreateFormView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.modelContext) private var modelContext
     @Environment(\.isProUnlocked) private var isPro
+    @Environment(\.requestPro) private var requestPro
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.openURL) private var openURL
 
@@ -20,6 +21,8 @@ struct CreateFormView: View {
     @State private var isSavingPhoto = false
     @State private var savedToPhotos = false
     @State private var photoAlert: PhotoAlert?
+    @State private var foreground = QRColor.black
+    @State private var background = QRColor.white
     @State private var location: CurrentLocation?
     @State private var isLocating = false
     @State private var isLocationDeniedAlertPresented = false
@@ -324,8 +327,10 @@ struct CreateFormView: View {
     @ViewBuilder
     private var preview: some View {
         if let generated {
+            // Colors apply to the saved, shared and printed image only; the history keeps the content.
+            let image = QRColorPalette.colored(generated.image, foreground: foreground, background: background) ?? generated.image
             VStack(spacing: 14) {
-                Image(uiImage: generated.image)
+                Image(uiImage: image)
                     .resizable()
                     .interpolation(.none)
                     .scaledToFit()
@@ -344,14 +349,18 @@ struct CreateFormView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
+                QRColorPicker(foreground: $foreground, background: $background, isPro: isPro) {
+                    requestPro(.allCodeTypes)
+                }
+                .onChange(of: [foreground, background]) { savedToPhotos = false }
                 Button {
-                    saveToPhotos(generated.image)
+                    saveToPhotos(image)
                 } label: {
                     Label(savedToPhotos ? L10n.createSavedToPhotos : L10n.createSaveToPhotos, systemImage: savedToPhotos ? "checkmark" : "square.and.arrow.down")
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 .disabled(isSavingPhoto || savedToPhotos)
-                ShareLink(item: Image(uiImage: generated.image), preview: SharePreview(kind.title, image: Image(uiImage: generated.image))) {
+                ShareLink(item: Image(uiImage: image), preview: SharePreview(kind.title, image: Image(uiImage: image))) {
                     Label(L10n.commonShare, systemImage: "square.and.arrow.up")
                         .font(.headline)
                         .frame(maxWidth: .infinity, minHeight: 52)

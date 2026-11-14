@@ -177,6 +177,94 @@
         }
       }
     },
+    "create.color.background": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景"
+          }
+        }
+      }
+    },
+    "create.color.foreground": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模様"
+          }
+        }
+      }
+    },
+    "create.color.lockedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模様と背景の色を変えられます（Pro）。読み取りにくい組み合わせは選べません。"
+          }
+        }
+      }
+    },
+    "create.color.refused": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この組み合わせは読み取りにくいため選べません（模様を背景より暗く、明るさの差を大きく）。"
+          }
+        }
+      }
+    },
+    "create.color.reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "白黒に戻す"
+          }
+        }
+      }
+    },
+    "create.color.seePro": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro を見る"
+          }
+        }
+      }
+    },
+    "create.color.swatch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "色 %lld"
+          }
+        }
+      }
+    },
+    "create.color.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "色"
+          }
+        }
+      }
+    },
     "create.field.address": {
       "extractionState": "manual",
       "localizations": {
