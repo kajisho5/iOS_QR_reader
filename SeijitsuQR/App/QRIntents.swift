@@ -39,7 +39,7 @@ struct CreateQRCodeIntent: AppIntent {
 /// "画像のQRコードを読む": an image in, the content of every code in it out.
 struct ReadCodesInImageIntent: AppIntent {
     static let title: LocalizedStringResource = "画像のQRコードを読む"
-    static let description = IntentDescription("画像に写った QR コードやバーコードの中身を取り出します。複数あれば全部を返します。読み取りは iPhone の中だけで行い、履歴には保存しません。")
+    static let description = IntentDescription("画像に写った QR コードやバーコードの中身を取り出します。複数あれば全部を返します。読み取りはこの端末の中だけで行い、履歴には保存しません。")
 
     @Parameter(title: "画像")
     var image: IntentFile
