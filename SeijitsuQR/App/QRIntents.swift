@@ -1,5 +1,6 @@
 import AppIntents
 import UIKit
+import UniformTypeIdentifiers
 
 // Shortcuts actions (docs/DESIGN_1.2.md §6, N). They run in the app on the device, without opening it,
 // and never save to the history (so an automation that runs often does not fill it).
