@@ -20,6 +20,16 @@ enum L10n {
     static var commonYes: String { String(localized: "common.yes") }
     static var createBadgeFree: String { String(localized: "create.badge.free") }
     static var createBadgePro: String { String(localized: "create.badge.pro") }
+    static var createColorBackground: String { String(localized: "create.color.background") }
+    static var createColorForeground: String { String(localized: "create.color.foreground") }
+    static var createColorLockedMessage: String { String(localized: "create.color.lockedMessage") }
+    static var createColorRefused: String { String(localized: "create.color.refused") }
+    static var createColorReset: String { String(localized: "create.color.reset") }
+    static var createColorSeePro: String { String(localized: "create.color.seePro") }
+    static func createColorSwatch(_ p1: Int) -> String {
+        String(format: String(localized: "create.color.swatch"), p1)
+    }
+    static var createColorTitle: String { String(localized: "create.color.title") }
     static var createFieldAddress: String { String(localized: "create.field.address") }
     static var createFieldAllDay: String { String(localized: "create.field.allDay") }
     static var createFieldBody: String { String(localized: "create.field.body") }
@@ -182,12 +192,18 @@ enum L10n {
     }
     static var paywallFailedMessage: String { String(localized: "paywall.failed.message") }
     static var paywallFailedTitle: String { String(localized: "paywall.failed.title") }
+    static var paywallFeatureColorDetail: String { String(localized: "paywall.feature.color.detail") }
+    static var paywallFeatureColorTitle: String { String(localized: "paywall.feature.color.title") }
+    static var paywallFeatureCountDetail: String { String(localized: "paywall.feature.count.detail") }
+    static var paywallFeatureCountTitle: String { String(localized: "paywall.feature.count.title") }
     static var paywallFeatureCreateDetail: String { String(localized: "paywall.feature.create.detail") }
     static var paywallFeatureCreateTitle: String { String(localized: "paywall.feature.create.title") }
     static var paywallFeatureCsvDetail: String { String(localized: "paywall.feature.csv.detail") }
     static var paywallFeatureCsvTitle: String { String(localized: "paywall.feature.csv.title") }
     static var paywallFeatureHistoryDetail: String { String(localized: "paywall.feature.history.detail") }
     static var paywallFeatureHistoryTitle: String { String(localized: "paywall.feature.history.title") }
+    static var paywallFeatureWatchDetail: String { String(localized: "paywall.feature.watch.detail") }
+    static var paywallFeatureWatchTitle: String { String(localized: "paywall.feature.watch.title") }
     static var paywallFeatureWidgetDetail: String { String(localized: "paywall.feature.widget.detail") }
     static var paywallFeatureWidgetTitle: String { String(localized: "paywall.feature.widget.title") }
     static var paywallFeaturesHeader: String { String(localized: "paywall.features.header") }
@@ -302,8 +318,37 @@ enum L10n {
     static var scanContinuous: String { String(localized: "scan.continuous") }
     static var scanContinuousOn: String { String(localized: "scan.continuous.on") }
     static var scanControlContinuousOn: String { String(localized: "scan.control.continuousOn") }
+    static var scanControlCountingOn: String { String(localized: "scan.control.countingOn") }
     static var scanControlPaste: String { String(localized: "scan.control.paste") }
     static var scanControlPhoto: String { String(localized: "scan.control.photo") }
+    static var scanCountCsv: String { String(localized: "scan.count.csv") }
+    static var scanCountCsvCode: String { String(localized: "scan.count.csvCode") }
+    static var scanCountCsvCount: String { String(localized: "scan.count.csvCount") }
+    static var scanCountCsvLast: String { String(localized: "scan.count.csvLast") }
+    static var scanCountCsvTitle: String { String(localized: "scan.count.csvTitle") }
+    static var scanCountDone: String { String(localized: "scan.count.done") }
+    static var scanCountEmpty: String { String(localized: "scan.count.empty") }
+    static var scanCountFooter: String { String(localized: "scan.count.footer") }
+    static var scanCountHint: String { String(localized: "scan.count.hint") }
+    static func scanCountMinus(_ p1: String) -> String {
+        String(format: String(localized: "scan.count.minus"), p1)
+    }
+    static func scanCountPieces(_ p1: Int) -> String {
+        String(format: String(localized: "scan.count.pieces"), p1)
+    }
+    static func scanCountPlus(_ p1: String) -> String {
+        String(format: String(localized: "scan.count.plus"), p1)
+    }
+    static var scanCountResultTitle: String { String(localized: "scan.count.resultTitle") }
+    static var scanCountSave: String { String(localized: "scan.count.save") }
+    static var scanCountSaved: String { String(localized: "scan.count.saved") }
+    static func scanCountSummary(_ p1: Int, _ p2: Int) -> String {
+        String(format: String(localized: "scan.count.summary"), p1, p2)
+    }
+    static var scanCountTitle: String { String(localized: "scan.count.title") }
+    static func scanCountToast(_ p1: String, _ p2: Int) -> String {
+        String(format: String(localized: "scan.count.toast"), p1, p2)
+    }
     static var scanDeniedMessage: String { String(localized: "scan.denied.message") }
     static var scanDeniedTitle: String { String(localized: "scan.denied.title") }
     static func scanDetectedAnnouncement(_ p1: String) -> String {
@@ -313,6 +358,9 @@ enum L10n {
     static var scanHint: String { String(localized: "scan.hint") }
     static var scanImageLoadFailedMessage: String { String(localized: "scan.imageLoadFailed.message") }
     static var scanImageLoadFailedTitle: String { String(localized: "scan.imageLoadFailed.title") }
+    static var scanModeContinuous: String { String(localized: "scan.mode.continuous") }
+    static var scanModeCounting: String { String(localized: "scan.mode.counting") }
+    static var scanModeTitle: String { String(localized: "scan.mode.title") }
     static var scanMultipleCodesMessage: String { String(localized: "scan.multipleCodes.message") }
     static var scanMultipleCodesTitle: String { String(localized: "scan.multipleCodes.title") }
     static var scanMultitaskingMessage: String { String(localized: "scan.multitasking.message") }
@@ -376,6 +424,17 @@ enum L10n {
     static var settingsSearchEngineFooter: String { String(localized: "settings.searchEngine.footer") }
     static var settingsSearchEngineHeader: String { String(localized: "settings.searchEngine.header") }
     static var settingsTitle: String { String(localized: "settings.title") }
+    static var settingsWatchCodes: String { String(localized: "settings.watch.codes") }
+    static func settingsWatchCount(_ p1: Int) -> String {
+        String(format: String(localized: "settings.watch.count"), p1)
+    }
+    static var settingsWatchFooter: String { String(localized: "settings.watch.footer") }
+    static var settingsWatchHeader: String { String(localized: "settings.watch.header") }
+    static var settingsWatchNoFavorites: String { String(localized: "settings.watch.noFavorites") }
+    static func settingsWatchPickerFooter(_ p1: Int) -> String {
+        String(format: String(localized: "settings.watch.pickerFooter"), p1)
+    }
+    static var settingsWatchShow: String { String(localized: "settings.watch.show") }
     static var shareCopied: String { String(localized: "share.copied") }
     static var shareDomain: String { String(localized: "share.domain") }
     static var shareHistoryNote: String { String(localized: "share.historyNote") }
@@ -445,6 +504,14 @@ enum L10n {
         "common.yes",
         "create.badge.free",
         "create.badge.pro",
+        "create.color.background",
+        "create.color.foreground",
+        "create.color.lockedMessage",
+        "create.color.refused",
+        "create.color.reset",
+        "create.color.seePro",
+        "create.color.swatch",
+        "create.color.title",
         "create.field.address",
         "create.field.allDay",
         "create.field.body",
@@ -591,12 +658,18 @@ enum L10n {
         "paywall.buy",
         "paywall.failed.message",
         "paywall.failed.title",
+        "paywall.feature.color.detail",
+        "paywall.feature.color.title",
+        "paywall.feature.count.detail",
+        "paywall.feature.count.title",
         "paywall.feature.create.detail",
         "paywall.feature.create.title",
         "paywall.feature.csv.detail",
         "paywall.feature.csv.title",
         "paywall.feature.history.detail",
         "paywall.feature.history.title",
+        "paywall.feature.watch.detail",
+        "paywall.feature.watch.title",
         "paywall.feature.widget.detail",
         "paywall.feature.widget.title",
         "paywall.features.header",
@@ -703,8 +776,27 @@ enum L10n {
         "scan.continuous",
         "scan.continuous.on",
         "scan.control.continuousOn",
+        "scan.control.countingOn",
         "scan.control.paste",
         "scan.control.photo",
+        "scan.count.csv",
+        "scan.count.csvCode",
+        "scan.count.csvCount",
+        "scan.count.csvLast",
+        "scan.count.csvTitle",
+        "scan.count.done",
+        "scan.count.empty",
+        "scan.count.footer",
+        "scan.count.hint",
+        "scan.count.minus",
+        "scan.count.pieces",
+        "scan.count.plus",
+        "scan.count.resultTitle",
+        "scan.count.save",
+        "scan.count.saved",
+        "scan.count.summary",
+        "scan.count.title",
+        "scan.count.toast",
         "scan.denied.message",
         "scan.denied.title",
         "scan.detected.announcement",
@@ -712,6 +804,9 @@ enum L10n {
         "scan.hint",
         "scan.imageLoadFailed.message",
         "scan.imageLoadFailed.title",
+        "scan.mode.continuous",
+        "scan.mode.counting",
+        "scan.mode.title",
         "scan.multipleCodes.message",
         "scan.multipleCodes.title",
         "scan.multitasking.message",
@@ -769,6 +864,13 @@ enum L10n {
         "settings.searchEngine.footer",
         "settings.searchEngine.header",
         "settings.title",
+        "settings.watch.codes",
+        "settings.watch.count",
+        "settings.watch.footer",
+        "settings.watch.header",
+        "settings.watch.noFavorites",
+        "settings.watch.pickerFooter",
+        "settings.watch.show",
         "share.copied",
         "share.domain",
         "share.historyNote",

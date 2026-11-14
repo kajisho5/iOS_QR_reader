@@ -15,6 +15,7 @@ struct ScannerView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.isProUnlocked) private var isPro
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.requestPro) private var requestPro
 
     @State private var capture = CaptureController()
     @State private var coordinator = ScanCoordinator()
@@ -23,6 +24,9 @@ struct ScannerView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var imageAlert: ImageAlert?
     @State private var multipleCodes: [DetectedCode] = []
+    @State private var isChoosingMode = false
+    /// The counts shown after counting ends (docs/design/26_stocktake.svg I3).
+    @State private var finishedCount: FinishedCount?
     /// Where the codes in `multipleCodes` came from (a photo or a pasted image).
     @State private var multipleSource: RecordSource = .photo
     /// A contact to add after the result sheet has closed (one sheet at a time: HIG Sheets).
@@ -83,6 +87,17 @@ struct ScannerView: View {
         }
         .onChange(of: coordinator.isContinuous) { _, isOn in
             if !isOn { requestReviewIfDue() }
+        }
+        .confirmationDialog(L10n.scanModeTitle, isPresented: $isChoosingMode, titleVisibility: .visible) {
+            Button(L10n.scanModeContinuous) { coordinator.setContinuous(true) }
+            Button(L10n.scanModeCounting) {
+                if isPro { coordinator.startCounting() } else { requestPro(.allCodeTypes) }
+            }
+            Button(L10n.commonCancel, role: .cancel) {}
+        }
+        .sheet(item: $finishedCount) { finished in
+            StocktakeSummaryView(session: finished.session) { finishedCount = nil }
+                .interactiveDismissDisabled()
         }
         .sheet(item: $coordinator.presented, onDismiss: showPendingContact) { result in
             NavigationStack {
@@ -234,7 +249,7 @@ struct ScannerView: View {
                             }
                     }
                 }
-                ReticleOverlay(isActive: coordinator.isContinuous, isRaised: isTrayVisible && presentsSheet)
+                ReticleOverlay(isActive: coordinator.isContinuous || coordinator.isCounting, isRaised: (isTrayVisible || coordinator.isCounting) && presentsSheet)
             }
             .ignoresSafeArea(edges: [.top, .horizontal])
             VStack(spacing: 12) {
@@ -248,7 +263,13 @@ struct ScannerView: View {
                     NoticeCapsule(text: L10n.scanDetectedToast, systemImage: "checkmark.circle.fill", prominent: true)
                         .transition(.opacity)
                 }
-                if isTrayVisible {
+                if let countToast = coordinator.countToast {
+                    NoticeCapsule(text: countToast, systemImage: "checkmark.circle.fill", prominent: true)
+                        .transition(.opacity)
+                }
+                if coordinator.isCounting {
+                    CountingTray(session: $coordinator.stocktake, onEnd: finishCounting)
+                } else if isTrayVisible {
                     ContinuousTray(
                         results: coordinator.tray,
                         onSelect: { coordinator.show($0) },
@@ -286,6 +307,7 @@ struct ScannerView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
             .animation(.default, value: coordinator.isToastVisible)
+            .animation(.default, value: coordinator.countToast)
         }
         .environment(\.colorScheme, .dark)
     }
@@ -313,14 +335,13 @@ struct ScannerView: View {
             .keyboardShortcut("o", modifiers: .command)
             ScanPasteButton { items in readPasted(items) }
             ScanControlButton(
-                title: coordinator.isContinuous ? L10n.scanControlContinuousOn : L10n.scanContinuous,
-                systemImage: "repeat",
-                isOn: coordinator.isContinuous,
+                title: coordinator.isCounting ? L10n.scanControlCountingOn : (coordinator.isContinuous ? L10n.scanControlContinuousOn : L10n.scanContinuous),
+                systemImage: coordinator.isCounting ? "list.number" : "repeat",
+                isOn: coordinator.isContinuous || coordinator.isCounting,
                 accessibilityLabel: L10n.scanContinuous,
-                accessibilityValue: coordinator.isContinuous ? L10n.commonOn : L10n.commonOff
-            ) {
-                coordinator.setContinuous(!coordinator.isContinuous)
-            }
+                accessibilityValue: coordinator.isContinuous || coordinator.isCounting ? L10n.commonOn : L10n.commonOff,
+                action: toggleContinuous
+            )
             if capture.hasTorch && capture.state == .running {
                 ScanControlButton(
                     title: L10n.scanTorch,
@@ -341,15 +362,14 @@ struct ScannerView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            Button {
-                coordinator.setContinuous(!coordinator.isContinuous)
-            } label: {
-                Label(coordinator.isContinuous ? L10n.scanContinuousOn : L10n.scanContinuous, systemImage: "repeat")
+            Button(action: toggleContinuous) {
+                Label(coordinator.isCounting ? L10n.scanControlCountingOn : (coordinator.isContinuous ? L10n.scanContinuousOn : L10n.scanContinuous),
+                      systemImage: coordinator.isCounting ? "list.number" : "repeat")
                     .labelStyle(.titleAndIcon)
             }
-            .tint(coordinator.isContinuous ? AppColor.accentOnCamera : nil)
+            .tint(coordinator.isContinuous || coordinator.isCounting ? AppColor.accentOnCamera : nil)
             .accessibilityLabel(L10n.scanContinuous)
-            .accessibilityValue(coordinator.isContinuous ? L10n.commonOn : L10n.commonOff)
+            .accessibilityValue(coordinator.isContinuous || coordinator.isCounting ? L10n.commonOn : L10n.commonOff)
         }
         ToolbarItemGroup(placement: .topBarTrailing) {
             Button(action: pickPhoto) {
@@ -415,6 +435,22 @@ struct ScannerView: View {
         coordinator.handle(code, source: source)
     }
 
+    /// Off → choose how to read (continuous or counting); on → stop (counting shows what was counted).
+    private func toggleContinuous() {
+        if coordinator.isCounting {
+            finishCounting()
+        } else if coordinator.isContinuous {
+            coordinator.setContinuous(false)
+        } else {
+            isChoosingMode = true
+        }
+    }
+
+    private func finishCounting() {
+        let session = coordinator.endCounting()
+        if !session.isEmpty { finishedCount = FinishedCount(session: session) }
+    }
+
     private func pickPhoto() {
         isPhotoPickerPresented = true
     }
@@ -473,6 +509,11 @@ struct ScannerView: View {
     private var isChoosingCode: Binding<Bool> {
         Binding(get: { !multipleCodes.isEmpty }, set: { if !$0 { multipleCodes = [] } })
     }
+}
+
+private struct FinishedCount: Identifiable {
+    let id = UUID()
+    let session: StocktakeSession
 }
 
 private enum ImageAlert: Equatable {

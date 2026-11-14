@@ -82,6 +82,7 @@ struct RootView: View {
 
     private func updateWidget() {
         WidgetSnapshotWriter.update(context: modelContext, isPro: store.isPro)
+        WatchLink.shared.update(context: modelContext, settings: settings, isPro: store.isPro)
     }
 
     private var commandActions: AppCommandActions {

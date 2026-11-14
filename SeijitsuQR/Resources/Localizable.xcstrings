@@ -177,6 +177,94 @@
         }
       }
     },
+    "create.color.background": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "背景"
+          }
+        }
+      }
+    },
+    "create.color.foreground": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模様"
+          }
+        }
+      }
+    },
+    "create.color.lockedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "模様と背景の色を変えられます（Pro）。読み取りにくい組み合わせは選べません。"
+          }
+        }
+      }
+    },
+    "create.color.refused": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この組み合わせは読み取りにくいため選べません（模様を背景より暗く、明るさの差を大きく）。"
+          }
+        }
+      }
+    },
+    "create.color.reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "白黒に戻す"
+          }
+        }
+      }
+    },
+    "create.color.seePro": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro を見る"
+          }
+        }
+      }
+    },
+    "create.color.swatch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "色 %lld"
+          }
+        }
+      }
+    },
+    "create.color.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "色"
+          }
+        }
+      }
+    },
     "create.field.address": {
       "extractionState": "manual",
       "localizations": {
@@ -1783,6 +1871,50 @@
         }
       }
     },
+    "paywall.feature.color.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取りやすい組み合わせから選べます"
+          }
+        }
+      }
+    },
+    "paywall.feature.color.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR コードの色"
+          }
+        }
+      }
+    },
+    "paywall.feature.count.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同じコードを読むたびに数えて、CSV で書き出し"
+          }
+        }
+      }
+    },
+    "paywall.feature.count.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数えながら読む（棚卸し）"
+          }
+        }
+      }
+    },
     "paywall.feature.create.detail": {
       "extractionState": "manual",
       "localizations": {
@@ -1845,6 +1977,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "履歴を無制限に保存"
+          }
+        }
+      }
+    },
+    "paywall.feature.watch.detail": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りの QR を Watch で見せられます"
+          }
+        }
+      }
+    },
+    "paywall.feature.watch.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch に表示"
           }
         }
       }
@@ -3015,6 +3169,17 @@
         }
       }
     },
+    "scan.control.countingOn": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数える ON"
+          }
+        }
+      }
+    },
     "scan.control.paste": {
       "extractionState": "manual",
       "localizations": {
@@ -3033,6 +3198,204 @@
           "stringUnit": {
             "state": "translated",
             "value": "写真から"
+          }
+        }
+      }
+    },
+    "scan.count.csv": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV で書き出す"
+          }
+        }
+      }
+    },
+    "scan.count.csvCode": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コード"
+          }
+        }
+      }
+    },
+    "scan.count.csvCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数"
+          }
+        }
+      }
+    },
+    "scan.count.csvLast": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最後に読んだ時刻"
+          }
+        }
+      }
+    },
+    "scan.count.csvTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数えた結果（CSV）"
+          }
+        }
+      }
+    },
+    "scan.count.done": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "終える"
+          }
+        }
+      }
+    },
+    "scan.count.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コードを枠に入れると、1 つ数えます。"
+          }
+        }
+      }
+    },
+    "scan.count.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV はコード・種類・形式・数・最後に読んだ時刻です。履歴にはコードごとに 1 件ずつ保存します。「終える」を押すと、数えた結果は消えます。"
+          }
+        }
+      }
+    },
+    "scan.count.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "かざしたままでは数えません。1 秒離すと次を数えます。"
+          }
+        }
+      }
+    },
+    "scan.count.minus": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を 1 つ減らす"
+          }
+        }
+      }
+    },
+    "scan.count.pieces": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 個"
+          }
+        }
+      }
+    },
+    "scan.count.plus": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ を 1 つ増やす"
+          }
+        }
+      }
+    },
+    "scan.count.resultTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数えた結果"
+          }
+        }
+      }
+    },
+    "scan.count.save": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴に保存する"
+          }
+        }
+      }
+    },
+    "scan.count.saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履歴に保存しました"
+          }
+        }
+      }
+    },
+    "scan.count.summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 種類・合計 %lld 個"
+          }
+        }
+      }
+    },
+    "scan.count.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数えた数"
+          }
+        }
+      }
+    },
+    "scan.count.toast": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "＋1　%@（%lld 個目）"
           }
         }
       }
@@ -3110,6 +3473,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "画像を読み込めませんでした"
+          }
+        }
+      }
+    },
+    "scan.mode.continuous": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "続けて読む（同じコードは 1 回だけ）"
+          }
+        }
+      }
+    },
+    "scan.mode.counting": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数えながら読む（棚卸し・Pro）"
+          }
+        }
+      }
+    },
+    "scan.mode.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み方を選ぶ"
           }
         }
       }
@@ -3737,6 +4133,83 @@
           "stringUnit": {
             "state": "translated",
             "value": "設定"
+          }
+        }
+      }
+    },
+    "settings.watch.codes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示するお気に入り"
+          }
+        }
+      }
+    },
+    "settings.watch.count": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 件"
+          }
+        }
+      }
+    },
+    "settings.watch.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りから選んだ QR を、ペアリングした Apple Watch に送ります。iPhone と Watch の間で直接送り、インターネットのサーバーには送りません。"
+          }
+        }
+      }
+    },
+    "settings.watch.header": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch"
+          }
+        }
+      }
+    },
+    "settings.watch.noFavorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お気に入りがありません。履歴で ☆ を付けてください。"
+          }
+        }
+      }
+    },
+    "settings.watch.pickerFooter": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 件まで選べます。"
+          }
+        }
+      }
+    },
+    "settings.watch.show": {
+      "extractionState": "manual",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch に表示（Pro）"
           }
         }
       }

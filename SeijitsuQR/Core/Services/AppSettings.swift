@@ -11,6 +11,8 @@ final class AppSettings {
         static let autosave = "settings.autosave"
         static let searchEngine = "settings.searchEngine"
         static let historyLock = "settings.historyLock"
+        static let watchEnabled = "settings.watch"
+        static let watchCodeIDs = "settings.watch.codes"
         static let successfulScans = "usage.successfulScans"
         static let reviewRequested = "usage.reviewRequested"
     }
@@ -34,6 +36,16 @@ final class AppSettings {
         didSet { defaults.set(isHistoryLockEnabled, forKey: Key.historyLock) }
     }
 
+    /// Show the chosen favorites on Apple Watch (Pro).
+    var isWatchEnabled: Bool {
+        didSet { defaults.set(isWatchEnabled, forKey: Key.watchEnabled) }
+    }
+
+    /// The favorites (record ids) sent to Apple Watch.
+    var watchCodeIDs: Set<String> {
+        didSet { defaults.set(Array(watchCodeIDs).sorted(), forKey: Key.watchCodeIDs) }
+    }
+
     /// Where product codes are searched (only when the user taps "ウェブで検索").
     var searchEngine: SearchEngine {
         didSet { defaults.set(searchEngine.rawValue, forKey: Key.searchEngine) }
@@ -55,6 +67,8 @@ final class AppSettings {
         isHapticsEnabled = defaults.bool(forKey: Key.haptics)
         isAutosaveEnabled = defaults.bool(forKey: Key.autosave)
         isHistoryLockEnabled = defaults.bool(forKey: Key.historyLock)
+        isWatchEnabled = defaults.bool(forKey: Key.watchEnabled)
+        watchCodeIDs = Set(defaults.stringArray(forKey: Key.watchCodeIDs) ?? [])
         searchEngine = defaults.string(forKey: Key.searchEngine).flatMap(SearchEngine.init(rawValue:)) ?? .google
         successfulScans = defaults.integer(forKey: Key.successfulScans)
         hasRequestedReview = defaults.bool(forKey: Key.reviewRequested)
